@@ -1,4 +1,4 @@
-# Snaps Specifaction & Improvement Proposals
+# Snaps Specification & Improvement Proposals
 
 ## Purpose
 
