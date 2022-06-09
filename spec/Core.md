@@ -19,6 +19,8 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 ## Snap Manifest
 
+The Snap package MUST include a `snap.manifest.json` file.
+
 > The formal schema can be found [here](../assets/spec/core/snap_manifest_json.schema.json)
 
 ### Permissions
