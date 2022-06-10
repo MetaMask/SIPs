@@ -1,0 +1,20 @@
+{
+  "name": "validate",
+  "packageManager": "yarn@3.2.1",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^17.0.41",
+    "@types/yargs": "^17.0.10",
+    "mdast": "^3.0.0",
+    "typescript": "^4.7.3"
+  },
+  "dependencies": {
+    "chalk": "^5.0.1",
+    "remark-frontmatter": "^4.0.1",
+    "remark-gfm": "^3.0.1",
+    "remark-parse": "^10.0.1",
+    "unified": "^10.1.2",
+    "yaml": "^2.1.1",
+    "yargs": "^17.5.1"
+  }
+}
