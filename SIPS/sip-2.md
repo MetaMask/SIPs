@@ -125,7 +125,7 @@ interface SnapKeyring {
 
 `BlockchainId` strings MUST be CAIP-2 Blockchain ID.
 
-`AccountId` strings MUST be fully qualified CAIP-10 Account ID. The Regular Expression used to validate Account IDs is:
+`AccountId` strings MUST be fully qualified CAIP-10 Account ID. The Regular Expression used to validate Account IDs SHOULD be:
 
 ```typescript
 const accountIdValidation =
