@@ -1,7 +1,7 @@
 import assert from "assert";
-import { Context } from "../context";
-import { AstNode, RuleDescriptor } from "../rule";
-import { deepContains } from "../utils";
+import { Context } from "../context.js";
+import { AstNode, RuleDescriptor } from "../rule.js";
+import { deepContains } from "../utils.js";
 
 const COPYRIGHT_POSTAMBLE = [
   {

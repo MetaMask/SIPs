@@ -1,5 +1,5 @@
 import type { Content, Root } from "mdast";
-import { Context } from "./context";
+import { Context } from "./context.js";
 
 export type AstNode = Content | Root;
 

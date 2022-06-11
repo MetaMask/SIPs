@@ -1,4 +1,4 @@
-import { AstNode } from "./rule";
+import { AstNode } from "./rule.js";
 
 export function compile(test: string): (node: AstNode) => boolean {
   if (test === "*") {

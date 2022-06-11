@@ -62,3 +62,17 @@ export function* zip<T extends Array<any>>(
     yield results.map(({ value }) => value) as T;
   }
 }
+
+export function* enumerate<T>(iterable: Iterable<T>): Generator<[number, T]> {
+  const iterator = iterable[Symbol.iterator]();
+
+  let i = 0;
+  while (true) {
+    const result = iterator.next();
+    if (result.done) {
+      break;
+    }
+    yield [i, result.value];
+    i++;
+  }
+}

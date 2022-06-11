@@ -1,7 +1,19 @@
 import assert from "assert";
+import Debug from "debug";
 import YAML from "yaml";
-import { Context } from "../context";
-import { AstNode, RuleDescriptor } from "../rule";
+import { Context } from "../context.js";
+import { AstNode, RuleDescriptor } from "../rule.js";
+
+const debug = Debug("validate:rule:preamble");
+
+const HEADER_TYPES = new Map([
+  ["sip", "number"],
+  ["title", "string"],
+  ["status", "string"],
+  ["author", "string"],
+  ["created", "string"],
+  ["updated", "string"],
+]);
 
 const HEADER_ORDER = [
   "sip",
@@ -28,14 +40,18 @@ const HEADER_ALL = new Set([
 const HEADER_DATES = new Set(["created", "updated"]);
 const STATUES = new Set(["Draft", "Review", "Final", "Withdrawn", "Living"]);
 const CATEGORIES = new Set(["Core", "Blockchain", "Meta"]);
-const ISO8601 = /^(?<year>\d\d\d\d)-(?<month>\d\d)-(?<day>\d\d)$/m;
+const ISO8601 = /^(?<year>\d\d\d\d)\-(?<month>\d\d)\-(?<day>\d\d)$/;
 const HEADERS_REGEX = /^([a-z]+):.+$/m;
 
-const AUTHOR = /^[\w\s]+ (?:\<.+@.+\>)? (\(@\w+\))?$/;
+const GITHUB_USERNAME = String.raw`[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}`;
+const EMAIL = String.raw`.+@.+`;
+const AUTHOR = new RegExp(
+  String.raw`^\w[.\w\s]*(?: (?:\<${EMAIL}\>(?: (\(\@${GITHUB_USERNAME}\)))?)|(\(\@${GITHUB_USERNAME}\)))?$`
+);
 
 function isValidDate(data: string): boolean {
-  const result = ISO8601.exec(data);
-  if (result === null || result.length !== 2) {
+  const result = data.match(ISO8601);
+  if (result === null) {
     return false;
   }
   if (
@@ -56,6 +72,32 @@ function isValidDate(data: string): boolean {
   );
 }
 
+interface Preamble {
+  sip?: number;
+  title?: string;
+  status?: string;
+  category?: string;
+  author?: string;
+  created?: string;
+  updated?: string;
+  [key: string]: unknown;
+}
+
+function assertIsPreamble(preamble: unknown): asserts preamble is Preamble {
+  if (typeof preamble !== "object" || preamble === null) {
+    throw new Error("Preamble is not YAML object");
+  }
+  Object.entries(preamble).forEach(([header, value]) => {
+    if (HEADER_TYPES.has(header) && typeof value !== HEADER_TYPES.get(header)) {
+      throw new Error(
+        `Parsed header \"${header}\" has wrong type. Has \"${typeof value}\", should be \"${HEADER_TYPES.get(
+          header
+        )}\"`
+      );
+    }
+  });
+}
+
 const descriptor: RuleDescriptor = {
   meta: {
     id: "preamble",
@@ -63,23 +105,18 @@ const descriptor: RuleDescriptor = {
   create: (context: Context) => ({
     yaml: (node: AstNode) => {
       assert(node.type === "yaml");
-      let preamble: any;
+      let preamble: Preamble;
       try {
         preamble = YAML.parse(node.value);
-        if (typeof preamble !== "object" || preamble === null) {
-          throw null;
-        }
-        Object.values(preamble).forEach((header) => {
-          if (typeof header !== "string") {
-            throw null;
-          }
-        });
+        assertIsPreamble(preamble);
       } catch (e) {
+        debug("Front-matter YAML parse error", e);
         return context.report({
           message: "The front-matter is not proper YAML",
           node,
         });
       }
+      debug(preamble);
 
       // Validate all required headers
       const headers = new Set(Object.keys(preamble));
@@ -121,7 +158,10 @@ const descriptor: RuleDescriptor = {
 
       // Validate dates
       HEADER_DATES.forEach((dateHeader) => {
-        if (dateHeader in preamble && !isValidDate(preamble[dateHeader])) {
+        if (
+          dateHeader in preamble &&
+          !isValidDate(preamble[dateHeader] as string)
+        ) {
           context.report({
             message: `Preamble header \"${dateHeader}\" is not a valid date in ISO 8601 format`,
             node,
@@ -130,7 +170,7 @@ const descriptor: RuleDescriptor = {
       });
 
       // Validate proper status
-      if (!STATUES.has(preamble.status)) {
+      if (preamble.status !== undefined && !STATUES.has(preamble.status)) {
         context.report({
           message: 'Header "status" is not a valid status',
           node,
@@ -147,7 +187,10 @@ const descriptor: RuleDescriptor = {
       }
 
       // Validate proper category
-      if (!CATEGORIES.has(preamble.category)) {
+      if (
+        preamble.category !== undefined &&
+        !CATEGORIES.has(preamble.category)
+      ) {
         context.report({
           message: 'Header "category" is not a valid category',
           node,
@@ -155,28 +198,30 @@ const descriptor: RuleDescriptor = {
       }
 
       // Validate author
-      const authors: string[] = preamble.author.split(",");
-      let hasGithub = false;
-      for (const author of authors) {
-        const match = author.trim().match(AUTHOR);
-        if (match === null) {
+      if ("author" in preamble) {
+        const authors: string[] = (preamble.author as string).split(",");
+        let hasGithub = false;
+        for (const author of authors) {
+          const match = author.trim().match(AUTHOR);
+          if (match === null) {
+            context.report({
+              message: 'Preamble header "author" is malformed',
+              node,
+            });
+            hasGithub = true;
+            break;
+          }
+          if (match.length >= 2) {
+            hasGithub = true;
+          }
+        }
+        if (!hasGithub) {
           context.report({
-            message: 'Preamble header "author" is malformed',
+            message:
+              'Preamble header "author" doesn\'t have at least one github account',
             node,
           });
-          hasGithub = true;
-          break;
         }
-        if (match.length >= 2) {
-          hasGithub = true;
-        }
-      }
-      if (!hasGithub) {
-        context.report({
-          message:
-            'Preamble header "author" doesn\'t have at least one github account',
-          node,
-        });
       }
     },
   }),

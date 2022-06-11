@@ -1,24 +1,59 @@
+#!/usr/bin/env node
 import assert from "assert";
-import { existsSync, promises as fs } from "fs";
+import Debug from "debug";
+import { promises as fs } from "fs";
+import glob from "glob";
 import process from "process";
+import { promisify } from "util";
 import { hideBin } from "yargs/helpers";
 import yargs from "yargs/yargs";
+import { Reporter, Results } from "./reporter.js";
+import * as reporters from "./reporters/index.js";
+import { validate } from "./validate.js";
+
+const debug = Debug("validate:main");
+
+const globAsync = promisify(glob);
 
 const argv = await yargs(hideBin(process.argv))
   .help()
-  .command("$0 <file>", "", (argv) =>
+  .version()
+  .command("$0 <glob>", "", (argv) =>
     argv
-      .positional("file", { describe: "The SIP to validate", type: "string" })
-      .check((argv) => {
-        assert(
-          argv._.length === 1 && typeof argv._[0] === "string",
-          "A file path required"
-        );
-        assert(existsSync(argv._[0]), `File at path "${argv._[0]}"`);
-        return true;
+      .positional("glob", {
+        describe: "Filepath of SIP or glob pattern of files to validate",
+        type: "string",
       })
+      .demandOption("glob")
+      .option("reporter", {
+        choices: Object.keys(reporters),
+        describe: "The reporter used to print out results",
+        default: "console",
+      })
+      .coerce("glob", (arg) => globAsync(arg, { nodir: true }))
   ).argv;
 
-assert(typeof argv._[0] === "string");
-const file = await fs.open(argv._[0], "r");
-file.createReadStream();
+assert(argv.glob !== undefined);
+const filePaths: string[] = argv.glob as unknown as string[]; // Typescript types fail here
+
+const results: Results = [];
+
+let errorCount = 0;
+
+for (const filePath of filePaths) {
+  debug(`Validating ${filePath}`);
+  const file = await fs.open(filePath, "r");
+  const messages = await validate(await file.readFile());
+  debug(`${filePath} message count: ${messages.length}`);
+  errorCount += messages.length;
+  results.push({ filePath, messages });
+}
+
+const output = await ((reporters as any)[argv.reporter] as Reporter)(results);
+if (output.length > 0) {
+  process.stdout.write(`${output}\n`);
+}
+
+if (errorCount > 0) {
+  process.exit(1);
+}
