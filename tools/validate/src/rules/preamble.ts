@@ -103,7 +103,12 @@ const descriptor: RuleDescriptor = {
     id: "preamble",
   },
   create: (context: Context) => ({
-    yaml: (node: AstNode) => {
+    root: (node: AstNode) => {
+      assert(node.type === "root");
+      if (node.children.length < 1 || node.children[0].type !== "yaml") {
+        return context.report({ message: "No preamble found", node });
+      }
+      node = node.children[0];
       assert(node.type === "yaml");
       let preamble: Preamble;
       try {

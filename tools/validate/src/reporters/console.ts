@@ -13,7 +13,7 @@ export default function (results: Results): string {
             chalk.gray(`(${message.ruleId})`)
         ) + "\n";
       output += `  ➜ ${file.filePath}:${message.line}:${message.column}`;
-      if (i !== results.length - 1) {
+      if (i !== file.messages.length - 1) {
         output += "\n\n";
       }
     }
