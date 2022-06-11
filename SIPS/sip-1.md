@@ -63,13 +63,24 @@ All dates in preamble MUST be in [ISO 8601](https://en.wikipedia.org/wiki/ISO_86
 
 Comma-separated list of authors of the SIP. Each author MUST be written in the following format: `Name Surname <email> (@github-username)`. If the author wants to maintain anonymity, they MAY provide only the username instead of their name and surname. The e-mail and github username are optional and MAY be provided. At least one of the authors MUST have a Github username provided in order to be notified of the changes concerning their SIP.
 
-Example header:
+Example `author` header:
 
 `John F. Kowalsky <john.kowalsky@domain.com> (@kowalsky), Gregory House, Anon (@anon)`
 
 ## Additional files
 
 The SIP MAY include additional files such as images and diagrams. Such files MUST be placed in `assets` folder in the following location `assets/SIP/sip-N/` where `N` is replaced by the SIPs number. When linking to files from SIP, relative links MUST be used, such as `[schema](../assets/sip/sip-1/schema.json)`.
+
+## Validation
+
+Every SIP MUST pass automatic validation when added in Pull Request. You can manually use the validation tool as follows:
+
+```bash
+cd tools/validate
+yarn install
+yarn build
+yarn validate ../../SIPS/*
+```
 
 ## SIP Editors
 

@@ -178,10 +178,10 @@ const descriptor: RuleDescriptor = {
       }
 
       // Validate updated
-      if (preamble.status === "living" && !("updated" in preamble)) {
+      if (preamble.status === "Living" && !("updated" in preamble)) {
         context.report({
           message:
-            'SIP has status of "living" but doesn\'t have "updated" header',
+            'SIP has status of "Living" but doesn\'t have "updated" header',
           node,
         });
       }
