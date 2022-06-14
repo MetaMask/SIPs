@@ -1,0 +1,34 @@
+{
+  "title": "Keyring Permission",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["blockchain"],
+  "properties": {
+    "blockchain": {
+      "title": "Supported blockchains",
+      "type": "array",
+      "items": {
+        "title": "Supported Blockchain",
+        "description": "Definition of a supported blockchain type",
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name"],
+        "properties": {
+          "name": {
+            "title": "Blockchain name",
+            "description": "User readable name of the supported blockchain",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "id": {
+            "title": "Blockchain ID",
+            "description": "A Blockchain ID using CAIP-2 specification",
+            "type": "string",
+            "pattern": "[-a-z0-9]{3,8}:[-a-zA-Z0-9]{1,32}"
+          }
+        }
+      }
+    }
+  }
+}
