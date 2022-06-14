@@ -2,13 +2,13 @@
   "title": "Keyring Permission",
   "type": "object",
   "additionalProperties": false,
-  "required": ["blockchain"],
+  "required": ["chains"],
   "properties": {
-    "blockchain": {
-      "title": "Supported blockchains",
+    "chains": {
+      "title": "List of supported blockchains",
       "type": "array",
       "items": {
-        "title": "Supported Blockchain",
+        "title": "Specific supported Blockchain",
         "description": "Definition of a supported blockchain type",
         "type": "object",
         "additionalProperties": false,
@@ -26,6 +26,17 @@
             "description": "A Blockchain ID using CAIP-2 specification",
             "type": "string",
             "pattern": "[-a-z0-9]{3,8}:[-a-zA-Z0-9]{1,32}"
+          },
+          "methods": {
+            "title": "Supported RPC methods",
+            "description": "A list of supported RPC methods on this chain",
+            "type": "array",
+            "items": {
+              "title": "Supported RPC method name",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            }
           }
         }
       }

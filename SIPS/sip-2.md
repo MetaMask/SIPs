@@ -32,7 +32,8 @@ created: 2022-06-10
 - **TODO(@ritave): Multisig Smart Contracts have no reference in CAIP-2, how should they be referenced?**
 - **TODO(@ritave): Ethereum Smart Contracts Multisig doesn't have a private key, how should API look in that situation?**
 - **TODO(@ritave): CAIPs don't have a standard on how to expose the provider to the DApp developer. Make one**
-- **TODO(@ritave): Should sign/decrypt message be included? That functionality could be created using routing of rpc requests later on**
+- **TODO(@ritave): They keyring needs to handle RPC requests for blockchains, should it be seperate from export.onRpcRequest?**
+- **TODO(@ritave): Add a provider that is not WalletConnect v2 that doesn't use relay server, but just talks directly to the extension**
 
 ## Abstract
 
@@ -58,6 +59,8 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 #### Provider
 
+The communication is based on [WalletConnect v2](https://docs.walletconnect.com/2.0/) open protocol.
+
 ### Application Routing
 
 ### Snap Developer
@@ -74,14 +77,22 @@ An example usage of above permission inside `snap.manifest.json`
 {
   "initialPermissions": {
     "snap:keyring": {
-      "blockchain": [
+      "chains": [
         {
           "id": "eip155:1",
-          "name": "Ethereum (Mainnet)"
+          "name": "Ethereum (Mainnet)",
+          "methods": [
+            "eth_signTransaction",
+            "eth_accounts",
+            "eth_sign",
+            "personal_sign",
+            "eth_signTypedData"
+          ]
         },
         {
           "id": "bip122:000000000019d6689c085ae165831e93",
-          "name": "Bitcoin (Mainnet)"
+          "name": "Bitcoin (Mainnet)",
+          "methods": ["signPBST", "getExtendedPublicKey"]
         }
       ]
     }
@@ -105,7 +116,6 @@ type AccountId = string;
 
 interface SnapKeyring {
   getAccounts(): Promise<AccountId[]>;
-  signTransaction(accountId: AccountId, data: unknown): Promise<unknown>;
 
   addAccounts?(blockchainId: BlockchainId, count: number): Promise<AccountId[]>;
   removeAccount?(accountId: AccountId): Promise<void>;
@@ -113,8 +123,11 @@ interface SnapKeyring {
   importAccount?(blockchainId: BlockchainId, data: unknown): Promise<AccountId>;
   exportAccount?(accountId: AccountId): Promise<unknown>;
 
-  signMessage?(accountId: AccountId, data: unknown): Promise<unknown>;
-  decryptMessage?(accountId: AccountId, data: unknown): Promise<unknown>;
+  handleRequest(
+    blockchainId: BlockchainId,
+    origin: string,
+    request: JsonRpcRequest
+  ): Promise<unknown>;
 }
 ```
 
@@ -134,9 +147,6 @@ interface SnapKeyring {
 - Importing
   - `importAccount?()`
   - `exportAccount?()`
-- Messages
-  - `signMessage?()`
-  - `decryptMessage?()`
 
 The Snaps SHOULD implement all methods inside a specific group that it wants to support (such as `Creation`), instead of implementing only some methods. The wallet MAY disable functionality of specific group if not all methods inside that group are implemented by the Snap.
 
