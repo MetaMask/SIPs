@@ -29,7 +29,7 @@
           },
           "methods": {
             "title": "Supported RPC methods",
-            "description": "A list of supported RPC methods on this chain",
+            "description": "A list of supported RPC methods on this chain that a DApp can call",
             "type": "array",
             "items": {
               "title": "Supported RPC method name",

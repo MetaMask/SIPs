@@ -32,7 +32,7 @@ created: 2022-06-10
 - **TODO(@ritave): Multisig Smart Contracts have no reference in CAIP-2, how should they be referenced?**
 - **TODO(@ritave): Ethereum Smart Contracts Multisig doesn't have a private key, how should API look in that situation?**
 - **TODO(@ritave): CAIPs don't have a standard on how to expose the provider to the DApp developer. Make one**
-- **TODO(@ritave): They keyring needs to handle RPC requests for blockchains, should it be seperate from export.onRpcRequest?**
+- **TODO(@ritave): They keyring needs to handle RPC requests for blockchains, should it be separate from export.onRpcRequest?**
 - **TODO(@ritave): Add a provider that is not WalletConnect v2 that doesn't use relay server, but just talks directly to the extension**
 
 ## Abstract
