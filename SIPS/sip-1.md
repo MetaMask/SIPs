@@ -41,7 +41,7 @@ stateDiagram-v2
 ```
 
 - **Draft** - The initial SIP status, indicating that it is in development. The SIP will be merged into the repository after being properly formatted.
-- **Review** - The SIP author(s) marked this SIP as ready as ready for peer review.
+- **Review** - The SIP author(s) marked this SIP as ready for peer review. All members of community are encouraged to participate.
 - **Final** - The SIP is considered a final standard. No further updates except errata and clarifications will be considered. The SIP MUST be implemented in at least one client before being considered for this status. After achieving this status, the SIP will be implemented in the next revision of the Specification.
 - **Withdrawn** - The proposed SIP has been withdrawn by the SIP author(s) or will not be considered for inclusion in the specification. This status is final. If the idea is to be pursued again, a new proposal MUST be created.
 - **Living** - SIPs with this special status are considered continually updated and never final. Such SIPs MUST include the `updated` property in their front-matter. Specifically this includes [SIP-1](./sip-1.md).
