@@ -28,12 +28,12 @@ created: 2022-06-10
 
 ## TODO
 
-- **TODO(@ritave): how should Keyring stored it's data? Should it be using `snap_manageState`?**
 - **TODO(@ritave): Multisig Smart Contracts have no reference in CAIP-2, how should they be referenced?**
 - **TODO(@ritave): Ethereum Smart Contracts Multisig doesn't have a private key, how should API look in that situation?**
 - **TODO(@ritave): CAIPs don't have a standard on how to expose the provider to the DApp developer. Make one**
 - **TODO(@ritave): They keyring needs to handle RPC requests for blockchains, should it be separate from export.onRpcRequest?**
 - **TODO(@ritave): Add a provider that is not WalletConnect v2 that doesn't use relay server, but just talks directly to the extension**
+- **TODO(@ritave): Should chain ids in permission be able to use regex to allow for multiple chains?**
 
 ## Abstract
 
@@ -77,24 +77,37 @@ An example usage of above permission inside `snap.manifest.json`
 {
   "initialPermissions": {
     "snap:keyring": {
-      "chains": [
-        {
-          "id": "eip155:1",
-          "name": "Ethereum (Mainnet)",
+      "namespaces": {
+        "eip155": {
           "methods": [
             "eth_signTransaction",
             "eth_accounts",
             "eth_sign",
             "personal_sign",
             "eth_signTypedData"
+          ],
+          "events": ["accountsChanged"],
+          "chains": [
+            {
+              "id": "eip155:1",
+              "name": "Ethereum (Mainnet)"
+            }
           ]
         },
-        {
-          "id": "bip122:000000000019d6689c085ae165831e93",
-          "name": "Bitcoin (Mainnet)",
-          "methods": ["signPBST", "getExtendedPublicKey"]
+        "bip122": {
+          "methods": ["signPBST", "getExtendedPublicKey"],
+          "chains": [
+            {
+              "id": "bip122:000000000019d6689c085ae165831e93",
+              "name": "Bitcoin (Mainnet)"
+            },
+            {
+              "id": "bip122:000000000933ea01ad0ee984209779ba",
+              "name": "Bitcoin (Testnet)"
+            }
+          ]
         }
-      ]
+      }
     }
   }
 }

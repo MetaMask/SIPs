@@ -2,40 +2,69 @@
   "title": "Keyring Permission",
   "type": "object",
   "additionalProperties": false,
-  "required": ["chains"],
+  "required": ["namespaces"],
   "properties": {
-    "chains": {
-      "title": "List of supported blockchains",
-      "type": "array",
-      "items": {
-        "title": "Specific supported Blockchain",
-        "description": "Definition of a supported blockchain type",
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["id", "name"],
-        "properties": {
-          "name": {
-            "title": "Blockchain name",
-            "description": "User readable name of the supported blockchain",
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 40
-          },
-          "id": {
-            "title": "Blockchain ID",
-            "description": "A Blockchain ID using CAIP-2 specification",
-            "type": "string",
-            "pattern": "[-a-z0-9]{3,8}:[-a-zA-Z0-9]{1,32}"
-          },
-          "methods": {
-            "title": "Supported RPC methods",
-            "description": "A list of supported RPC methods on this chain that a DApp can call",
-            "type": "array",
-            "items": {
-              "title": "Supported RPC method name",
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 40
+    "namespaces": {
+      "title": "Namespaces",
+      "description": "List of supported CAIP-2 namespaces",
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "[-a-z0-9]{3,8}": {
+          "title": "Namespace",
+          "description": "Description of one CAIP-2 namespace",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["chains"],
+          "properties": {
+            "chains": {
+              "title": "Supported chains",
+              "description": "A list of supported chains inside that namespace",
+              "type": "array",
+              "items": {
+                "title": "Chain",
+                "description": "Description of a specific chain inside namespace",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["id", "name"],
+                "properties": {
+                  "name": {
+                    "title": "Chain name",
+                    "description": "User readable name of the supported chain",
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40
+                  },
+                  "id": {
+                    "title": "Chain ID",
+                    "description": "A fully qualified chain ID using CAIP-2 specification",
+                    "type": "string",
+                    "pattern": "[-a-z0-9]{3,8}:[-a-zA-Z0-9]{1,32}"
+                  }
+                }
+              }
+            },
+            "methods": {
+              "title": "RPC methods",
+              "description": "A list of supported RPC methods on this namespace that a DApp can call",
+              "type": "array",
+              "items": {
+                "title": "Method name",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40
+              }
+            },
+            "events": {
+              "title": "RPC events",
+              "description": "A list of supported RPC events on this namespace that a DApp can listen to",
+              "type": "array",
+              "items": {
+                "title": "Event name",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40
+              }
             }
           }
         }
