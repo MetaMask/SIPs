@@ -42,7 +42,7 @@ export default async function (results: Results) {
       const rel = path.relative(repoDir, file.filePath);
       return file.messages.map(
         (message) =>
-          `- ${message.message} <span style="color:gray">(${message.ruleId})</span>\n\n  ➔ [\`${rel}:{${message.line}}\`](${rel})`
+          `- ${message.message} <span style="color:gray">(${message.ruleId})</span>\n\n  ➔ [\`${rel}:${message.line}\`](${rel})`
       );
     })
     .join("\n\n");
