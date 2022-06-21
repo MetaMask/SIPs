@@ -33,3 +33,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_PULL_REQUEST: ${{ github.event.pull_request.number }}
+          GITHUB_SHA_PULL_REQUEST: ${{ github.event.pull_request.head.sha }}

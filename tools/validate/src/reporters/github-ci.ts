@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/action";
-import { assert } from "console";
+import assert from "assert";
 import path from "path";
 import { Results } from "../reporter.js";
 
@@ -18,14 +18,15 @@ export default async function (results: Results) {
   assert(process.env.GITHUB_PULL_REQUEST !== undefined);
   assert(process.env.GITHUB_SHA !== undefined);
   assert(process.env.GITHUB_WORKSPACE !== undefined);
+  assert(process.env.GITHUB_SHA_PULL_REQUEST !== undefined);
 
   const octokit = new Octokit();
 
-  const [owner, repo] = process.env.GITHUB_REPOSITORY!.split("/");
-  const pull_number = Number(process.env.GITHUB_PULL_REQUEST!);
-  const commit_id = process.env.GITHUB_SHA!;
+  const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/");
+  const pull_number = Number(process.env.GITHUB_PULL_REQUEST);
+  const commit_id = process.env.GITHUB_SHA_PULL_REQUEST;
 
-  const repoDir = path.resolve(process.env.GITHUB_WORKSPACE!);
+  const repoDir = path.resolve(process.env.GITHUB_WORKSPACE);
   const comments = results.flatMap((file) =>
     file.messages.map((message) => ({
       path: path.relative(repoDir, file.filePath),
@@ -42,7 +43,7 @@ export default async function (results: Results) {
       pull_number,
       commit_id,
       event: "REQUEST_CHANGES",
-      body: "SIP validation failed, please file comments for details",
+      body: "SIP validation failed, please see file comments for details",
       comments,
     }
   );
