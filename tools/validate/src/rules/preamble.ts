@@ -49,6 +49,8 @@ const AUTHOR = new RegExp(
   String.raw`^\w[.\w\s]*(?: (?:\<${EMAIL}\>(?: (\(\@${GITHUB_USERNAME}\)))?)|(\(\@${GITHUB_USERNAME}\)))?$`
 );
 
+const EXTRACT_PATH_SIP = /sip-(?<sipNumber>[1-9][0-9]*)\.md$/;
+
 function isValidDate(data: string): boolean {
   const result = data.match(ISO8601);
   if (result === null) {
@@ -159,6 +161,32 @@ const descriptor: RuleDescriptor = {
           break;
         }
         orderIndex++;
+      }
+
+      // Validate SIP number
+      if (
+        preamble.sip !== undefined &&
+        (!Number.isSafeInteger(preamble.sip) || preamble.sip < 0)
+      ) {
+        context.report({
+          message: 'Preamble header "sip" is not a positive integer',
+          node,
+        });
+      }
+
+      // Validate that SIP number matches filename
+      if (preamble.sip !== undefined) {
+        const match = context.path?.match(EXTRACT_PATH_SIP);
+        let extractedSip: number | undefined = undefined;
+        if (match !== null && match !== undefined) {
+          extractedSip = Number(match.groups?.sipNumber ?? 0);
+        }
+        if (extractedSip === null || extractedSip !== preamble.sip) {
+          context.report({
+            message: 'Preamble header "sip" doesn\'t match the filename number',
+            node,
+          });
+        }
       }
 
       // Validate dates

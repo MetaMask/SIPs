@@ -10,7 +10,10 @@ import { AstNode, RuleDescriptor, Validator } from "./rule.js";
 import * as allRules from "./rules/index.js";
 import { compile as compileSelector } from "./selector.js";
 
-const parser = unified().use(remarkParse).use(remarkGfm).use(remarkFrontMatter);
+const parser = unified()
+  .use(remarkParse)
+  .use(remarkGfm)
+  .use(remarkFrontMatter, "yaml");
 
 function parse(source: string | Buffer): Root {
   return parser.parse(source);
@@ -26,10 +29,10 @@ function* walk(node: AstNode): Generator<AstNode> {
 }
 
 export async function validate(
-  data: string | Buffer,
+  file: { data: string | Buffer; path?: string },
   rules: RuleDescriptor[] = Object.values(allRules)
 ): Promise<Message[]> {
-  const context = new ContextImpl();
+  const context = new ContextImpl(file.path);
 
   const compiled = rules.reduce<[RuleDescriptor, Validator[]][]>(
     (acc, rule) => {
@@ -49,7 +52,7 @@ export async function validate(
     []
   );
 
-  const ast = parse(data);
+  const ast = parse(file.data);
 
   for (const node of walk(ast)) {
     for (const [rule, validators] of compiled) {
