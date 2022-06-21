@@ -27,13 +27,27 @@ export default async function (results: Results) {
   const commit_id = process.env.GITHUB_SHA_PULL_REQUEST;
 
   const repoDir = path.resolve(process.env.GITHUB_WORKSPACE);
-  const comments = results.flatMap((file) =>
+  // TODO(ritave): Getting information about diffs, converting that into specific lines and checking for edge cases (such as file renames that might fail some rules) is cumbersome
+  //               Allow automatic line reviewing someday
+  /*const comments = results.flatMap((file) =>
     file.messages.map((message) => ({
       path: path.relative(repoDir, file.filePath),
       line: message.line,
       body: message.message,
     }))
-  );
+  );*/
+
+  const errors = results
+    .flatMap((file) => {
+      const rel = path.relative(repoDir, file.filePath);
+      return file.messages.map(
+        (message) =>
+          `- ${message.message} <span style="color:gray">(${message.ruleId})</span>\n\n  ➔ [\`${rel}:{${message.line}}\`](${rel})`
+      );
+    })
+    .join("\n\n");
+
+  const body = "SIP validation failed with following errors:\n\n" + errors;
 
   await octokit.request(
     "POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews",
@@ -43,8 +57,8 @@ export default async function (results: Results) {
       pull_number,
       commit_id,
       event: "REQUEST_CHANGES",
-      body: "SIP validation failed, please see file comments for details",
-      comments,
+      body,
+      //comments,
     }
   );
   return "";
