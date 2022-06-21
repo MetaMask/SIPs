@@ -1,0 +1,36 @@
+name: Validate SIP
+
+on:
+  pull_request:
+    paths:
+      - "SIPS/**"
+
+jobs:
+  validate:
+    name: Validate SIPs
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./tools/validate
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version-file: "./tools/validate/.nvmrc"
+      - name: Get Yarn version
+        run: echo "::set-output name=YARN_VERSION::$(yarn --version)"
+        id: yarn-version
+      - name: Cache yarn dependencies
+        uses: actions/cache@v2
+        with:
+          path: .yarn/cache
+          key: yarn-cache-${{ steps.yarn-version.outputs.YARN_VERSION }}-${{ hashFiles('tools/validate/yarn.lock') }}
+      - run: yarn install --immutable
+      - run: yarn build
+      - name: Validate all SIPs
+        run: yarn validate ../../SIPS/** --reporter console githubci
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_PULL_REQUEST: ${{ github.event.pull_request.number }}
+          GITHUB_SHA_PULL_REQUEST: ${{ github.event.pull_request.head.sha }}

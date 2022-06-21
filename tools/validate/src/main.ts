@@ -27,7 +27,8 @@ const argv = await yargs(hideBin(process.argv))
       .demandOption("glob")
       .option("reporter", {
         choices: Object.keys(reporters),
-        describe: "The reporter used to print out results",
+        array: true,
+        describe: "One or more reporters used to print out results",
         default: "console",
       })
       .coerce("glob", (arg) => globAsync(arg, { nodir: true }))
@@ -43,13 +44,20 @@ let errorCount = 0;
 for (const filePath of filePaths) {
   debug(`Validating ${filePath}`);
   const file = await fs.open(filePath, "r");
-  const messages = await validate(await file.readFile());
+  const messages = await validate({
+    data: await file.readFile(),
+    path: filePath,
+  });
   debug(`${filePath} message count: ${messages.length}`);
   errorCount += messages.length;
   results.push({ filePath, messages });
 }
 
-const output = await ((reporters as any)[argv.reporter] as Reporter)(results);
+let output = "";
+for (const reporter of argv.reporter as unknown as string[]) {
+  output += await ((reporters as any)[reporter] as Reporter)(results);
+}
+
 if (output.length > 0) {
   process.stdout.write(`${output}\n`);
 }
