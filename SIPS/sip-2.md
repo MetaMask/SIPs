@@ -15,8 +15,8 @@ created: 2022-06-10
 - [Motivation](#motivation)
 - [Specification](#specification)
   - [Language](#language)
+  - [Common types](#common-types)
   - [DApp Developer](#dapp-developer)
-    - [Provider](#provider)
   - [Application Routing](#application-routing)
   - [Snap Developer](#snap-developer)
     - [Manifest](#manifest)
@@ -30,10 +30,9 @@ created: 2022-06-10
 
 - **TODO(@ritave): Multisig Smart Contracts have no reference in CAIP-2, how should they be referenced?**
 - **TODO(@ritave): Ethereum Smart Contracts Multisig doesn't have a private key, how should API look in that situation?**
-- **TODO(@ritave): CAIPs don't have a standard on how to expose the provider to the DApp developer. Make one**
 - **TODO(@ritave): They keyring needs to handle RPC requests for blockchains, should it be separate from export.onRpcRequest?**
-- **TODO(@ritave): Add a provider that is not WalletConnect v2 that doesn't use relay server, but just talks directly to the extension**
 - **TODO(@ritave): Should chain ids in permission be able to use regex to allow for multiple chains?**
+- **TODO(@ritave): If the DApp requests creation of a new account, how should the Snap notify the wallet of updated account?**
 
 ## Abstract
 
@@ -47,7 +46,7 @@ One of the main use-cases for Snaps is adding more protocols to Blockchain walle
 
 ## Specification
 
-> Formal specifications are written in Typescript, JSON and JSON schema version 2020-12. Usage of `CAIP-N` specifications, where `N` is a number, are references to [Chain Agnostic Improvement Proposals](https://github.com/ChainAgnostic/CAIPs)
+> Formal specifications are written in Typescript and JSON schema version 2020-12. Usage of `CAIP-N` specifications, where `N` is a number, are references to [Chain Agnostic Improvement Proposals](https://github.com/ChainAgnostic/CAIPs)
 
 ### Language
 
@@ -55,13 +54,99 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
 "OPTIONAL" written in uppercase in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt)
 
+### Common types
+
+The below common types are used throughout the specification
+
+```typescript
+type ChainId = string;
+type AccountId = string;
+
+interface RequestArguments {
+  method: string;
+  params: unknown[] | Record<string, unknown>;
+}
+```
+
+- `ChainId` strings MUST be CAIP-2 Chain ID.
+
+  The Regular Expression used to validate Chain IDs by the wallet SHOULD be:
+
+  ```typescript
+  const chainIdValidation = /^[-a-z0-9]{3,8}:[-a-zA-Z0-9]{1,32}$/;
+  ```
+
+- `AccountId` strings MUST be fully qualified CAIP-10 Account ID.
+
+  The Regular Expression used to validate Account IDs by the wallet SHOULD be:
+
+  ```typescript
+  const accountIdValidation =
+    /^(?<chainId>[-a-z0-9]{3,8}:[-a-zA-Z0-9]{1,32}):(?<accountAddress>[a-zA-Z0-9]{1,64})$/;
+  ```
+
+- `RequestArguments` are used by both DApp and the Snap.
+
 ### DApp Developer
 
-#### Provider
+The wallet implementation SHOULD support [WalletConnect v2.0](https://docs.walletconnect.com/2.0/) protocol.
 
-The communication is based on [WalletConnect v2](https://docs.walletconnect.com/2.0/) open protocol.
+Wallet MAY also inject into DApp a global provider `window.blockchain` that directly communicates with the wallet instead of using relay servers of WalletConnect v2. The optional provider MUST minimally implement following API:
+
+```typescript
+interface Namespace {
+  accounts: AccountID[];
+  methods: string[];
+  events: string[];
+}
+
+interface Session {
+  namespaces: Record<string, Namespace>;
+}
+
+interface ConnectArguments {
+  requiredNamespaces: {
+    [namespace: string]: {
+      chains: ChainId[];
+      methods?: string[];
+      events?: string[];
+    };
+  };
+}
+
+interface Provider {
+  connect(args: ConnectArguments): Promise<{ approval: Promise<Session> }>;
+  request(args: { chainId: ChainId; request: RequestArguments }): Promise<any>;
+
+  on(eventName: string, listener: (...args: unknown[]) => void): this;
+  once(eventName: string, listener: (...args: unknown[]) => void): this;
+  removeListener(
+    eventName: string,
+    listener: (...args: unknown[]) => void
+  ): this;
+  removeAllListeners(eventName: string): this;
+}
+
+declare global {
+  const blockchain: Provider;
+}
+```
+
+The above API is a minimal API based on WalletConnect v2.0 Sign API, that skips the bridge server functionality. All operations SHOULD behave the same as WalletConnect v2.0
+
+The wallet MUST support at least one of WalletConnect v2.0 or the injected provider.
 
 ### Application Routing
+
+Wallet implementation hides the details of how the requests are routed from the DApp to Snaps. During initial connection of the DApp to the Wallet using `provider.connect()` call, the wallet finds Snaps that can support requested functionality using below algorithm.
+
+1. Wallet splits connection arguments into namespaces.
+2. For each namespace, the wallet finds an installed Snap that supports all requested chains, methods and events.
+   1. If there are multiple such Snaps, the choice, which one of those to use, is undefined and implementation dependent.
+   2. Support for a namespace MUST NOT be split between multiple Snaps. For example, one Snap can't support one chain while other Snap supports second chain.
+3. The wallet returns information of supported namespaces back to the DApp inside a `Session` object. The amount of supported namespaces MAY be smaller than the amount of requested namespaces.
+
+If a user removes a Snap from wallet, removing any functionality that is provided to the DApp through an open session, such session MUST be invalidated.
 
 ### Snap Developer
 
@@ -124,33 +209,23 @@ module.exports.keyring = new SnapKeyring();
 The interface for the exported object is as follows
 
 ```typescript
-type BlockchainId = string;
-type AccountId = string;
-
 interface SnapKeyring {
   getAccounts(): Promise<AccountId[]>;
 
-  addAccounts?(blockchainId: BlockchainId, count: number): Promise<AccountId[]>;
+  addAccounts?(chainId: ChainId, count: number): Promise<AccountId[]>;
   removeAccount?(accountId: AccountId): Promise<void>;
 
-  importAccount?(blockchainId: BlockchainId, data: unknown): Promise<AccountId>;
+  importAccount?(chainId: ChainId, data: unknown): Promise<AccountId>;
   exportAccount?(accountId: AccountId): Promise<unknown>;
 
   handleRequest(
-    blockchainId: BlockchainId,
+    chainId: ChainId,
     origin: string,
-    request: JsonRpcRequest
+    request: RequestArguments
   ): Promise<unknown>;
 }
 ```
 
-- Types
-  - `BlockchainId` strings MUST be CAIP-2 Blockchain ID.
-  - `AccountId` strings MUST be fully qualified CAIP-10 Account ID. The Regular Expression used to validate Account IDs by the wallet SHOULD be:
-    ```typescript
-    const accountIdValidation =
-      /^(?<blockchainId>[-a-z0-9]{3,8}:[-a-zA-Z0-9]{1,32}):(?<accountAddress>[a-zA-Z0-9]{1,64})$/;
-    ```
 - Required
   - `getAccounts()`
   - `signTransaction()`
@@ -163,9 +238,9 @@ interface SnapKeyring {
 
 The Snaps SHOULD implement all methods inside a specific group that it wants to support (such as `Creation`), instead of implementing only some methods. The wallet MAY disable functionality of specific group if not all methods inside that group are implemented by the Snap.
 
-Generally the Snap MAY NOT need to check the consistency of provided `BlockchainId` and `AccountId` parameters. The wallet MUST only route accounts and blockchains that are confirmed to be existing inside the Snap, either by only using blockchain Ids from the permission or by getting account list beforehand using `getAccounts()`.
+Generally the Snap MAY NOT need to check the consistency of provided `ChainId` and `AccountId` parameters. The wallet MUST only route accounts and chains that are confirmed to be existing inside the Snap, either by only using Chain Ids from the permission or by getting account list beforehand using `getAccounts()`.
 
-The wallet SHOULD check for consistency of returned `AccountId` from the Snap. The blockchainId part SHOULD match one of specified inside the permission and the one requested in the method parameters of the call.
+The wallet SHOULD check for consistency of returned `AccountId` from the Snap. The chainId part SHOULD match one of specified inside the permission and the one requested in the method parameters of the call.
 
 ##### Feature discovery
 
