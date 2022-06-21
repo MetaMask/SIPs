@@ -29,8 +29,9 @@ jobs:
       - run: yarn install --immutable
       - run: yarn build
       - name: Validate all SIPs
-        run: yarn validate ../../SIPS/** --reporter console githubci
+        run: yarn validate ../../SIPS/**
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_PULL_REQUEST: ${{ github.event.pull_request.number }}
           GITHUB_SHA_PULL_REQUEST: ${{ github.event.pull_request.head.sha }}
+          FORCE_COLOR: 3

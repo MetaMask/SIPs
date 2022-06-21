@@ -29,7 +29,7 @@ const argv = await yargs(hideBin(process.argv))
         choices: Object.keys(reporters),
         array: true,
         describe: "One or more reporters used to print out results",
-        default: "console",
+        default: ["console"],
       })
       .coerce("glob", (arg) => globAsync(arg, { nodir: true }))
   ).argv;
@@ -54,7 +54,7 @@ for (const filePath of filePaths) {
 }
 
 let output = "";
-for (const reporter of argv.reporter as unknown as string[]) {
+for (const reporter of argv.reporter) {
   output += await ((reporters as any)[reporter] as Reporter)(results);
 }
 
