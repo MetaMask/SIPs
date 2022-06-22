@@ -24,8 +24,8 @@ jobs:
       - name: Cache yarn dependencies
         uses: actions/cache@v2
         with:
-          path: .yarn/cache
-          key: yarn-cache-${{ steps.yarn-version.outputs.YARN_VERSION }}-${{ hashFiles('tools/validate/yarn.lock') }}
+          path: tools/validate/.yarn/cache
+          key: yarn-cache-validate-${{ steps.yarn-version.outputs.YARN_VERSION }}-${{ hashFiles('tools/validate/yarn.lock') }}
       - run: yarn install --immutable
       - run: yarn build
       - name: Validate all SIPs
