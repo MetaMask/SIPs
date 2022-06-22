@@ -1,5 +1,6 @@
 import assert from "assert";
 import Debug from "debug";
+import { URL } from "url";
 import YAML from "yaml";
 import { Context } from "../context.js";
 import { AstNode, RuleDescriptor } from "../rule.js";
@@ -10,6 +11,7 @@ const HEADER_TYPES = new Map([
   ["sip", "number"],
   ["title", "string"],
   ["status", "string"],
+  ["discussions-to", "string"],
   ["author", "string"],
   ["created", "string"],
   ["updated", "string"],
@@ -19,6 +21,7 @@ const HEADER_ORDER = [
   "sip",
   "title",
   "status",
+  "discussions-to",
   "category",
   "author",
   "created",
@@ -32,7 +35,7 @@ const HEADER_REQUIRED = new Set([
   "author",
   "created",
 ]);
-const HEADER_OPTIONAL = new Set(["updated"]);
+const HEADER_OPTIONAL = new Set(["discussions-to", "updated"]);
 const HEADER_ALL = new Set([
   ...HEADER_REQUIRED.values(),
   ...HEADER_OPTIONAL.values(),
@@ -78,6 +81,7 @@ interface Preamble {
   sip?: number;
   title?: string;
   status?: string;
+  "discussions-to"?: string;
   category?: string;
   author?: string;
   created?: string;
@@ -87,17 +91,26 @@ interface Preamble {
 
 function assertIsPreamble(preamble: unknown): asserts preamble is Preamble {
   if (typeof preamble !== "object" || preamble === null) {
-    throw new Error("Preamble is not YAML object");
+    throw new Error('Preamble is not of type "object"');
   }
   Object.entries(preamble).forEach(([header, value]) => {
     if (HEADER_TYPES.has(header) && typeof value !== HEADER_TYPES.get(header)) {
       throw new Error(
-        `Parsed header \"${header}\" has wrong type. Has \"${typeof value}\", should be \"${HEADER_TYPES.get(
+        `Preamble header \"${header}\" has wrong type. Has \"${typeof value}\", should be \"${HEADER_TYPES.get(
           header
         )}\"`
       );
     }
   });
+}
+
+function isValidURL(url: string, protocols?: string[]): boolean {
+  try {
+    const parsed = new URL(url);
+    return protocols === undefined ? true : protocols.includes(parsed.protocol);
+  } catch {
+    return false;
+  }
 }
 
 const descriptor: RuleDescriptor = {
@@ -108,7 +121,7 @@ const descriptor: RuleDescriptor = {
     root: (node: AstNode) => {
       assert(node.type === "root");
       if (node.children.length < 1 || node.children[0].type !== "yaml") {
-        return context.report({ message: "No preamble found", node });
+        return context.report({ message: "Preamble not found", node });
       }
       node = node.children[0];
       assert(node.type === "yaml");
@@ -119,7 +132,7 @@ const descriptor: RuleDescriptor = {
       } catch (e) {
         debug("Front-matter YAML parse error", e);
         return context.report({
-          message: "The front-matter is not proper YAML",
+          message: "Preamble is not proper YAML",
           node,
         });
       }
@@ -130,7 +143,7 @@ const descriptor: RuleDescriptor = {
       HEADER_REQUIRED.forEach((required) => {
         if (!headers.has(required)) {
           context.report({
-            message: `Required header \"${required}\" is missing from preamble.`,
+            message: `Preamble required header \"${required}\" is missing from preamble.`,
             node,
           });
         }
@@ -205,7 +218,18 @@ const descriptor: RuleDescriptor = {
       // Validate proper status
       if (preamble.status !== undefined && !STATUES.has(preamble.status)) {
         context.report({
-          message: 'Header "status" is not a valid status',
+          message: 'Preamble header "status" is not a valid status',
+          node,
+        });
+      }
+
+      // Validate discussions-to
+      if (
+        preamble["discussions-to"] !== undefined &&
+        !isValidURL(preamble["discussions-to"], ["http", "https"])
+      ) {
+        context.report({
+          message: `Preamble header "discussions-to" is not a valid http/https url`,
           node,
         });
       }
@@ -214,7 +238,7 @@ const descriptor: RuleDescriptor = {
       if (preamble.status === "Living" && !("updated" in preamble)) {
         context.report({
           message:
-            'SIP has status of "Living" but doesn\'t have "updated" header',
+            'SIP has status of "Living" but doesn\'t have "updated" preamble header',
           node,
         });
       }
@@ -225,7 +249,7 @@ const descriptor: RuleDescriptor = {
         !CATEGORIES.has(preamble.category)
       ) {
         context.report({
-          message: 'Header "category" is not a valid category',
+          message: 'Preamble header "category" is not a valid category',
           node,
         });
       }

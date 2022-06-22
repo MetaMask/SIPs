@@ -2,6 +2,7 @@
 sip: (To be assigned)
 title: (The tile of this SIP)
 status: Draft
+discussions-to (*optional): (Http/Https URL)
 category: (`Meta`, `Core` or `Blockchain`)
 author: (Comma-separated list of authors in following format `Name Surname <optional email> (Github username)`)
 created: (Date created on in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format. `yyyy-mm-dd`)

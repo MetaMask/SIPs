@@ -53,6 +53,7 @@ Each SIP MUST begin with a header preamble in YAML format, preceded and followed
 - `sip` - A unique number identifying the SIP, assigned by the SIP editors.
 - `title` - A descriptive name for the SIP.
 - `status` - The current status of the SIP. One of stages as described [above](#stages).
+- `discussions-to` - (Optional) A URL where discussions and review of the specified SIP can be found.
 - `category` - The category this SIP belongs to. As described [above](#categories).
 - `author` - The list of authors in format described [below](#author-header).
 - `created` - The date the SIP was created on.
@@ -87,7 +88,6 @@ yarn validate ../../SIPS/*
 
 The current SIP editors, sorted alphabetically, are:
 
-- Erik Marks ([@rekmarks](https://github.com/rekmarks))
 - Olaf Tomalka ([@ritave](https://github.com/ritave))
 
 ## History
