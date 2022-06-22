@@ -1,7 +1,8 @@
 ---
 sip: 2
 title: Snap Keyrings
-status: Draft
+status: Review
+discussions-to: https://github.com/MetaMask/SSIPs/discussions/10
 category: Blockchain
 author: Olaf Tomalka (@ritave)
 created: 2022-06-10
@@ -10,7 +11,6 @@ created: 2022-06-10
 ## Table of Contents
 
 - [Table of Contents](#table-of-contents)
-- [TODO](#todo)
 - [Abstract](#abstract)
 - [Motivation](#motivation)
 - [Specification](#specification)
@@ -25,14 +25,6 @@ created: 2022-06-10
       - [Data races and account consistency](#data-races-and-account-consistency)
 - [History](#history)
 - [Copyright](#copyright)
-
-## TODO
-
-- **TODO(@ritave): Multisig Smart Contracts have no reference in CAIP-2, how should they be referenced?**
-- **TODO(@ritave): Ethereum Smart Contracts Multisig doesn't have a private key, how should API look in that situation?**
-- **TODO(@ritave): They keyring needs to handle RPC requests for blockchains, should it be separate from export.onRpcRequest?**
-- **TODO(@ritave): Should chain ids in permission be able to use regex to allow for multiple chains?**
-- **TODO(@ritave): If the DApp requests creation of a new account, how should the Snap notify the wallet of updated account?**
 
 ## Abstract
 
@@ -64,11 +56,11 @@ type AccountId = string;
 
 interface RequestArguments {
   method: string;
-  params: unknown[] | Record<string, unknown>;
+  params: unknown[];
 }
 ```
 
-- `ChainId` strings MUST be CAIP-2 Chain ID.
+- `ChainId` strings MUST be [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) Chain ID.
 
   The Regular Expression used to validate Chain IDs by the wallet SHOULD be:
 
@@ -76,7 +68,7 @@ interface RequestArguments {
   const chainIdValidation = /^[-a-z0-9]{3,8}:[-a-zA-Z0-9]{1,32}$/;
   ```
 
-- `AccountId` strings MUST be fully qualified CAIP-10 Account ID.
+- `AccountId` strings MUST be fully qualified [CAIP-10](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) Account ID.
 
   The Regular Expression used to validate Account IDs by the wallet SHOULD be:
 
@@ -91,7 +83,7 @@ interface RequestArguments {
 
 The wallet implementation SHOULD support [WalletConnect v2.0](https://docs.walletconnect.com/2.0/) protocol.
 
-Wallet MAY also inject into DApp a global provider `window.blockchain` that directly communicates with the wallet instead of using relay servers of WalletConnect v2. The optional provider MUST minimally implement following API:
+Wallet MAY also inject into DApp a global provider `window.blockchain` that directly communicates with the wallet instead of using relay servers of WalletConnect v2.0. The optional provider MUST minimally implement following API:
 
 ```typescript
 interface Namespace {
@@ -211,36 +203,44 @@ The interface for the exported object is as follows
 ```typescript
 interface SnapKeyring {
   getAccounts(): Promise<AccountId[]>;
+  handleRequest(
+    chainId: ChainId,
+    origin: string,
+    request: RequestArguments
+  ): Promise<unknown>;
+  on(
+    chainId: ChainId,
+    eventName: string,
+    eventArgs: unknown[],
+    listener: (...args: unknown[]) => void
+  ): string;
+  off(eventHandle: string): void;
 
   addAccounts?(chainId: ChainId, count: number): Promise<AccountId[]>;
   removeAccount?(accountId: AccountId): Promise<void>;
 
   importAccount?(chainId: ChainId, data: unknown): Promise<AccountId>;
   exportAccount?(accountId: AccountId): Promise<unknown>;
-
-  handleRequest(
-    chainId: ChainId,
-    origin: string,
-    request: RequestArguments
-  ): Promise<unknown>;
 }
 ```
 
 - Required
-  - `getAccounts()`
-  - `signTransaction()`
+  - `getAccounts()` - Returns a list of all created accounts of all supported chains.
+  - `handleRequest()` - The main way DApps can communicate with the Snap. The returned data MUST be JSON serializable.
+  - `on()` - The wallet will use this function to register callbacks for events declared in permission specification. The Snap MUST return a unique string representing that specific event subscription.
+  - `off()` - The wallet will use this function to unsubscribe from events. The argument passed is one of the handles returned by `on()`.
 - Creation
-  - `addAccounts?()`
-  - `removeAccount?()`
+  - `addAccounts?()` - Creates a `count` of new accounts.
+  - `removeAccount?()` - Removes specific account.
 - Importing
-  - `importAccount?()`
-  - `exportAccount?()`
+  - `importAccount?()` - Imports an account of supported chain type into the keyring. The data is Snap-specific. The data format MUST be JSON serializable, and SHOULD be in the same format as the one returned from `exportAccount()`.
+  - `exportAccount?()` - Returns Snap-specific data that, on it's own, is enough to recreate that specific account. The data format MUST be JSON serializable, and SHOULD be the same as one passed to `importAccount()`.
 
-The Snaps SHOULD implement all methods inside a specific group that it wants to support (such as `Creation`), instead of implementing only some methods. The wallet MAY disable functionality of specific group if not all methods inside that group are implemented by the Snap.
+The Snaps SHOULD implement all methods inside a specific group that it wants to support (such as "Creation"), instead of implementing only some methods. The wallet MAY disable functionality of a specific group if not all methods inside that group are implemented by the Snap.
 
 Generally the Snap MAY NOT need to check the consistency of provided `ChainId` and `AccountId` parameters. The wallet MUST only route accounts and chains that are confirmed to be existing inside the Snap, either by only using Chain Ids from the permission or by getting account list beforehand using `getAccounts()`.
 
-The wallet SHOULD check for consistency of returned `AccountId` from the Snap. The chainId part SHOULD match one of specified inside the permission and the one requested in the method parameters of the call.
+The Snap MAY be shut down if no DApp sessions are open.
 
 ##### Feature discovery
 
