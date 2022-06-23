@@ -107,8 +107,11 @@ function assertIsPreamble(preamble: unknown): asserts preamble is Preamble {
 function isValidURL(url: string, protocols?: string[]): boolean {
   try {
     const parsed = new URL(url);
-    return protocols === undefined ? true : protocols.includes(parsed.protocol);
-  } catch {
+    return protocols === undefined
+      ? true
+      : protocols.includes(parsed.protocol.slice(0, -1)); // remove ':' at end
+  } catch (e) {
+    debug("Failed to validate URL", e);
     return false;
   }
 }
