@@ -81,7 +81,7 @@ Every SIP MUST pass automatic validation when added in a pull request. You can m
 cd tools/validate
 yarn install
 yarn build
-yarn validate ../../SIPS/*
+yarn validate '../../SIPS/**'
 ```
 
 ## SIP Editors
