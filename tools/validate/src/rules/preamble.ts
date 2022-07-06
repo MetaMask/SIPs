@@ -43,7 +43,7 @@ const HEADER_ALL = new Set([
 const HEADER_DATES = new Set(["created", "updated"]);
 const STATUES = new Set(["Draft", "Review", "Final", "Withdrawn", "Living"]);
 const CATEGORIES = new Set(["Core", "Blockchain", "Meta"]);
-const ISO8601 = /^(?<year>\d\d\d\d)\-(?<month>\d\d)\-(?<day>\d\d)$/;
+const ISO8601 = /^\d\d\d\d\-\d\d\-\d\d$/;
 const HEADERS_REGEX = /^([a-z]+):.+$/m;
 
 const GITHUB_USERNAME = String.raw`[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}`;
@@ -59,22 +59,9 @@ function isValidDate(data: string): boolean {
   if (result === null) {
     return false;
   }
-  if (
-    result.groups?.year === undefined ||
-    result.groups?.month === undefined ||
-    result.groups?.day === undefined
-  ) {
-    return false;
-  }
-  const year = Number(result.groups.year);
-  const month = Number(result.groups.month);
-  const day = Number(result.groups.day);
+  const date = new Date(data);
   const now = new Date();
-  return (
-    year <= now.getFullYear() &&
-    month <= now.getMonth() + 1 &&
-    day <= now.getDate()
-  );
+  return date <= now;
 }
 
 interface Preamble {

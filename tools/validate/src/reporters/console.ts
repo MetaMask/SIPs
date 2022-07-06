@@ -12,11 +12,8 @@ export default function (results: Results): string {
             `: ${message.message} ` +
             chalk.gray(`(${message.ruleId})`)
         ) + "\n";
-      output += `  ➜ ${file.filePath}:${message.line}:${message.column}`;
-      if (i !== file.messages.length - 1) {
-        output += "\n\n";
-      }
+      output += `  ➜ ${file.filePath}:${message.line}:${message.column}\n\n`;
     }
   }
-  return output;
+  return output.slice(undefined, -2); // remove last '\n\n'
 }
