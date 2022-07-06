@@ -58,6 +58,14 @@ interface RequestArguments {
   method: string;
   params: unknown[];
 }
+
+type Json =
+  | null
+  | boolean
+  | number
+  | string
+  | Json[]
+  | { [prop: string]: Json };
 ```
 
 - `ChainId` strings MUST be [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) Chain ID.
@@ -207,7 +215,7 @@ interface SnapKeyring {
     chainId: ChainId,
     origin: string,
     request: RequestArguments
-  ): Promise<unknown>;
+  ): Promise<Json>;
   on(
     chainId: ChainId,
     eventName: string,
@@ -219,8 +227,8 @@ interface SnapKeyring {
   addAccounts?(chainId: ChainId, count: number): Promise<AccountId[]>;
   removeAccount?(accountId: AccountId): Promise<void>;
 
-  importAccount?(chainId: ChainId, data: unknown): Promise<AccountId>;
-  exportAccount?(accountId: AccountId): Promise<unknown>;
+  importAccount?(chainId: ChainId, data: Json): Promise<AccountId>;
+  exportAccount?(accountId: AccountId): Promise<Json>;
 }
 ```
 
