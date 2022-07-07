@@ -138,6 +138,8 @@ The wallet MUST support at least one of WalletConnect v2.0 or the injected provi
 
 ### Application Routing
 
+Requests (`blockchain.request(/*...*/)`) made by the DApp using WalletConnect v2.0 or the injected provider are forwarded to Snap's `module.exports.keyring.handleRequest(/*...*/)` method. See [below for Snap details](#snap)
+
 Wallet implementation hides the details of how the requests are routed from the DApp to Snaps. During initial connection of the DApp to the Wallet using `provider.connect()` call, the wallet finds Snaps that can support requested functionality using below algorithm.
 
 1. Wallet splits connection arguments into namespaces.
