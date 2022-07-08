@@ -4,7 +4,7 @@ title: Snap Keyrings
 status: Review
 discussions-to: https://github.com/MetaMask/SSIPs/discussions/10
 category: Blockchain
-author: Olaf Tomalka (@ritave)
+author: Olaf Tomalka (@ritave), Muji (@tmpfs)
 created: 2022-06-10
 ---
 
