@@ -3,7 +3,7 @@ sip: 1
 title: SIP Process
 status: Living
 category: Meta
-author: Olaf Tomalka (@ritave)
+author: Olaf Tomalka (@ritave), Erik Marks (@rekmarks)
 created: 2022-06-08
 updated: 2022-07-08
 ---
