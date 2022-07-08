@@ -5,7 +5,7 @@ status: Living
 category: Meta
 author: Olaf Tomalka (@ritave)
 created: 2022-06-08
-updated: 2022-06-11
+updated: 2022-07-08
 ---
 
 ## Abstract
@@ -57,7 +57,7 @@ Each SIP MUST begin with a header preamble in YAML format, preceded and followed
 - `category` - The category this SIP belongs to. As described [above](#categories).
 - `author` - The list of authors in format described [below](#author-header).
 - `created` - The date the SIP was created on.
-- `updated` - (Optional) The date the SIP was updated on. SIPs with status `Final` MUST have this header.
+- `updated` - (Optional) The date the SIP was updated on. SIPs with status `Living` MUST have this header.
 
 All dates in the preamble MUST be in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
 
