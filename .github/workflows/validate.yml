@@ -29,7 +29,7 @@ jobs:
       - run: yarn install --immutable
       - run: yarn build
       - name: Validate all SIPs
-        run: yarn validate '../../SIPS/**'
+        run: DEBUG=* yarn validate '../../SIPS/**'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_PULL_REQUEST: ${{ github.event.pull_request.number }}
