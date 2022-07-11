@@ -21,6 +21,7 @@ created: 2022-06-10
   - [Snap Developer](#snap-developer)
     - [Manifest](#manifest)
     - [Snap](#snap)
+      - [Lifecycle](#lifecycle)
       - [Feature discovery](#feature-discovery)
       - [Data races and account consistency](#data-races-and-account-consistency)
 - [History](#history)
@@ -250,7 +251,9 @@ The Snaps SHOULD implement all methods inside a specific group that it wants to 
 
 Generally the Snap MAY NOT need to check the consistency of provided `ChainId` and `AccountId` parameters. The wallet MUST only route accounts and chains that are confirmed to be existing inside the Snap, either by only using Chain Ids from the permission or by getting account list beforehand using `getAccounts()`.
 
-The Snap MAY be shut down if no DApp sessions are open.
+##### Lifecycle
+
+As long as there are open sessions with active event subscriptions (for example `blockchain.on('accountsChanged', /*...*/)`), the wallet MUST keep the Snap running. The Snap MAY be shut down if there are no DApp event subscriptions or no DApp sessions are open.
 
 ##### Feature discovery
 
