@@ -225,6 +225,17 @@ const descriptor: RuleDescriptor = {
       }
 
       // Validate updated
+      if (
+        "updated" in preamble &&
+        "created" in preamble &&
+        new Date(preamble.updated!) < new Date(preamble.created!)
+      ) {
+        context.report({
+          message:
+            'Preamble header "updated" is earlier than preamble header "created"',
+          node,
+        });
+      }
       if (preamble.status === "Living" && !("updated" in preamble)) {
         context.report({
           message:
