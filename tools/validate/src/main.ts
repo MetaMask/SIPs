@@ -44,13 +44,17 @@ let errorCount = 0;
 for (const filePath of filePaths) {
   debug(`Validating ${filePath}`);
   const file = await fs.open(filePath, "r");
-  const messages = await validate({
-    data: await file.readFile(),
-    path: filePath,
-  });
-  debug(`${filePath} message count: ${messages.length}`);
-  errorCount += messages.length;
-  results.push({ filePath, messages });
+  try {
+    const messages = await validate({
+      data: await file.readFile(),
+      path: filePath,
+    });
+    debug(`${filePath} message count: ${messages.length}`);
+    errorCount += messages.length;
+    results.push({ filePath, messages });
+  } finally {
+    await file.close();
+  }
 }
 
 let output = "";
