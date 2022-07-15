@@ -4,6 +4,7 @@
   "version": "1.0",
   "type": "module",
   "bin": "dist/main.js",
+  "private": true,
   "scripts": {
     "build": "tsc",
     "clean": "rimraf dist/",

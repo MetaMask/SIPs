@@ -1,11 +1,12 @@
-# Snaps Specification & Improvement Proposals
+# Snaps Improvement Proposals
 
 ## Purpose
 
-Make Snaps into an open standard by using SIPs as a way to document specifications in implementable way.
+Shape Metamask Snap's end user APIs before release with open discussion and involvement from the community.
 
-Snaps in current state are being researched by Metamask, and work closely with multiple open standards to extend the state-of-the art. Such as [TC39 Realms](https://github.com/endojs/endo/tree/master/packages/ses) and [CASA](https://github.com/ChainAgnostic/CASA).
-We envision the future of Snaps to be a way to run sandboxed Javascript in a secure way using permissions. Not only by blockchain wallets, but also in projects such as Node.js and Deno.
+Snaps in current state are being researched by Metamask, and feedback from the community directs the features that are developed. This repository serves as an open list of design documents pertaining to new developments in the snap ecosystem, written both by Metamask team as well as including high quality proposals from the community.
+
+**We invite everyone to participate in discussions**
 
 ## Contributing
 
