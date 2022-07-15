@@ -22,16 +22,15 @@ const HEADER_ORDER = [
   "title",
   "status",
   "discussions-to",
-  "category",
   "author",
   "created",
   "updated",
 ];
+
 const HEADER_REQUIRED = new Set([
   "sip",
   "title",
   "status",
-  "category",
   "author",
   "created",
 ]);
@@ -40,9 +39,24 @@ const HEADER_ALL = new Set([
   ...HEADER_REQUIRED.values(),
   ...HEADER_OPTIONAL.values(),
 ]);
+assert(
+  [...HEADER_ALL.values()].every((header) => HEADER_TYPES.has(header)),
+  "Some headers don't have specified type"
+);
+assert(
+  [...HEADER_ALL.values()].every((header) => HEADER_ORDER.includes(header)),
+  "Some headers don't have specified order"
+);
+
 const HEADER_DATES = new Set(["created", "updated"]);
-const STATUES = new Set(["Draft", "Review", "Final", "Withdrawn", "Living"]);
-const CATEGORIES = new Set(["Core", "Blockchain", "Meta"]);
+const STATUES = new Set([
+  "Draft",
+  "Review",
+  "Implementation",
+  "Final",
+  "Withdrawn",
+  "Living",
+]);
 const ISO8601 = /^\d\d\d\d\-\d\d\-\d\d$/;
 const HEADERS_REGEX = /^([a-z]+):.+$/m;
 
@@ -69,7 +83,6 @@ interface Preamble {
   title?: string;
   status?: string;
   "discussions-to"?: string;
-  category?: string;
   author?: string;
   created?: string;
   updated?: string;
@@ -240,17 +253,6 @@ const descriptor: RuleDescriptor = {
         context.report({
           message:
             'SIP has status of "Living" but doesn\'t have "updated" preamble header',
-          node,
-        });
-      }
-
-      // Validate proper category
-      if (
-        preamble.category !== undefined &&
-        !CATEGORIES.has(preamble.category)
-      ) {
-        context.report({
-          message: 'Preamble header "category" is not a valid category',
           node,
         });
       }
