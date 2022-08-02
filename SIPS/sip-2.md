@@ -129,16 +129,29 @@ interface ConnectArguments {
   };
 }
 
+/**
+ * One of events requested in the snap manifest.
+ */
+interface Event {
+  name: string;
+  data: unknown;
+}
+
 interface Provider {
   connect(args: ConnectArguments): Promise<{ approval: Promise<Session> }>;
   request(args: { chainId: ChainId; request: RequestArguments }): Promise<any>;
 
-  on(eventName: string, listener: (...args: unknown[]) => void): this;
-  once(eventName: string, listener: (...args: unknown[]) => void): this;
-  removeListener(
-    eventName: string,
-    listener: (...args: unknown[]) => void
+  on(
+    eventName: "session_event",
+    listener: (arg: { params: { event: Event; chainId: ChainId } }) => void
   ): this;
+  on(eventName: string, listener: (...args: unknown[]) => void): this;
+  once(
+    eventName: "session_event",
+    listener: (arg: { params: { event: Event; chainId: ChainId } }) => void
+  ): this;
+  once(eventName: string, listener: (...args: unknown[]) => void): this;
+  removeListener(eventName: string, listener: Function): this;
   removeAllListeners(eventName: string): this;
 }
 
@@ -147,7 +160,7 @@ declare global {
 }
 ```
 
-The above API is a minimal API based on WalletConnect v2.0 Sign API, that skips the bridge server functionality. All operations SHOULD behave the same as WalletConnect v2.0
+The above API is a minimal API based on WalletConnect v2.0 Sign API, that skips the bridge server functionality and is transport protocol independent. All operations SHOULD behave the same as WalletConnect v2.0.
 
 The wallet MUST support at least one of WalletConnect v2.0 or the injected provider.
 
