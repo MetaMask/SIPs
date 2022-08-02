@@ -173,7 +173,6 @@ Wallet implementation hides the details of how the requests are routed from the 
 1. Wallet splits connection arguments into namespaces.
 2. For each namespace, the wallet finds an installed snap that supports all requested chains, methods and events.
    1. If there are multiple such snaps, the choice, which one of those to use, is undefined and implementation dependent.
-   2. Support for a namespace MUST NOT be split between multiple snaps. For example, one snap can't support one chain while other snap supports second chain.
 3. The wallet returns information of supported namespaces back to the DApp inside a `Session` object. The amount of supported namespaces MAY be smaller than the amount of requested namespaces.
 
 If a user removes a snap from wallet, removing any functionality that is provided to the DApp through an open session, such session MUST be invalidated.
