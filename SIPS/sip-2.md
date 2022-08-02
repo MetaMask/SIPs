@@ -14,6 +14,7 @@ created: 2022-06-10
 - [Motivation](#motivation)
 - [Specification](#specification)
   - [Language](#language)
+  - [Definitions](#definitions)
   - [Common types](#common-types)
   - [DApp Developer](#dapp-developer)
   - [Application Routing](#application-routing)
@@ -38,13 +39,26 @@ One of the main use-cases for snaps is adding more protocols to Blockchain walle
 
 ## Specification
 
-> Formal specifications are written in Typescript and JSON schema version 2020-12. Usage of `CAIP-N` specifications, where `N` is a number, are references to [Chain Agnostic Improvement Proposals](https://github.com/ChainAgnostic/CAIPs)
+> Formal specifications are written in Typescript and [JSON schema version 2020-12](https://json-schema.org/draft/2020-12/json-schema-core.html). Usage of `CAIP-N` specifications, where `N` is a number, are references to [Chain Agnostic Improvement Proposals](https://github.com/ChainAgnostic/CAIPs)
 
 ### Language
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
 "OPTIONAL" written in uppercase in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt)
+
+### Definitions
+
+> This section is non-normative
+
+- `ChainId` - a [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) string. It identifies a specific chain in all of possible blockchains.
+  - `ChainId` consists of a `Namespace` and a `Reference`
+    - `Namespace` - A class of similar blockchains. For example EVM-based blockchains.
+    - `Reference` - A way to identify a concrete chain inside a `Namespace`. For example Ethereum Mainnet or Polygon.
+- `AccountId` - a [CAIP-10](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) string. It identifies a specific account on a specific chain.
+  - `AccountId` consists of a `ChainId` and `account_address`
+    - `ChainId` is a [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) string defined above.
+    - `account_address` is a string whose format is chain-specific. Without the ChainId part it is ambiguous and so is not used alone in this SIP.
 
 ### Common types
 
@@ -68,15 +82,16 @@ type Json =
   | { [prop: string]: Json };
 ```
 
-- `ChainId` strings MUST be [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) Chain ID.
+- `ChainId` strings MUST be [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) Chain Id.
 
   The Regular Expression used to validate Chain IDs by the wallet SHOULD be:
 
   ```typescript
-  const chainIdValidation = /^[-a-z0-9]{3,8}:[-a-zA-Z0-9]{1,32}$/;
+  const chainIdValidation =
+    /^(?<namespace>[-a-z0-9]{3,8}):(?<reference>[-a-zA-Z0-9]{1,32})$/;
   ```
 
-- `AccountId` strings MUST be fully qualified [CAIP-10](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) Account ID.
+- `AccountId` strings MUST be fully qualified (including `ChainId` part) [CAIP-10](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) Account Id.
 
   The Regular Expression used to validate Account IDs by the wallet SHOULD be:
 
