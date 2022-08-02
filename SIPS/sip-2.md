@@ -14,6 +14,7 @@ created: 2022-06-10
 - [Motivation](#motivation)
 - [Specification](#specification)
   - [Language](#language)
+  - [Definitions](#definitions)
   - [Common types](#common-types)
   - [DApp Developer](#dapp-developer)
   - [Application Routing](#application-routing)
@@ -38,13 +39,26 @@ One of the main use-cases for snaps is adding more protocols to Blockchain walle
 
 ## Specification
 
-> Formal specifications are written in Typescript and JSON schema version 2020-12. Usage of `CAIP-N` specifications, where `N` is a number, are references to [Chain Agnostic Improvement Proposals](https://github.com/ChainAgnostic/CAIPs)
+> Formal specifications are written in Typescript and [JSON schema version 2020-12](https://json-schema.org/draft/2020-12/json-schema-core.html). Usage of `CAIP-N` specifications, where `N` is a number, are references to [Chain Agnostic Improvement Proposals](https://github.com/ChainAgnostic/CAIPs)
 
 ### Language
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
 "OPTIONAL" written in uppercase in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt)
+
+### Definitions
+
+> This section is non-normative
+
+- `ChainId` - a [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) string. It identifies a specific chain in all of possible blockchains.
+  - `ChainId` consists of a `Namespace` and a `Reference`
+    - `Namespace` - A class of similar blockchains. For example EVM-based blockchains.
+    - `Reference` - A way to identify a concrete chain inside a `Namespace`. For example Ethereum Mainnet or Polygon.
+- `AccountId` - a [CAIP-10](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) string. It identifies a specific account on a specific chain.
+  - `AccountId` consists of a `ChainId` and `account_address`
+    - `ChainId` is a [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) string defined above.
+    - `account_address` is a string whose format is chain-specific. Without the ChainId part it is ambiguous and so is not used alone in this SIP.
 
 ### Common types
 
@@ -68,15 +82,16 @@ type Json =
   | { [prop: string]: Json };
 ```
 
-- `ChainId` strings MUST be [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) Chain ID.
+- `ChainId` strings MUST be [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) Chain Id.
 
   The Regular Expression used to validate Chain IDs by the wallet SHOULD be:
 
   ```typescript
-  const chainIdValidation = /^[-a-z0-9]{3,8}:[-a-zA-Z0-9]{1,32}$/;
+  const chainIdValidation =
+    /^(?<namespace>[-a-z0-9]{3,8}):(?<reference>[-a-zA-Z0-9]{1,32})$/;
   ```
 
-- `AccountId` strings MUST be fully qualified [CAIP-10](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) Account ID.
+- `AccountId` strings MUST be fully qualified (including `ChainId` part) [CAIP-10](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) Account Id.
 
   The Regular Expression used to validate Account IDs by the wallet SHOULD be:
 
@@ -114,16 +129,29 @@ interface ConnectArguments {
   };
 }
 
+/**
+ * One of events requested in the snap manifest.
+ */
+interface Event {
+  name: string;
+  data: unknown;
+}
+
 interface Provider {
   connect(args: ConnectArguments): Promise<{ approval: Promise<Session> }>;
   request(args: { chainId: ChainId; request: RequestArguments }): Promise<any>;
 
-  on(eventName: string, listener: (...args: unknown[]) => void): this;
-  once(eventName: string, listener: (...args: unknown[]) => void): this;
-  removeListener(
-    eventName: string,
-    listener: (...args: unknown[]) => void
+  on(
+    eventName: "session_event",
+    listener: (arg: { params: { event: Event; chainId: ChainId } }) => void
   ): this;
+  on(eventName: string, listener: (...args: unknown[]) => void): this;
+  once(
+    eventName: "session_event",
+    listener: (arg: { params: { event: Event; chainId: ChainId } }) => void
+  ): this;
+  once(eventName: string, listener: (...args: unknown[]) => void): this;
+  removeListener(eventName: string, listener: Function): this;
   removeAllListeners(eventName: string): this;
 }
 
@@ -132,7 +160,7 @@ declare global {
 }
 ```
 
-The above API is a minimal API based on WalletConnect v2.0 Sign API, that skips the bridge server functionality. All operations SHOULD behave the same as WalletConnect v2.0
+The above API is a minimal API based on WalletConnect v2.0 Sign API, that skips the bridge server functionality and is transport protocol independent. All operations SHOULD behave the same as WalletConnect v2.0.
 
 The wallet MUST support at least one of WalletConnect v2.0 or the injected provider.
 
@@ -145,7 +173,6 @@ Wallet implementation hides the details of how the requests are routed from the 
 1. Wallet splits connection arguments into namespaces.
 2. For each namespace, the wallet finds an installed snap that supports all requested chains, methods and events.
    1. If there are multiple such snaps, the choice, which one of those to use, is undefined and implementation dependent.
-   2. Support for a namespace MUST NOT be split between multiple snaps. For example, one snap can't support one chain while other snap supports second chain.
 3. The wallet returns information of supported namespaces back to the DApp inside a `Session` object. The amount of supported namespaces MAY be smaller than the amount of requested namespaces.
 
 If a user removes a snap from wallet, removing any functionality that is provided to the DApp through an open session, such session MUST be invalidated.
@@ -213,20 +240,22 @@ The interface for the exported object is as follows
 ```typescript
 interface SnapKeyring {
   getAccounts(): Promise<AccountId[]>;
-  handleRequest(
-    chainId: ChainId,
-    origin: string,
-    request: RequestArguments
-  ): Promise<Json>;
+  handleRequest(data: {
+    chainId: ChainId;
+    origin: string;
+    request: RequestArguments;
+  }): Promise<Json>;
   on(
-    chainId: ChainId,
-    eventName: string,
-    eventArgs: unknown[],
+    data: {
+      chainId: ChainId;
+      origin: string;
+      eventName: string;
+    },
     listener: (...args: unknown[]) => void
-  ): string;
-  off(eventHandle: string): void;
+  ): void;
+  off(data: { chainId: ChainId; origin: string; eventName: string }): void;
 
-  addAccounts?(chainId: ChainId, count: number): Promise<AccountId[]>;
+  addAccount?(chainId: ChainId): Promise<AccountId>;
   removeAccount?(accountId: AccountId): Promise<void>;
 
   importAccount?(chainId: ChainId, data: Json): Promise<AccountId>;
@@ -235,12 +264,12 @@ interface SnapKeyring {
 ```
 
 - Required
-  - `getAccounts()` - Returns a list of all created accounts of all supported chains.
+  - `getAccounts()` - Returns a list of all managed accounts of all supported chains.
   - `handleRequest()` - The main way DApps can communicate with the snap. The returned data MUST be JSON serializable.
-  - `on()` - The wallet will use this function to register callbacks for events declared in permission specification. The snap MUST return a unique string representing that specific event subscription.
-  - `off()` - The wallet will use this function to unsubscribe from events. The argument passed is one of the handles returned by `on()`.
+  - `on()` - The wallet will use this function to register callbacks for events declared in permission specification. The wallet SHALL register at most one listener per each unique `[origin, chainId, eventName]` tuple.
+  - `off()` - The wallet will use this function to unsubscribe from events registered using `on()`.
 - Creation
-  - `addAccounts?()` - Creates a `count` of new accounts.
+  - `addAccounts?()` - Creates new account.
   - `removeAccount?()` - Removes specific account.
 - Importing
   - `importAccount?()` - Imports an account of supported chain type into the keyring. The data is Snap-specific. The data format MUST be JSON serializable, and SHOULD be in the same format as the one returned from `exportAccount()`.
@@ -248,7 +277,7 @@ interface SnapKeyring {
 
 The snaps SHOULD implement all methods inside a specific group that it wants to support (such as "Creation"), instead of implementing only some methods. The wallet MAY disable functionality of a specific group if not all methods inside that group are implemented by the snap.
 
-Generally the snap MAY NOT need to check the consistency of provided `ChainId` and `AccountId` parameters. The wallet MUST only route accounts and chains that are confirmed to be existing inside the snap, either by only using Chain Ids from the permission or by getting account list beforehand using `getAccounts()`.
+The snap MAY NOT need to check the consistency of provided `ChainId` and `AccountId` parameters. The wallet MUST only route accounts and chains that are confirmed to be existing inside the snap, either by only using Chain Ids from the permission or by getting account list beforehand using `getAccounts()`.
 
 ##### Lifecycle
 
