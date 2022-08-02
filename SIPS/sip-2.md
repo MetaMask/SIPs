@@ -241,20 +241,22 @@ The interface for the exported object is as follows
 ```typescript
 interface SnapKeyring {
   getAccounts(): Promise<AccountId[]>;
-  handleRequest(
-    chainId: ChainId,
-    origin: string,
-    request: RequestArguments
-  ): Promise<Json>;
+  handleRequest(data: {
+    chainId: ChainId;
+    origin: string;
+    request: RequestArguments;
+  }): Promise<Json>;
   on(
-    chainId: ChainId,
-    eventName: string,
-    eventArgs: unknown[],
+    data: {
+      chainId: ChainId;
+      origin: string;
+      eventName: string;
+    },
     listener: (...args: unknown[]) => void
-  ): string;
-  off(eventHandle: string): void;
+  ): void;
+  off(data: { chainId: ChainId; origin: string; eventName: string }): void;
 
-  addAccounts?(chainId: ChainId, count: number): Promise<AccountId[]>;
+  addAccount?(chainId: ChainId): Promise<AccountId>;
   removeAccount?(accountId: AccountId): Promise<void>;
 
   importAccount?(chainId: ChainId, data: Json): Promise<AccountId>;
@@ -263,12 +265,12 @@ interface SnapKeyring {
 ```
 
 - Required
-  - `getAccounts()` - Returns a list of all created accounts of all supported chains.
+  - `getAccounts()` - Returns a list of all managed accounts of all supported chains.
   - `handleRequest()` - The main way DApps can communicate with the snap. The returned data MUST be JSON serializable.
-  - `on()` - The wallet will use this function to register callbacks for events declared in permission specification. The snap MUST return a unique string representing that specific event subscription.
-  - `off()` - The wallet will use this function to unsubscribe from events. The argument passed is one of the handles returned by `on()`.
+  - `on()` - The wallet will use this function to register callbacks for events declared in permission specification. The wallet SHALL register at most one listener per each unique `[origin, chainId, eventName]` tuple.
+  - `off()` - The wallet will use this function to unsubscribe from events registered using `on()`.
 - Creation
-  - `addAccounts?()` - Creates a `count` of new accounts.
+  - `addAccounts?()` - Creates new account.
   - `removeAccount?()` - Removes specific account.
 - Importing
   - `importAccount?()` - Imports an account of supported chain type into the keyring. The data is Snap-specific. The data format MUST be JSON serializable, and SHOULD be in the same format as the one returned from `exportAccount()`.
@@ -276,7 +278,7 @@ interface SnapKeyring {
 
 The snaps SHOULD implement all methods inside a specific group that it wants to support (such as "Creation"), instead of implementing only some methods. The wallet MAY disable functionality of a specific group if not all methods inside that group are implemented by the snap.
 
-Generally the snap MAY NOT need to check the consistency of provided `ChainId` and `AccountId` parameters. The wallet MUST only route accounts and chains that are confirmed to be existing inside the snap, either by only using Chain Ids from the permission or by getting account list beforehand using `getAccounts()`.
+The snap MAY NOT need to check the consistency of provided `ChainId` and `AccountId` parameters. The wallet MUST only route accounts and chains that are confirmed to be existing inside the snap, either by only using Chain Ids from the permission or by getting account list beforehand using `getAccounts()`.
 
 ##### Lifecycle
 
