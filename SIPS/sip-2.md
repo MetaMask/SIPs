@@ -181,7 +181,7 @@ If a user removes a snap from wallet, removing any functionality that is provide
 
 #### Manifest
 
-This SIP proposes to add a new permission to the Snap Manifest named `snap:keyring`. The permission would describe the allowed keyring capabilities of the snap.
+This SIP proposes to add a new permission to the Snap Manifest named `snap_keyring`. The permission would describe the allowed keyring capabilities of the snap.
 
 > The schema for the permission [can be found in assets](../assets/sip-2/permission.schema.json).
 
@@ -190,7 +190,7 @@ An example usage of above permission inside `snap.manifest.json`
 ```json
 {
   "initialPermissions": {
-    "snap:keyring": {
+    "snap_keyring": {
       "namespaces": {
         "eip155": {
           "methods": [
@@ -229,7 +229,7 @@ An example usage of above permission inside `snap.manifest.json`
 
 #### Snap
 
-A snap requesting `snap:keyring` permission SHOULD expose a `keyring` export using CommonJS.
+A snap requesting `snap_keyring` permission SHOULD expose a `keyring` export using CommonJS.
 
 ```typescript
 module.exports.keyring = new SnapKeyring();
