@@ -138,7 +138,7 @@ interface Event {
 }
 
 interface Provider {
-  connect(args: ConnectArguments): Promise<{ approval: Promise<Session> }>;
+  connect(args: ConnectArguments): Promise<{ approval(): Promise<Session> }>;
   request(args: { chainId: ChainId; request: RequestArguments }): Promise<any>;
 
   on(
