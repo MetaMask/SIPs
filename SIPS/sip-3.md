@@ -1,6 +1,3 @@
-SIP-3: Transaction Insights
-
-
 ---
 sip: 3
 title: Transaction Insights
