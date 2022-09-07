@@ -2,7 +2,7 @@
 sip: 3
 title: Transaction Insights
 status: Review
-discussions-to: https://github.com/MetaMask/SSIPs/discussions
+discussions-to: https://github.com/MetaMask/SIPs/discussions/31
 author: Hassan Malik (@hmalik88)
 created: 2022-08-23
 ---
