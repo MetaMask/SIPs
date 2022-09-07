@@ -23,7 +23,7 @@ created: 2022-06-10
     - [Snap](#snap)
       - [Lifecycle](#lifecycle)
       - [Feature discovery](#feature-discovery)
-      - [Data races and account consistency](#data-races-and-account-consistency)
+      - [Account consistency](#account-consistency)
 - [History](#history)
 - [Copyright](#copyright)
 
@@ -287,9 +287,7 @@ As long as there are open sessions with active event subscriptions (for example 
 
 Many methods in `SnapKeyring` are optional, since some operations are not possible on different account types. For example, Smart Contract based Multisig wallets can't sign messages. The wallet will initialize the keyring class and check for existence of specific methods. The wallet SHOULD do that check only once during initialization of the snap. That means if methods are added dynamically, they won't be discovered and that functionality won't be available.
 
-##### Data races and account consistency
-
-Currently, snaps can get multiple RPC requests before previous ones finish, developers generally avoid consistency problems by using packages such as `async-mutex`. For example, calling in quick succession `getAccounts()` and `removeAccount()` could result in data race where account is removed before a complete list is returned, thus returning an already deleted account. Since Keyrings hold sensitive data and it's of top most importance their consistency is maintained, the implementation SHOULD ensure the linearity of the calls to the Keyring. This means that the implementation SHOULD wait for the first call to finish before calling another method. This most likely will be implemented using a queue of waiting commands. The implementation MAY limit the size of such queue and reject additional requests outright.
+##### Account consistency
 
 The implementation MAY also hold it's own copy of accounts of a snap to avoid multiple `getAccounts()` calls. For example, instead of calling `getAccounts()` again after `removeAccount()`, the implementation MAY remove such account after calling `removeAccount()` from it's own copy without consulting snap for newest list of accounts.
 
