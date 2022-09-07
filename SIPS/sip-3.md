@@ -109,7 +109,7 @@ interface OnTransactionArgs  {
 
 **Transaction** - The transaction object is specifically not defined in this SIP because the transaction object can look different across various chains and it is not our intention to define an interface for every chain. Instead, the onus is on the Snap developer to be cognizant of the shape of the transaction object. However, that being said, the transaction object out of the MetaMask extension is of the following interface:
 
-[NON EIP-1559]
+*[NON EIP-1559]*
 
 ```typescript
 interface TransactionObject {
@@ -126,7 +126,7 @@ interface TransactionObject {
 }
 ```
 
-[EIP-1559]
+*[EIP-1559]*
 
 ```typescript
 interface TransactionObject {
