@@ -36,7 +36,7 @@ The current MetaMask extension already has a "transaction insights" feature that
 
 ## Specification
 
-> Formal specifications are written in Typescript and [JSON schema version 2020-12](https://json-schema.org/draft/2020-12/json-schema-core.html). Usage of `CAIP-N` specifications, where `N` is a number, are references to [Chain Agnostic Improvement Proposals](https://github.com/ChainAgnostic/CAIPs)
+> Formal specifications are written in Typescript. Usage of `CAIP-N` specifications, where `N` is a number, are references to [Chain Agnostic Improvement Proposals](https://github.com/ChainAgnostic/CAIPs)
 
 ### Language
 
@@ -154,9 +154,15 @@ The return type for an `onTransaction` import should be as follows:
 
 ```typescript
 interface OnTransactionReturn {
-  insights: Record<string, unknown>;
+  insights: Record<string, Json>;
 }
 ```
+
+### MetaMask Extension Integration
+
+A transaction insight snap (a snap with the `endowment:transaction-insight` permission) will be displayed in an extra tab in MetaMask confirmation screens. Currently, transaction insights will be provided for contract interaction type transactions. The `insights` object returned from the snap will be displayed in the confirmation screen UI as titles and subtext. The key being the title and the subtext being a stringified version of the value.
+
+**Note:** In the future the intention is to extend the `OnTransactionReturn` interface with additional properties that can interact with the extension in various ways.
 
 ## History
 
