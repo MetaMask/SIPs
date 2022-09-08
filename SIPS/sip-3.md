@@ -15,7 +15,6 @@ created: 2022-08-23
 - [Specification](#specification)
   - [Language](#language)
   - [Definitions](#definitions)
-  - [Common types](#common-types)
   - [Snap Developer](#snap-developer)
     - [Manifest](#manifest)
     - [Snap](#snap)
