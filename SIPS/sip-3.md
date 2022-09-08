@@ -53,23 +53,6 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
     - `Namespace` - A class of similar blockchains. For example EVM-based blockchains.
     - `Reference` - A way to identify a concrete chain inside a `Namespace`. For example Ethereum Mainnet or Polygon.
 
-### Common types
-
-The below common types are used throughout the specification
-
-```typescript
-type ChainId = string;
-```
-
-- `ChainId` strings MUST be [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) Chain Id.
-
-  The Regular Expression used to validate Chain IDs by the snap SHOULD be:
-
-```typescript
-  const chainIdValidation =
-    /^(?<namespace>[-a-z0-9]{3,8}):(?<reference>[-a-zA-Z0-9]{1,32})$/;
-```
-
 ### Snap Developer
 
 #### Manifest
@@ -148,7 +131,7 @@ interface TransactionObject {
 }
 ```
 
-**ChainId** - This is a CAIP-2 `ChainId` string, the snap is expected to parse and utilize this string as needed.
+**ChainId** - This is a [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) `chainId` string, the snap is expected to parse and utilize this string as needed.
 
 The return type for an `onTransaction` export should be as follows:
 
