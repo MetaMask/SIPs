@@ -88,7 +88,7 @@ An example usage of the permission inside `snap.manifest.json` is as follows:
 
 #### Snap
 
-The transaction insight snap implementation MUST implement the following API:
+Any snap that wishes to expose transaction insight features must implement the following API:
 
 ```typescript
 import { OnTransactionHandler } from "@metamask/snap-types";
@@ -111,12 +111,12 @@ interface OnTransactionArgs {
 }
 ```
 
-**Transaction** - The transaction object is specifically not defined in this SIP because the transaction object can look different across various chains and it is not our intention to define an interface for every chain. Instead, the onus is on the Snap developer to be cognizant of the shape of the transaction object. However, that being said, the _default_ transaction object in of the MetaMask extension is of the following interface:
+**Transaction** - The transaction object is specifically not defined in this SIP because the transaction object can look different across various chains and it is not our intention to define an interface for every chain. Instead, the onus is on the Snap developer to be cognizant of the shape of the transaction object. However, that being said, the _default_ transaction object in the MetaMask extension is of the following interface:
 
 _[NON EIP-1559]_
 
 ```typescript
-interface TransactionObject {
+interface LegacyTransactionObject {
   from: string;
   to: string;
   nonce: string;
@@ -140,7 +140,7 @@ interface TransactionObject {
   value: string;
   data: string;
   gas: string;
-  maxFeePerrGas: string;
+  maxFeePerGas: string;
   maxPriorityFeePerGas: string;
   type: string;
   estimateSuggested: string;
@@ -150,7 +150,7 @@ interface TransactionObject {
 
 **ChainId** - This is a CAIP-2 `ChainId` string, the snap is expected to parse and utilize this string as needed.
 
-The return type for an `onTransaction` import should be as follows:
+The return type for an `onTransaction` export should be as follows:
 
 ```typescript
 interface OnTransactionReturn {
