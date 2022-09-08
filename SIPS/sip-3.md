@@ -32,7 +32,7 @@ Example use-cases for transaction insights are phishing detection, malicious con
 
 Deciding what information to show before a user is prompted to sign a transaction and furthermore deciding which information is critical is a difficult problem. It may even be user-dependant. Similarly to how SIP-2 allows snaps to expand the keyrings that MetaMask support, this SIP aims to expand the options the user is given in which information they see before signing a transaction.
 
-The current MetaMask extension already has a "transaction insights" feature that does transaction simulation and shows the result to the user. This SIP aims to expand on this feature, allowing the community to build snaps that provide **any form of "insight"** into a transaction. This insight will be shown in the MetaMask UI alongside any official insight provided by MetaMask itself.
+The current MetaMask extension already has a "transaction insights" feature that does transaction decoding and shows the result to the user. This SIP aims to expand on this feature, allowing the community to build snaps that provide **any form of "insight"** into a transaction. This insight will be shown in the MetaMask UI alongside any official insight provided by MetaMask itself.
 
 ## Specification
 
