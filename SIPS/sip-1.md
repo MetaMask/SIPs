@@ -85,6 +85,8 @@ yarn validate '../../SIPS/**'
 
 ## SIP Editors
 
+The role of SIP repository editors is to enforce the inclusion process. They do not judge the proposals on it's merits, it is up to the community to discuss.
+
 The current SIP editors, sorted alphabetically, are:
 
 - Olaf Tomalka ([@ritave](https://github.com/ritave))
