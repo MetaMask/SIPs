@@ -79,6 +79,10 @@ yarn build
 yarn validate '../../SIPS/**'
 ```
 
+## Tips
+
+- Some SIPs contain Table of Contents - it's not required. You can generate them automatically, for example, by using [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one) extension.
+
 ## SIP Editors
 
 The current SIP editors, sorted alphabetically, are:
