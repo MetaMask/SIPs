@@ -22,7 +22,6 @@ created: 2022-08-23
 - [History](#history)
 - [Copyright](#copyright)
 
-
 ## Abstract
 
 This SIP proposes a way for snaps to provide extra "insight" into the transactions that users are signing. These insights can then be displayed in the MetaMask confirmation UI, informing the user better before they sign.
@@ -58,7 +57,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 The below common types are used throughout the specification
 
-```typescript
+````typescript
 type ChainId = string;
 
 - `ChainId` strings MUST be [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) Chain Id.
@@ -68,7 +67,7 @@ type ChainId = string;
   ```typescript
   const chainIdValidation =
     /^(?<namespace>[-a-z0-9]{3,8}):(?<reference>[-a-zA-Z0-9]{1,32})$/;
-  ```
+````
 
 ### Snap Developer
 
@@ -87,73 +86,74 @@ An example usage of the permission inside `snap.manifest.json` is as follows:
 ```
 
 #### Snap
-  
-Any snap that wishes to expose transaction insight features must implement the following API:
+
+The transaction insight snap implementation MUST implement the following API:
 
 ```typescript
-import { OnTransactionHandler } from '@metamask/snap-types';
+import { OnTransactionHandler } from "@metamask/snap-types";
 
-export const onTransaction: OnTransactionHandler = async ({ transaction, chainId }) => {
-    // do something
-    return { insights }
-}
+export const onTransaction: OnTransactionHandler = async ({
+  transaction,
+  chainId,
+}) => {
+  // do something
+  return { insights };
+};
 ```
 
 The interface for an `onTransaction` handler function’s arguments is:
 
 ```typescript
-interface OnTransactionArgs  {
-    transaction: Record<string, unknown>;
-    chainId: string;
+interface OnTransactionArgs {
+  transaction: Record<string, unknown>;
+  chainId: string;
 }
 ```
 
 **Transaction** - The transaction object is specifically not defined in this SIP because the transaction object can look different across various chains and it is not our intention to define an interface for every chain. Instead, the onus is on the Snap developer to be cognizant of the shape of the transaction object. However, that being said, the _default_ transaction object in of the MetaMask extension is of the following interface:
 
-*[NON EIP-1559]*
-
-```typescript
-interface LegacyTransactionObject {
-    from: string;
-    to: string;
-    nonce: string;
-    value: string;
-    data: string;
-    gas: string;
-    gasPrice: string;
-    type: string;
-    estimateSuggested: string;
-    estimateUsed: string;
-}
-```
-
-*[EIP-1559]*
+_[NON EIP-1559]_
 
 ```typescript
 interface TransactionObject {
-	from: string;
-	to: string;
-	nonce: string;
-	value: string;
-	data: string;
-	gas: string;
-	maxFeePerGas: string;
-	maxPriorityFeePerGas: string;
-	Type: string;
-	estimateSuggested: string;
-	estimateUsed: string;
+  from: string;
+  to: string;
+  nonce: string;
+  value: string;
+  data: string;
+  gas: string;
+  gasPrice: string;
+  type: string;
+  estimateSuggested: string;
+  estimateUsed: string;
+}
+```
+
+_[EIP-1559]_
+
+```typescript
+interface TransactionObject {
+  from: string;
+  to: string;
+  nonce: string;
+  value: string;
+  data: string;
+  gas: string;
+  maxFeePerrGas: string;
+  maxPriorityFeePerGas: string;
+  type: string;
+  estimateSuggested: string;
+  estimateUsed: string;
 }
 ```
 
 **ChainId** - This is a CAIP-2 `ChainId` string, the snap is expected to parse and utilize this string as needed.
-	
 
 The return type for an `onTransaction` import should be as follows:
 
 ```typescript
-
 interface OnTransactionReturn {
-    insights: Record<string, unknown>;
+  insights: Record<string, unknown>;
 }
 ```
 
