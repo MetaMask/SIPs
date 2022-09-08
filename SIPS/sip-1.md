@@ -4,10 +4,13 @@ title: SIP Process
 status: Living
 author: Olaf Tomalka (@ritave), Erik Marks (@rekmarks)
 created: 2022-06-08
-updated: 2022-07-15
+updated: 2022-09-08
 ---
 
 ## Abstract
+
+This SIP specified the process of working with proposals inside this repository.
+The goals of the process is participate with the community, but in a structured, engineering-focused, way.
 
 ### Language
 
@@ -16,6 +19,8 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "OPTIONAL" written in uppercase in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt)
 
 ## Workflow
+
+> A good starting point for a new SIP is the [SIP template](../sip-template.md).
 
 ### Stages
 
