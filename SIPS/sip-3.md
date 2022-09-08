@@ -57,17 +57,18 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 The below common types are used throughout the specification
 
-````typescript
+```typescript
 type ChainId = string;
+```
 
 - `ChainId` strings MUST be [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) Chain Id.
 
   The Regular Expression used to validate Chain IDs by the snap SHOULD be:
 
-  ```typescript
+```typescript
   const chainIdValidation =
     /^(?<namespace>[-a-z0-9]{3,8}):(?<reference>[-a-zA-Z0-9]{1,32})$/;
-````
+```
 
 ### Snap Developer
 
