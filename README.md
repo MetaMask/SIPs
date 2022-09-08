@@ -10,4 +10,6 @@ Snaps in current state are being researched by Metamask, and feedback from the c
 
 ## Contributing
 
-Please read [SIP-1](./SIPS/sip-1.md) on guidelines and approval process
+Please read [SIP-1](./SIPS/sip-1.md) on guidelines and approval process.
+
+The [SIP template](./sip-template.md) is a good starting point for your new SIP.
