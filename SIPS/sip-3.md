@@ -3,7 +3,7 @@ sip: 3
 title: Transaction Insights
 status: Review
 discussions-to: https://github.com/MetaMask/SIPs/discussions/31
-author: Hassan Malik (@hmalik88)
+author: Hassan Malik (@hmalik88), Frederik Bolding (@frederikbolding)
 created: 2022-08-23
 ---
 
@@ -25,13 +25,15 @@ created: 2022-08-23
 
 ## Abstract
 
-This SIP proposes a way for snaps to provide transaction insights that can then be displayed in the MetaMask confirmation UI.
+This SIP proposes a way for snaps to provide extra "insight" into the transactions that users are signing. These insights can then be displayed in the MetaMask confirmation UI, informing the user better before they sign.
 
-Example use-cases for transaction insights can be phishing detection, malicious address detection, transaction simulation, arbitrage trading.
+Example use-cases for transaction insights are phishing detection, malicious contract detection and transaction simulation.
 
 ## Motivation
 
-One of the main use cases for transaction insights is transaction simulation. In the current state of the MetaMask wallet, we do not provide any sort of insight as to whether or not a transaction will succeed based on the web of contract/address interaction that can happen. Transaction insight snaps would provide the ability to calculate some sort of insights and return them to the wallet..
+Deciding what information to show before a user is prompted to sign a transaction and furthermore deciding which information is critical is a difficult problem. It may even be user-dependant. Similarly to how SIP-2 allows snaps to expand the keyrings that MetaMask support, this SIP aims to expand the options the user is given in which information they see before signing a transaction.
+
+The current MetaMask extension already has a "transaction insights" feature that does transaction simulation and shows the result to the user. This SIP aims to expand on this feature, allowing the community to build snaps that provide **any form of "insight"** into a transaction. This insight will be shown in the MetaMask UI alongside any official insight provided by MetaMask itself.
 
 ## Specification
 
@@ -51,7 +53,6 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
   - `ChainId` consists of a `Namespace` and a `Reference`
     - `Namespace` - A class of similar blockchains. For example EVM-based blockchains.
     - `Reference` - A way to identify a concrete chain inside a `Namespace`. For example Ethereum Mainnet or Polygon.
-- `AccountId` - a [CAIP-10](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) string. It identifies a specific account on a specific chain.
 
 ### Common types
 
@@ -87,7 +88,7 @@ An example usage of the permission inside `snap.manifest.json` is as follows:
 
 #### Snap
   
-The transaction insight snap implementation must implement the following API:
+Any snap that wishes to expose transaction insight features must implement the following API:
 
 ```typescript
 import { OnTransactionHandler } from '@metamask/snap-types';
@@ -107,12 +108,12 @@ interface OnTransactionArgs  {
 }
 ```
 
-**Transaction** - The transaction object is specifically not defined in this SIP because the transaction object can look different across various chains and it is not our intention to define an interface for every chain. Instead, the onus is on the Snap developer to be cognizant of the shape of the transaction object. However, that being said, the transaction object out of the MetaMask extension is of the following interface:
+**Transaction** - The transaction object is specifically not defined in this SIP because the transaction object can look different across various chains and it is not our intention to define an interface for every chain. Instead, the onus is on the Snap developer to be cognizant of the shape of the transaction object. However, that being said, the _default_ transaction object in of the MetaMask extension is of the following interface:
 
 *[NON EIP-1559]*
 
 ```typescript
-interface TransactionObject {
+interface LegacyTransactionObject {
     from: string;
     to: string;
     nonce: string;
@@ -120,7 +121,7 @@ interface TransactionObject {
     data: string;
     gas: string;
     gasPrice: string;
-    Type: string;
+    type: string;
     estimateSuggested: string;
     estimateUsed: string;
 }
@@ -136,7 +137,7 @@ interface TransactionObject {
 	value: string;
 	data: string;
 	gas: string;
-	maxFeePerrGas: string;
+	maxFeePerGas: string;
 	maxPriorityFeePerGas: string;
 	Type: string;
 	estimateSuggested: string;
@@ -147,7 +148,7 @@ interface TransactionObject {
 **ChainId** - This is a CAIP-2 `ChainId` string, the snap is expected to parse and utilize this string as needed.
 	
 
-The return object for an `onTransaction` import should be as follows:
+The return type for an `onTransaction` import should be as follows:
 
 ```typescript
 
@@ -158,7 +159,7 @@ interface OnTransactionReturn {
 
 ## History
 
-The transaction insight feature has been inspired by the need to improve user confidence in everyday web3 interactions. Allowing for various transaction insights inside of MetaMask will increase confidence, improve UX and ultimately drive the volume in transactions across our user base.
+The transaction insight feature has been inspired by the need to improve user confidence in everyday web3 interactions. Allowing for various transaction insights inside of MetaMask will increase confidence, improve UX and ultimately provide a safer and more informed experience for our users.
 
 ## Copyright
 
