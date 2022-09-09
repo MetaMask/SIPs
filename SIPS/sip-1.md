@@ -84,17 +84,20 @@ yarn build
 yarn validate '../../SIPS/**'
 ```
 
-## Tips
-
-- Some SIPs contain Table of Contents - it's not required. You can generate them automatically, for example, by using [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one) extension.
-
 ## SIP Editors
 
 The role of SIP repository editors is to enforce the inclusion process. They do not judge the proposals on it's merits, it is up to the community to discuss.
 
 The current SIP editors, sorted alphabetically, are:
 
+- Christian Montoya ([@Montoya](https://github.com/Montoya))
+- Erik Marks ([@rekmarks](https://github.com/rekmarks))
+- Hassan Malik ([@hmalik88](https://github.com/hmalik88))
 - Olaf Tomalka ([@ritave](https://github.com/ritave))
+
+## Tips
+
+- Some SIPs contain Table of Contents - it's not required. You can generate them automatically, for example, by using [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one) extension.
 
 ## History
 
