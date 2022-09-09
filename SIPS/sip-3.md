@@ -15,27 +15,31 @@ created: 2022-08-23
 - [Specification](#specification)
   - [Language](#language)
   - [Definitions](#definitions)
-  - [Snap Developer](#snap-developer)
-    - [Manifest](#manifest)
-    - [Snap](#snap)
-- [History](#history)
+  - [Snap Manifest](#snap-manifest)
+  - [Snap](#snap)
+- [Appendix I](#appendix-i-ethereum-transaction-objects)
 - [Copyright](#copyright)
 
 ## Abstract
 
-This SIP proposes a way for snaps to provide extra "insight" into the transactions that users are signing. These insights can then be displayed in the MetaMask confirmation UI, informing the user better before they sign.
+This SIP proposes a way for snaps to provide "insights" into transactions that users are signing. These insights can then be displayed in the MetaMask confirmation UI, helping the user to make informed decisions about signing transactions.
 
-Example use-cases for transaction insights are phishing detection, malicious contract detection and transaction simulation.
+Example use cases for transaction insights are phishing detection, malicious contract detection and transaction simulation.
 
 ## Motivation
 
-Deciding what information to show before a user is prompted to sign a transaction and furthermore deciding which information is critical is a difficult problem. It may even be user-dependant. Similarly to how SIP-2 allows snaps to expand the keyrings that MetaMask support, this SIP aims to expand the options the user is given in which information they see before signing a transaction.
+One of the most difficult problems blockchain wallets solve for their users is "signature comprehension", i.e. making cryptographic signature inputs intelligible to the user.
+Blockchain transactions are signed before being submitted to a node, and constitute an important subset of this problem space.
+A single wallet may not be able to provide all relevant information to any given user for any given transaction.
+To alleviate this problem, this SIP aims to expand the kinds of information MetaMask provides to a user before signing a transaction.
 
-The current MetaMask extension already has a "transaction insights" feature that does transaction decoding and shows the result to the user. This SIP aims to expand on this feature, allowing the community to build snaps that provide **any form of "insight"** into a transaction. This insight will be shown in the MetaMask UI alongside any official insight provided by MetaMask itself.
+The current MetaMask extension already has a "transaction insights" feature that decodes transactions and displays the result to the user.
+To expand on this feature, this SIP allows the community to build snaps that provide arbitrary "insights" into transactions.
+These insights can then be displayed in the MetaMask UI alongside any information provided by MetaMask itself.
 
 ## Specification
 
-> Formal specifications are written in Typescript. Usage of `CAIP-N` specifications, where `N` is a number, are references to [Chain Agnostic Improvement Proposals](https://github.com/ChainAgnostic/CAIPs)
+> Formal specifications are written in Typescript. Usage of `CAIP-N` specifications, where `N` is a number, are references to [Chain Agnostic Improvement Proposals](https://github.com/ChainAgnostic/CAIPs).
 
 ### Language
 
@@ -45,20 +49,20 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 ### Definitions
 
-> This section is non-normative
+> This section is non-normative, and merely recapitulates some definitions from [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md).
 
-- `ChainId` - a [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) string. It identifies a specific chain in all of possible blockchains.
+- `ChainId` - a [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) string.
+It identifies a specific chain among all blockchains recognized by the CAIP standards.
   - `ChainId` consists of a `Namespace` and a `Reference`
-    - `Namespace` - A class of similar blockchains. For example EVM-based blockchains.
-    - `Reference` - A way to identify a concrete chain inside a `Namespace`. For example Ethereum Mainnet or Polygon.
+    - `Namespace` - a class of similar blockchains. For example EVM-based blockchains.
+    - `Reference` - a way to identify a concrete chain inside a `Namespace`. For example Ethereum Mainnet or one of its test networks.
 
-### Snap Developer
+### Snap Manifest
 
-#### Manifest
+This SIP specifies a permission named `endowment:transaction-insight`.
+The permission grants a snap read-only access to raw transaction payloads, before they are accepted for signing by the user.
 
-This SIP proposes to add a new permission named `endowment:transaction-insight`. The permission would allow a snap access to an unsigned transaction’s payload.
-
-An example usage of the permission inside `snap.manifest.json` is as follows:
+This permission is specified as follows in `snap.manifest.json` files:
 
 ```json
 {
@@ -68,9 +72,9 @@ An example usage of the permission inside `snap.manifest.json` is as follows:
 }
 ```
 
-#### Snap
+### Snap
 
-Any snap that wishes to expose transaction insight features must implement the following API:
+Any snap that wishes to provide transaction insight features must implement the following API:
 
 ```typescript
 import { OnTransactionHandler } from "@metamask/snap-types";
@@ -79,7 +83,7 @@ export const onTransaction: OnTransactionHandler = async ({
   transaction,
   chainId,
 }) => {
-  // do something
+  const insights = /* Get insights */;
   return { insights };
 };
 ```
@@ -93,26 +97,27 @@ interface OnTransactionArgs {
 }
 ```
 
-**Transaction** - The transaction object is specifically not defined in this SIP because the transaction object can look different across various chains and it is not our intention to define an interface for every chain. Instead, the onus is on the Snap developer to be cognizant of the shape of the transaction object. However, that being said, the _default_ transaction object in the MetaMask extension is of the following interface:
+`transaction` - The transaction object is intentionally not defined in this SIP because different chains may specify different transaction formats.
+It is beyond the scope of the SIP standards to define interfaces for every chain.
+Instead, it is the Snap developer's responsibility to be cognizant of the shape of transaction objects for relevant chains.
+Nevertheless, you can refer to [Appendix I](#appendix-i-ethereum-transaction-objects) for the interfaces of the Ethereum transaction objects available in MetaMask at the time of this SIP's creation.
 
-_[NON EIP-1559]_
+`chainId` - This is a [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) `chainId` string.
+The snap is expected to parse and utilize this string as needed.
+
+The interface for the return value of an `onTransaction` export is:
 
 ```typescript
-interface LegacyTransactionObject {
-  from: string;
-  to: string;
-  nonce: string;
-  value: string;
-  data: string;
-  gas: string;
-  gasPrice: string;
-  type: string;
-  estimateSuggested: string;
-  estimateUsed: string;
+interface OnTransactionReturn {
+  insights: Record<string, Json>;
 }
 ```
 
-_[EIP-1559]_
+Implementations of this SIP **MAY** require the `insights` object to have a specific shape.
+
+## Appendix I: Ethereum Transaction Objects
+
+### EIP-1559
 
 ```typescript
 interface TransactionObject {
@@ -130,25 +135,22 @@ interface TransactionObject {
 }
 ```
 
-**ChainId** - This is a [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) `chainId` string, the snap is expected to parse and utilize this string as needed.
-
-The return type for an `onTransaction` export should be as follows:
+### Legacy (non-EIP-1559)
 
 ```typescript
-interface OnTransactionReturn {
-  insights: Record<string, Json>;
+interface LegacyTransactionObject {
+  from: string;
+  to: string;
+  nonce: string;
+  value: string;
+  data: string;
+  gas: string;
+  gasPrice: string;
+  type: string;
+  estimateSuggested: string;
+  estimateUsed: string;
 }
 ```
-
-### MetaMask Extension Integration
-
-A transaction insight snap (a snap with the `endowment:transaction-insight` permission) will be displayed in an extra tab in MetaMask confirmation screens. Currently, transaction insights will be provided for contract interaction type transactions. The `insights` object returned from the snap will be displayed in the confirmation screen UI as titles and subtext. The key being the title and the subtext being a stringified version of the value.
-
-**Note:** In the future, the intention is to extend the `OnTransactionReturn` interface with additional properties that can interact with the extension in various ways.
-
-## History
-
-The transaction insight feature has been inspired by the need to improve user confidence in everyday web3 interactions. Allowing for various transaction insights inside of MetaMask will increase confidence, improve UX and ultimately provide a safer and more informed experience for our users.
 
 ## Copyright
 
