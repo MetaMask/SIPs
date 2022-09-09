@@ -35,7 +35,7 @@ Example use-cases are Ethereum Smart Contract Accounts (Multisig) or Bitcoin Acc
 
 ## Motivation
 
-One of the main use-cases for snaps is adding more protocols to Blockchain wallets. In current state, snaps can't expose their capabilities to wallets, and DApp developers need to talk with the snap directly. This SIP tries to improve the usability of snaps by allowing wallets to integrate snap accounts into it's own UI, and allow DApp developers to seamlessly talk to specific blockchains as if talking directly to the wallet itself, not knowing how the wallet handles such requests.
+One of the main use-cases for snaps is adding more protocols to Blockchain wallets. In current state, snaps can't expose their capabilities to wallets, and DApp developers need to talk with the snap directly. This SIP tries to improve the usability of snaps by allowing wallets to integrate snap accounts into its own UI, and allow DApp developers to seamlessly talk to specific blockchains as if talking directly to the wallet itself, not knowing how the wallet handles such requests.
 
 ## Specification
 
@@ -181,7 +181,7 @@ If a user removes a snap from wallet, removing any functionality that is provide
 
 #### Manifest
 
-This SIP proposes to add a new permission to the Snap Manifest named `snap_keyring`. The permission would describe the allowed keyring capabilities of the snap.
+This SIP proposes to add a new permission to the Snap Manifest named `endowment:keyring`. The permission would describe the allowed keyring capabilities of the snap.
 
 > The schema for the permission [can be found in assets](../assets/sip-2/permission.schema.json).
 
@@ -190,7 +190,7 @@ An example usage of above permission inside `snap.manifest.json`
 ```json
 {
   "initialPermissions": {
-    "snap_keyring": {
+    "endowment:keyring": {
       "namespaces": {
         "eip155": {
           "methods": [
@@ -229,7 +229,7 @@ An example usage of above permission inside `snap.manifest.json`
 
 #### Snap
 
-A snap requesting `snap_keyring` permission SHOULD expose a `keyring` export using CommonJS.
+A snap requesting `endowment:keyring` permission SHOULD expose a `keyring` export using CommonJS.
 
 ```typescript
 module.exports.keyring = new SnapKeyring();
@@ -273,7 +273,7 @@ interface SnapKeyring {
   - `removeAccount?()` - Removes specific account.
 - Importing
   - `importAccount?()` - Imports an account of supported chain type into the keyring. The data is Snap-specific. The data format MUST be JSON serializable, and SHOULD be in the same format as the one returned from `exportAccount()`.
-  - `exportAccount?()` - Returns snap-specific data that, on it's own, is enough to recreate that specific account. The data format MUST be JSON serializable, and SHOULD be the same as one passed to `importAccount()`.
+  - `exportAccount?()` - Returns snap-specific data that, on its own, is enough to recreate that specific account. The data format MUST be JSON serializable, and SHOULD be the same as one passed to `importAccount()`.
 
 The snaps SHOULD implement all methods inside a specific group that it wants to support (such as "Creation"), instead of implementing only some methods. The wallet MAY disable functionality of a specific group if not all methods inside that group are implemented by the snap.
 
@@ -289,7 +289,7 @@ Many methods in `SnapKeyring` are optional, since some operations are not possib
 
 ##### Account consistency
 
-The implementation MAY also hold it's own copy of accounts of a snap to avoid multiple `getAccounts()` calls. For example, instead of calling `getAccounts()` again after `removeAccount()`, the implementation MAY remove such account after calling `removeAccount()` from it's own copy without consulting snap for newest list of accounts.
+The implementation MAY also hold its own copy of accounts of a snap to avoid multiple `getAccounts()` calls. For example, instead of calling `getAccounts()` again after `removeAccount()`, the implementation MAY remove such account after calling `removeAccount()` from its own copy without consulting snap for newest list of accounts.
 
 ## History
 
