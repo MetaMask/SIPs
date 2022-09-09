@@ -16,7 +16,8 @@ created: 2022-08-23
   - [Language](#language)
   - [Definitions](#definitions)
   - [Snap Manifest](#snap-manifest)
-  - [Snap](#snap)
+  - [Snap Implementation](#snap-implementation)
+  - [MetaMask Integration](#metamask-integration)
 - [Appendix I](#appendix-i-ethereum-transaction-objects)
 - [Copyright](#copyright)
 
@@ -72,9 +73,9 @@ This permission is specified as follows in `snap.manifest.json` files:
 }
 ```
 
-### Snap
+### Snap Implementation
 
-Any snap that wishes to provide transaction insight features must implement the following API:
+Any snap that wishes to provide transaction insight features **MUST** implement the following API:
 
 ```typescript
 import { OnTransactionHandler } from "@metamask/snap-types";
@@ -115,7 +116,19 @@ interface OnTransactionReturn {
 
 Implementations of this SIP **MAY** require the `insights` object to have a specific shape.
 
+### MetaMask Integration
+
+The `insights` object returned by the snap will be displayed alongside the confirmation for the `transaction` that `onTransaction` was called with.
+Keys and values will be displayed in the order received, with each key rendered as a title and each value rendered as follows:
+
+- If the value is an array or an object, it will be rendered as text after being converted to a string.
+- If the value is neither an array nor an object, it will be rendered directly as text.
+
 ## Appendix I: Ethereum Transaction Objects
+
+The following transaction objects may appear for any `chainId` of `eip155:*` where `*` is some positive integer.
+This includes all Ethereum or "EVM-compatible" chains.
+As of the time of creation of this SIP, they are the only possible transaction objects for Ethereum chains.
 
 ### EIP-1559
 
