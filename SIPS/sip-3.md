@@ -114,8 +114,6 @@ interface OnTransactionReturn {
 }
 ```
 
-Implementations of this SIP **MAY** require the `insights` object to have a specific shape.
-
 ### MetaMask Integration
 
 The `insights` object returned by the snap will be displayed alongside the confirmation for the `transaction` that `onTransaction` was called with.
