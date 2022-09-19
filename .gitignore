@@ -115,3 +115,9 @@ dist
 # Documentation here: https://yarnpkg.com/features/zero-installs
 !.yarn/cache
 #.pnp.*
+
+_site
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+vendor
