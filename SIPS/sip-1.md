@@ -97,10 +97,6 @@ The current SIP editors, sorted alphabetically, are:
 
 At least one of the editors has to approve any incoming pull requests that update files in the [SIPs folder](./).
 
-## Tips
-
-- Some SIPs contain Table of Contents - it's not required. You can generate them automatically, for example, by using [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one) extension.
-
 ## History
 
 The Snaps Improvement Proposals have been inspired by [EIPs](https://github.com/ethereum/EIPs), [CAIPs](https://github.com/ChainAgnostic/CAIPs) and [TC39 Stages](https://tc39.es/process-document/).
