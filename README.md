@@ -1,5 +1,7 @@
 # Snaps Improvement Proposals
 
+[Website](https://metamask.github.io/SIPs)
+
 ## Purpose
 
 Shape Metamask Snap's end user APIs before release with open discussion and involvement from the community.

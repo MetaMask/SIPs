@@ -7,20 +7,6 @@ author: Hassan Malik (@hmalik88), Frederik Bolding (@frederikbolding)
 created: 2022-08-23
 ---
 
-## Table of Contents
-
-- [Table of Contents](#table-of-contents)
-- [Abstract](#abstract)
-- [Motivation](#motivation)
-- [Specification](#specification)
-  - [Language](#language)
-  - [Definitions](#definitions)
-  - [Snap Manifest](#snap-manifest)
-  - [Snap Implementation](#snap-implementation)
-  - [MetaMask Integration](#metamask-integration)
-- [Appendix I](#appendix-i-ethereum-transaction-objects)
-- [Copyright](#copyright)
-
 ## Abstract
 
 This SIP proposes a way for snaps to provide "insights" into transactions that users are signing. These insights can then be displayed in the MetaMask confirmation UI, helping the user to make informed decisions about signing transactions.

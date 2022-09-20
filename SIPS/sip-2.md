@@ -7,26 +7,6 @@ author: Olaf Tomalka (@ritave), Muji (@tmpfs)
 created: 2022-06-10
 ---
 
-## Table of Contents
-
-- [Table of Contents](#table-of-contents)
-- [Abstract](#abstract)
-- [Motivation](#motivation)
-- [Specification](#specification)
-  - [Language](#language)
-  - [Definitions](#definitions)
-  - [Common types](#common-types)
-  - [DApp Developer](#dapp-developer)
-  - [Application Routing](#application-routing)
-  - [Snap Developer](#snap-developer)
-    - [Manifest](#manifest)
-    - [Snap](#snap)
-      - [Lifecycle](#lifecycle)
-      - [Feature discovery](#feature-discovery)
-      - [Account consistency](#account-consistency)
-- [History](#history)
-- [Copyright](#copyright)
-
 ## Abstract
 
 This SIP proposes a way for snaps to programmatically expose their blockchain account management capabilities that can be used by wallets to enrich their UI and used by DApp developers without needing to know how the wallet implements support for specific blockchain.
