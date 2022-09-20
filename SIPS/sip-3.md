@@ -1,7 +1,7 @@
 ---
 sip: 3
 title: Transaction Insights
-status: Review
+status: Implementation
 discussions-to: https://github.com/MetaMask/SIPs/discussions/31
 author: Hassan Malik (@hmalik88), Frederik Bolding (@frederikbolding)
 created: 2022-08-23
@@ -39,7 +39,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 > This section is non-normative, and merely recapitulates some definitions from [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md).
 
 - `ChainId` - a [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) string.
-It identifies a specific chain among all blockchains recognized by the CAIP standards.
+  It identifies a specific chain among all blockchains recognized by the CAIP standards.
   - `ChainId` consists of a `Namespace` and a `Reference`
     - `Namespace` - a class of similar blockchains. For example EVM-based blockchains.
     - `Reference` - a way to identify a concrete chain inside a `Namespace`. For example Ethereum Mainnet or one of its test networks.
