@@ -26,21 +26,8 @@ layout: default
     {% endif %}
     <tr>
       <th>Status</th>
-      <td>{{ page.status | xml_escape }}
-        {% if page.last-call-deadline != undefined %}
-    <tr>
-      <th>Last Call Deadline</th>
-      <td>{{ page.last-call-deadline | xml_escape }}</td>
+      <td>{{ page.status | xml_escape }}</td>
     </tr>
-    {% endif %}
-    </td>
-    </tr>
-    {% if page.category != undefined %}
-    <tr>
-      <th>Category</th>
-      <td>{{ page.category | xml_escape }}</td>
-    </tr>
-    {% endif %}
     <tr>
       <th>Created</th>
       <td>{{ page.created | xml_escape }}</td>
