@@ -4,9 +4,9 @@
 
 ## Purpose
 
-Shape Metamask Snap's end user APIs before release with open discussion and involvement from the community.
+Shape MetaMask Snap's end user APIs before release with open discussion and involvement from the community.
 
-Snaps in current state are being researched by Metamask, and feedback from the community directs the features that are developed. This repository serves as an open list of design documents pertaining to new developments in the snap ecosystem, written both by Metamask team as well as including high quality proposals from the community.
+Snaps in current state are being researched by MetaMask, and feedback from the community directs the features that are developed. This repository serves as an open list of design documents pertaining to new developments in the snap ecosystem, written both by MetaMask team as well as including high quality proposals from the community.
 
 **We invite everyone to participate in discussions.**
 
