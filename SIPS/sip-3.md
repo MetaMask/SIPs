@@ -1,7 +1,7 @@
 ---
 sip: 3
 title: Transaction Insights
-status: Implementation
+status: Final
 discussions-to: https://github.com/MetaMask/SIPs/discussions/31
 author: Hassan Malik (@hmalik88), Frederik Bolding (@frederikbolding)
 created: 2022-08-23
