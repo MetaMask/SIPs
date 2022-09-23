@@ -2,7 +2,7 @@
 sip: 4
 title: Merging of snap.manifest.json and package.json
 status: Draft
-discussions-to (*optional): (Http/Https URL)
+discussions-to: https://github.com/MetaMask/SIPs/discussions/51
 author: Olaf Tomalka (@ritave)
 created: 2022-09-23
 ---
@@ -32,7 +32,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 ### Snap ID
 
-The ID of a snap MUST be an URI as defined in [RFC-3986](https://datatracker.ietf.org/doc/html/rfc3986) consisting of a `scheme`, `host` and a `path`.
+The ID of a snap MUST be an URI as defined in [RFC-3986](https://datatracker.ietf.org/doc/html/rfc3986), consisting of a `scheme`, `host` and a `path`.
 
 ### Supported schemes
 
