@@ -34,10 +34,16 @@ The ID is an URI as defined in [RFC-3986](https://datatracker.ietf.org/doc/html/
 
 ### Supported schemes
 
-- `npm` - (example `npm:my-snap`). The snap SHALL be looked for in the [npmjs.com](https://npmjs.com) registry with the `path` component acting as it's NPM id. The wallet MAY NOT need to support any other `host` outside of [registry.npmjs.com](https://npmjs.com). The wallet will search for `package.json` in the root directory of the package. All files referenced in `package.json` SHALL be searched for relative to the root directory of the package.
-- `http` / `https` - (example `http://localhost:8080/foo/package.json`). The `package.json` MUST be under that URL. All files referenced in `package.json` SHALL be looked relative to the path of `package.json`.
-  > For example, `package.json:main: "bar/index.js"` will be looked at in `http://localhost:8080/foo/bar.index.js`.
-- `ipfs` - (example: `ipfs://bafybeifpaez32hlrz5tmr7scndxtjgw3auuloyuyxblynqmjw5saapewmu`). The `path` MUST be an IPFS directory. The wallet SHALL look for `package.json` in that directory. All files referenced in `package.json` SHALL be looked relative to the root directory.
+- `npm` - The snap SHALL be looked for in the [npmjs.com](https://npmjs.com) registry with the `path` component acting as it's NPM id. The wallet MAY NOT need to support any other `host` outside of [registry.npmjs.com](https://npmjs.com). The wallet will search for `package.json` in the root directory of the package. All files referenced in `package.json` SHALL be searched for relative to the root directory of the package.
+  > For example `npm:my-snap`
+- `http` / `https` - The `package.json` MUST be under that URL. All files referenced in `package.json` SHALL be looked relative to the path of `package.json`.
+
+  > For example `http://localhost:8080/foo/package.json`.
+
+  > To explain relative lookup - `package.json:main: "bar/index.js"` will be looked at in `http://localhost:8080/foo/bar.index.js`.
+
+- `ipfs` - The `path` MUST be an IPFS directory. The wallet SHALL look for `package.json` in that directory. All files referenced in `package.json` SHALL be looked relative to the root directory.
+  > For example `ipfs://bafybeifpaez32hlrz5tmr7scndxtjgw3auuloyuyxblynqmjw5saapewmu`/
 
 ### package.json
 
