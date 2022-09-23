@@ -80,6 +80,8 @@ The snap's `package.json` MUST adhere to `package.json` schema as [defined by th
 
 This SIP intends to break backwards compatibility. We propose that MetaMask Flask follows our standard practice of informing the community of deprecation for one version of Flask and remove the old way altogether in the following one.
 
+List of breaking changes:
+
 - Removal of `snap.manifest.json` and reliance on `package.json`
 - Removal of `local` Snap ID uri `scheme`, replaced by `http` and `https`. Today the implementation of `local` already behaves the same way as `http` would.
 
