@@ -40,7 +40,7 @@ The ID is an URI as defined in [RFC-3986](https://datatracker.ietf.org/doc/html/
 
   > For example `http://localhost:8080/foo/package.json`.
 
-  > To explain relative lookup - `package.json:main: "bar/index.js"` will be looked at in `http://localhost:8080/foo/bar.index.js`.
+  > To explain relative lookup - `package.json:main: "bar/index.js"` will be looked at in `http://localhost:8080/foo/bar/index.js`.
 
 - `ipfs` - The `path` MUST be an IPFS directory. The wallet SHALL look for `package.json` in that directory. All files referenced in `package.json` SHALL be looked relative to the root directory.
   > For example `ipfs://bafybeifpaez32hlrz5tmr7scndxtjgw3auuloyuyxblynqmjw5saapewmu`/
