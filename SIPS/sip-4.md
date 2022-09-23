@@ -18,9 +18,11 @@ This SIP intends to supersede [Snaps Publishing Specification v0.1](https://gith
 There are multiple fields that are the same in `package.json` files and `snap.manifest.json` files that routinely become desynchronized.
 Visual Studio Code adds it's own properties to the package.json successfully. I believe merging those two files will be beneficial for the developers while still allowing other snap sources outside of NPM.
 
-Because this SIP intends to supersede the previous specification, all behavior has been re-specified to server as a singular source of truth.
+Because this SIP intends to supersede the previous specification, all behavior has been re-specified to serve as a singular source of truth.
 
 ## Specification
+
+> Such sections are non-normative
 
 ### Language
 
@@ -30,7 +32,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 ### Snap ID
 
-The ID is an URI as defined in [RFC-3986](https://datatracker.ietf.org/doc/html/rfc3986) consisting of a `scheme`, `host` and a `path`.
+The ID of a snap MUST be an URI as defined in [RFC-3986](https://datatracker.ietf.org/doc/html/rfc3986) consisting of a `scheme`, `host` and a `path`.
 
 ### Supported schemes
 
@@ -42,7 +44,7 @@ The ID is an URI as defined in [RFC-3986](https://datatracker.ietf.org/doc/html/
 
   > To explain relative lookup - `package.json:main: "bar/index.js"` will be looked at in `http://localhost:8080/foo/bar/index.js`.
 
-- `ipfs` - The `path` MUST be an IPFS directory. The wallet SHALL look for `package.json` in that directory. All files referenced in `package.json` SHALL be looked relative to the root directory.
+- `ipfs` - The `host` MUST be an IPFS CID that is also a directory. The wallet SHALL look for `package.json` in that directory. All files referenced in `package.json` SHALL be looked relative to the root directory.
   > For example `ipfs://bafybeifpaez32hlrz5tmr7scndxtjgw3auuloyuyxblynqmjw5saapewmu`/
 
 ### package.json
