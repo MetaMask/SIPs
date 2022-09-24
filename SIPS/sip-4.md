@@ -49,7 +49,7 @@ The ID of a snap MUST be an URI as defined in [RFC-3986](https://datatracker.iet
 
 ### package.json
 
-> The full JSON Schema for snap's package.json [can be found in the assets](../assets/sip-4/package.json.schema.json).
+> The full JSON Schema for snap's package.json [can be found in the assets](../assets/sip-4/package.schema.json).
 
 The snap's `package.json` MUST adhere to `package.json` schema as [defined by the NPM organization](https://docs.npmjs.com/cli/v8/configuring-npm/package-json). That schema is extended with the following behavior:
 
@@ -58,7 +58,6 @@ The snap's `package.json` MUST adhere to `package.json` schema as [defined by th
   - `.version` - [SemVer](https://semver.org/spec/v2.0.0.html) version of the snap. DApps can request specific version ranges, if a mismatch occurs between requested version range and the fetched snap, that snap MUST not be installed.
     > Additionally, wallet MAY allow updating snaps to the requested version in some ID schemes.
     > For example, if the installed snap is `npm:my-snap@1.0.0` while the dapp requests `npm:my-snap@^2.0.0`, the wallet will try to get the newest version from [npm.js](https://npm.js) and will update the snap a version that satisfies `^2.0.0`.
-  - `.repository` - Unused by the wallet, exists only for informative purposes.
   - `.main` - The location of the snaps bundled source code to be executed.
   - `.engines` - The wallet SHALL introduce `snaps` engine which will follow semver versioning. The engine check is strict, meaning if a the requested semver is not satisfied by the extension run by the end-user, the snap MUST NOT be executed.
     - The first version of `snaps` engine after implementing this SIP SHALL be `1.0.0`.
@@ -76,7 +75,7 @@ The snap's `package.json` MUST adhere to `package.json` schema as [defined by th
 
 ## Test vector
 
-> You can find an example [`package.json` in the assets](../assets/sip-4/package.example.json).
+> You can find an example [`package.json` in the assets](../assets/sip-4/package.json).
 
 ## Backwards compatibility
 

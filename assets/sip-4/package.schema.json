@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "title": "Snap's package.json",
+  "type": "object",
+  "required": ["snap", "main", "description", "name", "version", "engines"],
+  "allOf": [{ "$ref": "https://json.schemastore.org/package.json#" }],
+  "properties": {
+    "engines": {
+      "type": "object",
+      "required": ["snaps"],
+      "properties": {
+        "snaps": {
+          "type": "string",
+          "description": "SemVer range specifying this snaps' compatibility with a wallet"
+        }
+      }
+    },
+    "main": {
+      "description": "The bundled snap code that will be executed by the wallet"
+    },
+    "snap": {
+      "description": "Snap specific metadata",
+      "type": "object",
+      "required": ["proposedName", "checksum", "permissions"],
+      "properties": {
+        "proposedName": {
+          "type": "string",
+          "description": "User readable name for this snap. Shown in the UI",
+          "minLength": 3,
+          "maxLength": 214
+        },
+        "checksum": {
+          "type": "object",
+          "description": "The checksum verifying the integrity of the bundled code located in \".main\" property",
+          "markdownDescription": "The checksum verifying the integrity of the bundled code located in `.main` property",
+          "additionalProperties": false,
+          "required": ["algorithm", "hash"],
+          "properties": {
+            "algorithm": {
+              "description": "The algorithm used for calculating the checksum",
+              "const": "sha-256"
+            },
+            "hash": {
+              "description": "The actual checksum hash",
+              "type": "string",
+              "minLength": 44,
+              "maxLength": 44
+            }
+          }
+        },
+        "permissions": {
+          "description": "An object containing permissions that the snap needs to run",
+          "type": "object"
+        },
+        "icon": {
+          "description": "Relative location of the icon file identifying the snap in the UI",
+          "type": "string"
+        }
+      }
+    }
+  }
+}
