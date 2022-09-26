@@ -95,6 +95,7 @@ The snap's `package.json` MUST adhere to `package.json` schema as [defined by th
   - `scheme` - `https`
   - `authority` - `localhost:8080`
   - `path` - _(zero-length)_
+  - `package.json:main: "dist/index.js"` - `https://localhost:8080/dist/index.js`
 - `https://my-host.com/my-snap`
   - `scheme` - `https`
   - `authority` - `my-host.com`
