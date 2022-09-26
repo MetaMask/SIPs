@@ -32,20 +32,19 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 ### Snap ID
 
-The ID of a snap MUST be an URI as defined in [RFC-3986](https://datatracker.ietf.org/doc/html/rfc3986), consisting of a `scheme`, `host` and a `path`.
+The ID of a snap MUST be an URI as defined in [RFC-3986](https://datatracker.ietf.org/doc/html/rfc3986).
+
+> URI consists of a `scheme`, `authority` and a `path`, which we use throughout this SIP.
 
 ### Supported schemes
 
-- `npm` - The snap SHALL be looked for in the [npmjs.com](https://npmjs.com) registry with the `path` component acting as it's NPM id. The wallet MAY NOT need to support any other `host` outside of [registry.npmjs.com](https://npmjs.com). The wallet will search for `package.json` in the root directory of the package. All files referenced in `package.json` SHALL be searched for relative to the root directory of the package.
-  > For example `npm:my-snap`
-- `http` / `https` - The `package.json` MUST be under that URL. All files referenced in `package.json` SHALL be looked relative to the path of `package.json`.
+> See [Test Vectors](#uri) for examples.
 
-  > For example `http://localhost:8080/foo/package.json`.
-
-  > To explain relative lookup - `package.json:main: "bar/index.js"` will be looked at in `http://localhost:8080/foo/bar/index.js`.
-
-- `ipfs` - The `host` MUST be an IPFS CID that is also a directory. The wallet SHALL look for `package.json` in that directory. All files referenced in `package.json` SHALL be looked relative to the root directory.
-  > For example `ipfs://bafybeifpaez32hlrz5tmr7scndxtjgw3auuloyuyxblynqmjw5saapewmu`/
+- `npm` - The snap SHALL be searched for using [registry.npmjs.com](https://registry.npmjs.com) protocol. `https` SHALL be used as the underlying transport protocol.
+  - The `authority` part of the URI indicates the registry to use. The `authority` MAY be omitted and the default [https://registry.npmjs.com](https://registry.npmjs.com) SHALL be used instead.
+  - The `path` represents the package's id namespaced to the register. The wallet will search for `package.json` in the root directory of the package. All files referenced in `package.json` SHALL be searched for relative to the root directory of the package.
+- `http` / `https` - The `package.json` MUST be under that URL. All files referenced in `package.json` SHALL be searched for relative to the path of `package.json`.
+- `ipfs` - The `authority` MUST be an IPFS CID that is also a directory. The wallet SHALL search for `package.json` in root of that directory. All files referenced in `package.json` SHALL be looked relative to the root directory.
 
 ### package.json
 
@@ -73,7 +72,49 @@ The snap's `package.json` MUST adhere to `package.json` schema as [defined by th
       - `.snap.checksum.hash` - The resulting hash calculated from the `.main` source code using `.snap.checksum.algorithm` algorithm.
     - `.snap.icon` - The optional location of the icon that the wallet MAY use to identify the snap to the user in the UI.
 
-## Test vector
+## Test vectors
+
+## URI
+
+### NPM
+
+- `npm:my-snap`
+  - `scheme` - `npm`
+  - `authority` - `https://registry.npmjs.com`
+  - `path` - `my-snap`
+- `npm:root@my-registry.com:8080/my-snap`
+  - `scheme` - `npm`
+  - `authority` - `https://root@my-registry.com:8080`
+  - `path` - `my-snap`
+
+### HTTP / HTTPS
+
+> Test vectors for HTTP are considered the same expect the differing scheme
+
+- `https://localhost:8080`
+  - `scheme` - `https`
+  - `authority` - `localhost:8080`
+  - `path` - _(zero-length)_
+- `https://my-host.com/my-snap`
+  - `scheme` - `https`
+  - `authority` - `my-host.com`
+  - `path` - `my-snap`
+  - `package.json:main: "dist/index.js"` - `https://my-host.com/dist/index.js`
+- `https://my-host.com/my-snap/`
+  - `scheme` - `https`
+  - `authority` - `my-host.com`
+  - `path` - `my-snap/`
+  - `package.json:main: "dist/index.js"` - `https://my-host.com/my-snap/dist/index.js`
+
+### IPFS
+
+- `ipfs://bafybeifpaez32hlrz5tmr7scndxtjgw3auuloyuyxblynqmjw5saapewmu`
+  - `scheme` - `ipfs`
+  - `authority` - `bafybeifpaez32hlrz5tmr7scndxtjgw3auuloyuyxblynqmjw5saapewmu`
+  - `path` - _(zero-length)_
+  - `package.json:main: "dist/index.js"` - `ipfs://bafybeifpaez32hlrz5tmr7scndxtjgw3auuloyuyxblynqmjw5saapewmu/dist/index.js`
+
+## `package.json`
 
 > You can find an example [`package.json` in the assets](../assets/sip-4/package.json).
 
