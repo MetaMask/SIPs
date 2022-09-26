@@ -68,7 +68,7 @@ The snap's `package.json` MUST adhere to `package.json` schema as [defined by th
     - `.snap.proposedName` - User readable name that the wallet MAY show in the UI. The name MUST be shorter or equal to 214 characters.
     - `.snap.permissions` - Permissions that the snap is requesting.
     - `.snap.checksum` - The checksum of the source code bundle defined in `.main`.
-      - `.snap.checksum.algorithm` - The algorithm used to calculate the checksum. See [Appendix II](#appendix-ii-checksum-algorithms) for list of supported algorithms.
+      - `.snap.checksum.algorithm` - The algorithm used to calculate the checksum. The algorithm field MUST be `sha-256`.
       - `.snap.checksum.hash` - The resulting hash calculated from the `.main` source code using `.snap.checksum.algorithm` algorithm.
     - `.snap.icon` - The optional location of the icon that the wallet MAY use to identify the snap to the user in the UI.
 
@@ -148,12 +148,6 @@ This is the minimal set of information we need to know about a snap to manage it
   - `snap.manifest.json:initialPermissions` - Permissions that the snap is requesting from the user.
   - `snap.manifest.json:shasum` - The shashum of the bundled source required for security purposes.
   - `snap.manifest.json:source.location.npm.iconPath` - _(optional)_ The location of the icon file that represents the snap in the UI of the wallet.
-
-### Appendix II: Checksum algorithms
-
-There is only one supported checksum algorithm at this time that can be used in `package.json:snap.checksum.algorithm`.
-
-- `sha-256`. The SHA-256 algorithm for checksum.
 
 ## Copyright
 
