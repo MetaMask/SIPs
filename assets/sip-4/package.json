@@ -1,0 +1,26 @@
+{
+  "$schema": "./package.schema.json",
+  "name": "my-snap",
+  "version": "1.0.0",
+  "description": "An example snap description",
+  "main": "dist/index.js",
+  "files": [
+    "dist/",
+    "images/"
+  ],
+  "engines": {
+    "node": ">=16.0.0",
+    "snaps": "^1.0.0"
+  },
+  "snap": {
+    "proposedName": "My Snap",
+    "checksum": {
+      "algorithm": "sha-256",
+      "hash": "qNYd+o17O8kEwz40rxgBftRiyss2sYS7ir++rlLBQXo="
+    },
+    "permissions": {
+      "snap_confirm": {}
+    },
+    "icon": "images/icon.png"
+  }
+}
