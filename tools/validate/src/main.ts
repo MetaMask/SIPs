@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 import assert from "assert";
 import Debug from "debug";
-import { promises as fs } from "fs";
 import glob from "glob";
 import process from "process";
+import { read } from "to-vfile";
 import { promisify } from "util";
 import { hideBin } from "yargs/helpers";
 import yargs from "yargs/yargs";
-import { Reporter, Results } from "./reporter.js";
 import * as reporters from "./reporters/index.js";
 import { validate } from "./validate.js";
 
@@ -35,37 +34,23 @@ const argv = await yargs(hideBin(process.argv))
   ).argv;
 
 assert(argv.glob !== undefined);
+
 const filePaths: string[] = argv.glob as unknown as string[]; // Typescript types fail here
-
-const results: Results = [];
-
-let errorCount = 0;
-
-for (const filePath of filePaths) {
-  debug(`Validating ${filePath}`);
-  const file = await fs.open(filePath, "r");
-  try {
-    const messages = await validate({
-      data: await file.readFile(),
-      path: filePath,
-    });
-    debug(`${filePath} message count: ${messages.length}`);
-    errorCount += messages.length;
-    results.push({ filePath, messages });
-  } finally {
-    await file.close();
-  }
-}
+const files = await Promise.all(filePaths.map((path) => read(path)));
+const results = await validate(files);
+const isFatal = results.some((file) =>
+  file.messages.some((message) => message.fatal)
+);
 
 let output = "";
 for (const reporter of argv.reporter) {
-  output += await ((reporters as any)[reporter] as Reporter)(results);
+  output += await (reporters as any)[reporter](results);
 }
 
 if (output.length > 0) {
   process.stdout.write(`${output}\n`);
 }
 
-if (errorCount > 0) {
+if (isFatal) {
   process.exit(1);
 }

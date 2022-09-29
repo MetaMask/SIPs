@@ -1,9 +1,9 @@
 import assert from "assert";
 import Debug from "debug";
+import { Root } from "mdast";
+import { lintRule } from "unified-lint-rule";
 import { URL } from "url";
 import YAML from "yaml";
-import { Context } from "../context.js";
-import { AstNode, RuleDescriptor } from "../rule.js";
 
 const debug = Debug("validate:rule:preamble");
 
@@ -116,174 +116,152 @@ function isValidURL(url: string, protocols?: string[]): boolean {
   }
 }
 
-const descriptor: RuleDescriptor = {
-  meta: {
-    id: "preamble",
-  },
-  create: (context: Context) => ({
-    root: (node: AstNode) => {
-      assert(node.type === "root");
-      if (node.children.length < 1 || node.children[0].type !== "yaml") {
-        return context.report({ message: "Preamble not found", node });
-      }
-      node = node.children[0];
-      assert(node.type === "yaml");
-      let preamble: Preamble;
-      try {
-        preamble = YAML.parse(node.value);
-        assertIsPreamble(preamble);
-      } catch (e) {
-        debug("Front-matter YAML parse error", e);
-        return context.report({
-          message: "Preamble is not proper YAML",
-          node,
-        });
-      }
-      debug(preamble);
+const rule = lintRule<Root>("sip:preamble", (tree, file) => {
+  if (tree.children.length < 1 || tree.children[0].type !== "yaml") {
+    file.message("Preamble not found", tree);
+    return;
+  }
+  const node = tree.children[0];
+  assert(node.type === "yaml");
 
-      // Validate all required headers
-      const headers = new Set(Object.keys(preamble));
-      HEADER_REQUIRED.forEach((required) => {
-        if (!headers.has(required)) {
-          context.report({
-            message: `Preamble required header \"${required}\" is missing from preamble.`,
-            node,
-          });
-        }
-      });
+  let preamble: Preamble;
+  try {
+    preamble = YAML.parse(node.value);
+    assertIsPreamble(preamble);
+  } catch (e) {
+    debug("Front-matter YAML parse error", e);
+    file.message("Preamble is not proper YAML", node);
+    return;
+  }
+  debug(preamble);
 
-      // Validate only required and optional headers
-      headers.forEach((header) => {
-        if (!HEADER_ALL.has(header)) {
-          context.report({
-            message: `Preamble has unknown header \"${header}\".`,
-            node,
-          });
-        }
-      });
+  // Validate all required headers
+  const headers = new Set(Object.keys(preamble));
+  HEADER_REQUIRED.forEach((required) => {
+    if (!headers.has(required)) {
+      file.message(
+        `Preamble required header \"${required}\" is missing from preamble.`,
+        node
+      );
+    }
+  });
 
-      // Validate header order
-      const orderedHeaders = HEADERS_REGEX.exec(node.value)?.slice(1) ?? [];
-      let orderIndex = 0;
-      for (const header of orderedHeaders) {
-        if (
-          HEADER_ORDER[orderIndex] in orderedHeaders &&
-          header !== HEADER_ORDER[orderIndex]
-        ) {
-          context.report({
-            message: `Preamble header \"${header}\" is not in proper order`,
-            node,
-          });
-          break;
-        }
-        orderIndex++;
+  // Validate only required and optional headers
+  headers.forEach((header) => {
+    if (!HEADER_ALL.has(header)) {
+      file.message(`Preamble has unknown header \"${header}\".`, node);
+    }
+  });
+
+  // Validate header order
+  const orderedHeaders = HEADERS_REGEX.exec(node.value)?.slice(1) ?? [];
+  let orderIndex = 0;
+  for (const header of orderedHeaders) {
+    if (
+      HEADER_ORDER[orderIndex] in orderedHeaders &&
+      header !== HEADER_ORDER[orderIndex]
+    ) {
+      file.message(
+        `Preamble header \"${header}\" is not in proper order`,
+        node
+      );
+      break;
+    }
+    orderIndex++;
+  }
+
+  // Validate SIP number
+  if (
+    preamble.sip !== undefined &&
+    (!Number.isSafeInteger(preamble.sip) || preamble.sip < 0)
+  ) {
+    file.message('Preamble header "sip" is not a positive integer', node);
+  }
+
+  // Validate that SIP number matches filename
+  if (preamble.sip !== undefined) {
+    const match = file.basename?.match(EXTRACT_PATH_SIP);
+    let extractedSip: number | undefined = undefined;
+    if (match !== null && match !== undefined) {
+      extractedSip = Number(match.groups?.sipNumber ?? 0);
+    }
+    if (extractedSip === null || extractedSip !== preamble.sip) {
+      file.message(
+        'Preamble header "sip" doesn\'t match the filename number',
+        node
+      );
+    }
+  }
+
+  // Validate dates
+  HEADER_DATES.forEach((dateHeader) => {
+    if (
+      dateHeader in preamble &&
+      !isValidDate(preamble[dateHeader] as string)
+    ) {
+      file.message(
+        `Preamble header \"${dateHeader}\" is not a valid date in ISO 8601 format`,
+        node
+      );
+    }
+  });
+
+  // Validate proper status
+  if (preamble.status !== undefined && !STATUES.has(preamble.status)) {
+    file.message('Preamble header "status" is not a valid status', node);
+  }
+
+  // Validate discussions-to
+  if (
+    preamble["discussions-to"] !== undefined &&
+    !isValidURL(preamble["discussions-to"], ["http", "https"])
+  ) {
+    file.message(
+      `Preamble header "discussions-to" is not a valid http/https url`,
+      node
+    );
+  }
+
+  // Validate updated
+  if (
+    "updated" in preamble &&
+    "created" in preamble &&
+    new Date(preamble.updated!) < new Date(preamble.created!)
+  ) {
+    file.message(
+      'Preamble header "updated" is earlier than preamble header "created"',
+      node
+    );
+  }
+  if (preamble.status === "Living" && !("updated" in preamble)) {
+    file.message(
+      'SIP has status of "Living" but doesn\'t have "updated" preamble header',
+      node
+    );
+  }
+
+  // Validate author
+  if ("author" in preamble) {
+    const authors: string[] = (preamble.author as string).split(",");
+    let hasGithub = false;
+    for (const author of authors) {
+      const match = author.trim().match(AUTHOR);
+      if (match === null) {
+        file.message('Preamble header "author" is malformed', node);
+        hasGithub = true;
+        break;
       }
-
-      // Validate SIP number
-      if (
-        preamble.sip !== undefined &&
-        (!Number.isSafeInteger(preamble.sip) || preamble.sip < 0)
-      ) {
-        context.report({
-          message: 'Preamble header "sip" is not a positive integer',
-          node,
-        });
+      if (match.length >= 2) {
+        hasGithub = true;
       }
+    }
+    if (!hasGithub) {
+      file.message(
+        'Preamble header "author" doesn\'t have at least one github account',
+        node
+      );
+    }
+  }
+});
 
-      // Validate that SIP number matches filename
-      if (preamble.sip !== undefined) {
-        const match = context.path?.match(EXTRACT_PATH_SIP);
-        let extractedSip: number | undefined = undefined;
-        if (match !== null && match !== undefined) {
-          extractedSip = Number(match.groups?.sipNumber ?? 0);
-        }
-        if (extractedSip === null || extractedSip !== preamble.sip) {
-          context.report({
-            message: 'Preamble header "sip" doesn\'t match the filename number',
-            node,
-          });
-        }
-      }
-
-      // Validate dates
-      HEADER_DATES.forEach((dateHeader) => {
-        if (
-          dateHeader in preamble &&
-          !isValidDate(preamble[dateHeader] as string)
-        ) {
-          context.report({
-            message: `Preamble header \"${dateHeader}\" is not a valid date in ISO 8601 format`,
-            node,
-          });
-        }
-      });
-
-      // Validate proper status
-      if (preamble.status !== undefined && !STATUES.has(preamble.status)) {
-        context.report({
-          message: 'Preamble header "status" is not a valid status',
-          node,
-        });
-      }
-
-      // Validate discussions-to
-      if (
-        preamble["discussions-to"] !== undefined &&
-        !isValidURL(preamble["discussions-to"], ["http", "https"])
-      ) {
-        context.report({
-          message: `Preamble header "discussions-to" is not a valid http/https url`,
-          node,
-        });
-      }
-
-      // Validate updated
-      if (
-        "updated" in preamble &&
-        "created" in preamble &&
-        new Date(preamble.updated!) < new Date(preamble.created!)
-      ) {
-        context.report({
-          message:
-            'Preamble header "updated" is earlier than preamble header "created"',
-          node,
-        });
-      }
-      if (preamble.status === "Living" && !("updated" in preamble)) {
-        context.report({
-          message:
-            'SIP has status of "Living" but doesn\'t have "updated" preamble header',
-          node,
-        });
-      }
-
-      // Validate author
-      if ("author" in preamble) {
-        const authors: string[] = (preamble.author as string).split(",");
-        let hasGithub = false;
-        for (const author of authors) {
-          const match = author.trim().match(AUTHOR);
-          if (match === null) {
-            context.report({
-              message: 'Preamble header "author" is malformed',
-              node,
-            });
-            hasGithub = true;
-            break;
-          }
-          if (match.length >= 2) {
-            hasGithub = true;
-          }
-        }
-        if (!hasGithub) {
-          context.report({
-            message:
-              'Preamble header "author" doesn\'t have at least one github account',
-            node,
-          });
-        }
-      }
-    },
-  }),
-};
-export default descriptor;
+export default rule;
