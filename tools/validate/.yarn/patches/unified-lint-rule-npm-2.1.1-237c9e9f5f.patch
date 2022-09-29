@@ -1,0 +1,13 @@
+diff --git a/lib/index.js b/lib/index.js
+index ac57a60dc789d6f828bccd29dfd8f250a992b74a..0ca39fb04030e3e7064c73f9628abc3ccc324ac4 100644
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -63,7 +63,7 @@ export function lintRule(meta, rule) {
+         }
+
+         while (++index < messages.length) {
+-          Object.assign(messages[index], {ruleId, source, fatal, url})
++          Object.assign(messages[index], {ruleId, source, fatal: messages[index].fatal === null ? null : fatal, url})
+         }
+
+         next()

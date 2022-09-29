@@ -62,3 +62,15 @@ export function* zip<T extends Array<any>>(
     yield results.map(({ value }) => value) as T;
   }
 }
+
+const ISO8601 = /^\d\d\d\d\-\d\d\-\d\d$/;
+
+export function isValidISO8601Date(data: string): boolean {
+  const result = data.match(ISO8601);
+  if (result === null) {
+    return false;
+  }
+  const date = new Date(data);
+  const now = new Date();
+  return date <= now;
+}
