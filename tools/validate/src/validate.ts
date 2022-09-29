@@ -1,30 +1,40 @@
-import remarkFrontMatter, { Root } from "remark-frontmatter";
+import remarkFrontMatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
+import remarkLintHardBreakSpaces from "remark-lint-hard-break-spaces";
+import remarkLintNoDuplicateDefinitions from "remark-lint-no-duplicate-definitions";
+import remarkLintNoHeadingContentIndent from "remark-lint-no-heading-content-indent";
+import remarkLintNoInlinePadding from "remark-lint-no-inline-padding";
+import remarkLintNoShortcutReferenceImage from "remark-lint-no-shortcut-reference-image";
+import remarkLintNoShortcutReferenceLink from "remark-lint-no-shortcut-reference-link";
+import remarkLintNoUndefinedReferences from "remark-lint-no-undefined-references";
+import remarkLintNoUnusedDefinitions from "remark-lint-no-unused-definitions";
 import remarkParse from "remark-parse";
-import { Plugin, Processor, unified } from "unified";
+import { Processor, unified } from "unified";
 import { VFile, VFileCompatible } from "vfile";
-import * as allRules from "./rules/index.js";
-
-const SEVERITY_FATAL = 2;
+import * as sipRules from "./rules/index.js";
 
 const parser = unified()
   .use(remarkParse)
   .use(voidCompiler)
   .use(remarkGfm)
   .use(remarkFrontMatter, "yaml")
+  .use({
+    plugins: [
+      remarkLintHardBreakSpaces,
+      remarkLintNoDuplicateDefinitions,
+      remarkLintNoHeadingContentIndent,
+      remarkLintNoInlinePadding,
+      remarkLintNoShortcutReferenceImage,
+      remarkLintNoShortcutReferenceLink,
+      remarkLintNoUndefinedReferences,
+      remarkLintNoUnusedDefinitions,
+    ],
+  }) // like remark-preset-lint-recommended but only for critical mistakes
+  .use(Object.values(sipRules))
   .freeze();
 
-export function validate(
-  files: VFileCompatible[],
-  rules: Plugin<any, Root, Root>[] = Object.values(allRules)
-): Promise<VFile[]> {
-  const withRules = parser().use(
-    rules.map<[Plugin<any, Root, Root>, [number]]>((rule) => [
-      rule,
-      [SEVERITY_FATAL],
-    ])
-  );
-  return Promise.all(files.map((file) => withRules.process(file)));
+export function validate(files: VFileCompatible[]): Promise<VFile[]> {
+  return Promise.all(files.map((file) => parser.process(file)));
 }
 
 function voidCompiler(this: Processor) {

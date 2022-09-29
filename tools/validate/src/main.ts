@@ -38,9 +38,7 @@ assert(argv.glob !== undefined);
 const filePaths: string[] = argv.glob as unknown as string[]; // Typescript types fail here
 const files = await Promise.all(filePaths.map((path) => read(path)));
 const results = await validate(files);
-const isFatal = results.some((file) =>
-  file.messages.some((message) => message.fatal)
-);
+const isFatal = results.some((file) => file.messages.length);
 
 let output = "";
 for (const reporter of argv.reporter) {
