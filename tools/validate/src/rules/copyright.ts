@@ -1,6 +1,6 @@
-import assert from "assert";
-import { Context } from "../context.js";
-import { AstNode, RuleDescriptor } from "../rule.js";
+import { Root } from "mdast";
+import { lintRule } from "unified-lint-rule";
+import { location } from "vfile-location";
 import { deepContains } from "../utils.js";
 
 const COPYRIGHT_POSTAMBLE = [
@@ -27,25 +27,17 @@ const COPYRIGHT_POSTAMBLE = [
   },
 ];
 
-const descriptor: RuleDescriptor = {
-  meta: {
-    id: "copyright",
-  },
-  create: (context: Context) => ({
-    root: (node: AstNode) => {
-      assert(node.type === "root");
+const rule = lintRule<Root>("sip:copyright", (tree, file) => {
+  if (
+    tree.children.length < 2 ||
+    !deepContains(tree.children.slice(-2), COPYRIGHT_POSTAMBLE)
+  ) {
+    const place = location(file);
+    file.message(
+      "No copyright postamble found or is malformed",
+      place.toPoint(Math.max(file.value.length - 1, 0))
+    );
+  }
+});
 
-      if (
-        node.children.length < 2 ||
-        !deepContains(node.children.slice(-2), COPYRIGHT_POSTAMBLE)
-      ) {
-        return context.report({
-          message: "No copyright postamble found or is malformed",
-          node,
-        });
-      }
-    },
-  }),
-};
-
-export default descriptor;
+export default rule;

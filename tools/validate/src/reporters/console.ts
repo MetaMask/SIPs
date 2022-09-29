@@ -1,19 +1,27 @@
 import chalk from "chalk";
-import { Results } from "../reporter.js";
-import { enumerate } from "../utils.js";
+import { VFile } from "vfile";
 
-export default function (results: Results): string {
+const reporter = (files: VFile[]) => {
   let output = "";
-  for (const file of results) {
-    for (const [i, message] of enumerate(file.messages)) {
+  for (const file of files) {
+    for (const message of file.messages) {
       output +=
         chalk.bold(
           chalk.red(`error`) +
-            `: ${message.message} ` +
-            chalk.gray(`(${message.ruleId})`)
+            `: ${message.reason} ` +
+            chalk.gray(`(${message.source}:${message.ruleId})`)
         ) + "\n";
-      output += `  ➜ ${file.filePath}:${message.line}:${message.column}\n\n`;
+      output += `  ➜ ${file.path}`;
+      if (message.line !== null) {
+        output += `:${message.line}`;
+        if (message.column !== null) {
+          output += `:${message.column}`;
+        }
+      }
+      output += "\n\n";
     }
   }
   return output.slice(undefined, -2); // remove last '\n\n'
-}
+};
+
+export default reporter;
