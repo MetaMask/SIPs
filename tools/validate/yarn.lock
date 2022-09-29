@@ -476,6 +476,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mdast-util-heading-style@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "mdast-util-heading-style@npm:2.0.0"
+  dependencies:
+    "@types/mdast": ^3.0.0
+  checksum: ff34a9943a2cf289455d42a2f63ac254496fa26ba44e47c10ebf8e756fb18c04921d0794b5b80d95721d56b96c93babf794a68c34f102e75194f4900bf61994a
+  languageName: node
+  linkType: hard
+
 "mdast-util-to-markdown@npm:^1.0.0, mdast-util-to-markdown@npm:^1.3.0":
   version: 1.3.0
   resolution: "mdast-util-to-markdown@npm:1.3.0"
@@ -895,6 +904,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pluralize@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "pluralize@npm:8.0.0"
+  checksum: 08931d4a6a4a5561a7f94f67a31c17e6632cb21e459ab3ff4f6f629d9a822984cf8afef2311d2005fbea5d7ef26016ebb090db008e2d8bce39d0a9a9d218736e
+  languageName: node
+  linkType: hard
+
 "remark-frontmatter@npm:^4.0.1":
   version: 4.0.1
   resolution: "remark-frontmatter@npm:4.0.1"
@@ -916,6 +932,120 @@ __metadata:
     micromark-extension-gfm: ^2.0.0
     unified: ^10.0.0
   checksum: 02254f74d67b3419c2c9cf62d799ec35f6c6cd74db25c001361751991552a7ce86049a972107bff8122d85d15ae4a8d1a0618f3bc01a7df837af021ae9b2a04e
+  languageName: node
+  linkType: hard
+
+"remark-lint-hard-break-spaces@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "remark-lint-hard-break-spaces@npm:3.1.1"
+  dependencies:
+    "@types/mdast": ^3.0.0
+    unified: ^10.0.0
+    unified-lint-rule: ^2.0.0
+    unist-util-generated: ^2.0.0
+    unist-util-position: ^4.0.0
+    unist-util-visit: ^4.0.0
+  checksum: 8e84b0c66ef8aefedd0ff36f8ce7bf4db1434ab591f21184d8b922622d9ed2ed6cb8c8d612d4c409cfeed11701a704625f4787b51018ff3e6cb67f66e4f71d10
+  languageName: node
+  linkType: hard
+
+"remark-lint-no-duplicate-definitions@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "remark-lint-no-duplicate-definitions@npm:3.1.1"
+  dependencies:
+    "@types/mdast": ^3.0.0
+    unified: ^10.0.0
+    unified-lint-rule: ^2.0.0
+    unist-util-generated: ^2.0.0
+    unist-util-position: ^4.0.0
+    unist-util-stringify-position: ^3.0.0
+    unist-util-visit: ^4.0.0
+  checksum: a8de885eb64f521429ececfa72ea5d736c3a54c636c1d0c2c9aaf82c28cbb4c33a912d1caae5ae011635d36a40e550fb146be3d637e0968d573dbda465117a97
+  languageName: node
+  linkType: hard
+
+"remark-lint-no-heading-content-indent@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "remark-lint-no-heading-content-indent@npm:4.1.1"
+  dependencies:
+    "@types/mdast": ^3.0.0
+    mdast-util-heading-style: ^2.0.0
+    pluralize: ^8.0.0
+    unified: ^10.0.0
+    unified-lint-rule: ^2.0.0
+    unist-util-generated: ^2.0.0
+    unist-util-position: ^4.0.0
+    unist-util-visit: ^4.0.0
+  checksum: 086eaffdfae19116cda175b0a803c444350f86059e9486d7f1a6b30138d53ff6e0a06c6587942aeff5850b226974be768e244e4b8575fa7b0271b714049b2bfa
+  languageName: node
+  linkType: hard
+
+"remark-lint-no-inline-padding@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "remark-lint-no-inline-padding@npm:4.1.1"
+  dependencies:
+    "@types/mdast": ^3.0.0
+    mdast-util-to-string: ^3.0.0
+    unified: ^10.0.0
+    unified-lint-rule: ^2.0.0
+    unist-util-generated: ^2.0.0
+    unist-util-visit: ^4.0.0
+  checksum: fab21dc8fb4418b1bab16bb1b80742dea44a1ce560d83d6dc6019990a22af6a339c533d1c01d6e04f006ebd5f2875928971bcdb70732c149a5b8deb6e59d17b4
+  languageName: node
+  linkType: hard
+
+"remark-lint-no-shortcut-reference-image@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "remark-lint-no-shortcut-reference-image@npm:3.1.1"
+  dependencies:
+    "@types/mdast": ^3.0.0
+    unified: ^10.0.0
+    unified-lint-rule: ^2.0.0
+    unist-util-generated: ^2.0.0
+    unist-util-visit: ^4.0.0
+  checksum: 8ad48be913dac09b9c1f78c1a5b91b98684d1ae93e3d4a78aad19ec5ffaa17172114c2ccaf947b256a510e26e80d72255df859159f621b4e13bcac8003c2c59d
+  languageName: node
+  linkType: hard
+
+"remark-lint-no-shortcut-reference-link@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "remark-lint-no-shortcut-reference-link@npm:3.1.1"
+  dependencies:
+    "@types/mdast": ^3.0.0
+    unified: ^10.0.0
+    unified-lint-rule: ^2.0.0
+    unist-util-generated: ^2.0.0
+    unist-util-visit: ^4.0.0
+  checksum: c3b78bc0cbce6551dc47f4beda7e2e5c6a5f1f22e895d1d11865897c13f6105cd458a4b11a75576b503e2cff82b9d8de763326344323d6058a45b4b3114b018b
+  languageName: node
+  linkType: hard
+
+"remark-lint-no-undefined-references@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "remark-lint-no-undefined-references@npm:4.2.0"
+  dependencies:
+    "@types/mdast": ^3.0.0
+    micromark-util-normalize-identifier: ^1.0.0
+    unified: ^10.0.0
+    unified-lint-rule: ^2.0.0
+    unist-util-generated: ^2.0.0
+    unist-util-position: ^4.0.0
+    unist-util-visit: ^4.0.0
+    vfile-location: ^4.0.0
+  checksum: effedeb3f06dab28f6d8e7dbb664d18215eff328b3ee2a29b6061d54f4a825b571003d976d6daa3d04df332c66755c31a78b62da61679c2cc164bb4cfcca2942
+  languageName: node
+  linkType: hard
+
+"remark-lint-no-unused-definitions@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "remark-lint-no-unused-definitions@npm:3.1.1"
+  dependencies:
+    "@types/mdast": ^3.0.0
+    unified: ^10.0.0
+    unified-lint-rule: ^2.0.0
+    unist-util-generated: ^2.0.0
+    unist-util-visit: ^4.0.0
+  checksum: 959e5d4e508c9265a846a3a23256f15f47a7f5bbed22f5c9494e190cd117ef3a44dbe429d2e53bf801d3bd1116549386be0c68c6ff4ee641d62fbb944fe775a1
   languageName: node
   linkType: hard
 
@@ -1014,7 +1144,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unified-lint-rule@npm:^2.1.1":
+"unified-lint-rule@npm:^2.0.0, unified-lint-rule@npm:^2.1.1":
   version: 2.1.1
   resolution: "unified-lint-rule@npm:2.1.1"
   dependencies:
@@ -1041,10 +1171,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"unist-util-generated@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "unist-util-generated@npm:2.0.0"
+  checksum: 3a806793fa24a75190c217740ce706340d6cb0d51eff677134253d628f8e4355ebd8a243fe8045c583463f6bebfd50f902d653161da87c1359fcd1a14b99c8e0
+  languageName: node
+  linkType: hard
+
 "unist-util-is@npm:^5.0.0":
   version: 5.1.1
   resolution: "unist-util-is@npm:5.1.1"
   checksum: e8743a19a304d8a8f5684f3e5ddb5546f2655847b42123687277d76566a2aba89beb7b4a8a9e9ebc4d904cd1cecc285356d7923d973a43cfc19a1e10ff6bdee4
+  languageName: node
+  linkType: hard
+
+"unist-util-position@npm:^4.0.0":
+  version: 4.0.3
+  resolution: "unist-util-position@npm:4.0.3"
+  dependencies:
+    "@types/unist": ^2.0.0
+  checksum: 0d89973628d40f19345cbcc50008f7f56d411afa54434bbe6c224b22d26aaf9d4500da2de363f1f01945acab1f1c31920c514253149eb546ff9b8bbc1ea94209
   languageName: node
   linkType: hard
 
@@ -1105,6 +1251,14 @@ __metadata:
     mdast: ^3.0.0
     remark-frontmatter: ^4.0.1
     remark-gfm: ^3.0.1
+    remark-lint-hard-break-spaces: ^3.1.1
+    remark-lint-no-duplicate-definitions: ^3.1.1
+    remark-lint-no-heading-content-indent: ^4.1.1
+    remark-lint-no-inline-padding: ^4.1.1
+    remark-lint-no-shortcut-reference-image: ^3.1.1
+    remark-lint-no-shortcut-reference-link: ^3.1.1
+    remark-lint-no-undefined-references: ^4.2.0
+    remark-lint-no-unused-definitions: ^3.1.1
     remark-parse: ^10.0.1
     rimraf: ^3.0.2
     to-vfile: ^7.2.3
@@ -1120,7 +1274,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"vfile-location@npm:^4.0.1":
+"vfile-location@npm:^4.0.0, vfile-location@npm:^4.0.1":
   version: 4.0.1
   resolution: "vfile-location@npm:4.0.1"
   dependencies:
