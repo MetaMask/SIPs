@@ -5,6 +5,22 @@ __metadata:
   version: 6
   cacheKey: 8
 
+"@kwsites/file-exists@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@kwsites/file-exists@npm:1.1.1"
+  dependencies:
+    debug: ^4.1.1
+  checksum: 4ff945de7293285133aeae759caddc71e73c4a44a12fac710fdd4f574cce2671a3f89d8165fdb03d383cfc97f3f96f677d8de3c95133da3d0e12a123a23109fe
+  languageName: node
+  linkType: hard
+
+"@kwsites/promise-deferred@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@kwsites/promise-deferred@npm:1.1.1"
+  checksum: 07455477a0123d9a38afb503739eeff2c5424afa8d3dbdcc7f9502f13604488a4b1d9742fc7288832a52a6422cf1e1c0a1d51f69a39052f14d27c9a0420b6629
+  languageName: node
+  linkType: hard
+
 "@types/debug@npm:^4.0.0":
   version: 4.1.7
   resolution: "@types/debug@npm:4.1.7"
@@ -188,7 +204,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:^4.0.0, debug@npm:^4.3.4":
+"debug@npm:^4.0.0, debug@npm:^4.1.1, debug@npm:^4.3.4":
   version: 4.3.4
   resolution: "debug@npm:4.3.4"
   dependencies:
@@ -1087,6 +1103,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"simple-git@npm:^3.14.1":
+  version: 3.14.1
+  resolution: "simple-git@npm:3.14.1"
+  dependencies:
+    "@kwsites/file-exists": ^1.1.1
+    "@kwsites/promise-deferred": ^1.1.1
+    debug: ^4.3.4
+  checksum: f9d2282e1483f8f42325a7e80803389eb540101a88968bf9fd277c1eade8621d4c24dcf2677be5d611df8716934fb4c9676356052ac03e2fcec7517b4b922e8b
+  languageName: node
+  linkType: hard
+
 "string-width@npm:^4.1.0, string-width@npm:^4.2.0, string-width@npm:^4.2.3":
   version: 4.2.3
   resolution: "string-width@npm:4.2.3"
@@ -1144,7 +1171,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unified-lint-rule@npm:^2.0.0, unified-lint-rule@npm:^2.1.1":
+"unified-lint-rule@npm:2.1.1, unified-lint-rule@npm:^2.0.0":
   version: 2.1.1
   resolution: "unified-lint-rule@npm:2.1.1"
   dependencies:
@@ -1153,6 +1180,18 @@ __metadata:
     unified: ^10.0.0
     vfile: ^5.0.0
   checksum: 224cd0a89396d560674d7caac8cc9b52e89912954e83a4b940efadb3c41b34e5f6602c0d79f801a18666cf01427b1c6a09cf50abeb0f2b84f5c9d3b647885435
+  languageName: node
+  linkType: hard
+
+"unified-lint-rule@patch:unified-lint-rule@npm:2.1.1#.yarn/patches/unified-lint-rule-npm-2.1.1-237c9e9f5f.patch::locator=validate%40workspace%3A.":
+  version: 2.1.1
+  resolution: "unified-lint-rule@patch:unified-lint-rule@npm%3A2.1.1#.yarn/patches/unified-lint-rule-npm-2.1.1-237c9e9f5f.patch::version=2.1.1&hash=1d2aaa&locator=validate%40workspace%3A."
+  dependencies:
+    "@types/unist": ^2.0.0
+    trough: ^2.0.0
+    unified: ^10.0.0
+    vfile: ^5.0.0
+  checksum: d74718a8d23858a7480e912ed100d0bbb0b914cbc5f95a4ceef794488ffef4a9d2a80236d57ee669beced39c49f16a988d6520b910ce2f8d1e6b2145c0f4be9a
   languageName: node
   linkType: hard
 
@@ -1213,6 +1252,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"unist-util-visit-parents@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "unist-util-visit-parents@npm:5.1.1"
+  dependencies:
+    "@types/unist": ^2.0.0
+    unist-util-is: ^5.0.0
+  checksum: c699d18f5b26461dee37612b84c243fd5457c98f4c0540d9ba8bee05062aece5f3b4fb1af6b07423ce6750d8926e8c01fc2b1a4de1e54925ef6795c177ed8e18
+  languageName: node
+  linkType: hard
+
 "unist-util-visit@npm:^4.0.0":
   version: 4.1.0
   resolution: "unist-util-visit@npm:4.1.0"
@@ -1221,6 +1270,17 @@ __metadata:
     unist-util-is: ^5.0.0
     unist-util-visit-parents: ^5.0.0
   checksum: 3521abee2ed4535092aac073d05f46255475c89781b8e9d8c951a473d91b5d6e4d5912ae4a68a4c1cf17a42ed0108cb93103c7f5c736977529969997451363fb
+  languageName: node
+  linkType: hard
+
+"unist-util-visit@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "unist-util-visit@npm:4.1.1"
+  dependencies:
+    "@types/unist": ^2.0.0
+    unist-util-is: ^5.0.0
+    unist-util-visit-parents: ^5.1.1
+  checksum: c4a63734b0a5b439c62d20901bb472bdafdbbcd80c383e254aedeb98b23d0bae815a331e776ce7d63ea3c8018a54318abb8709d07cdf7dd094f79b2f07bb39f0
   languageName: node
   linkType: hard
 
@@ -1261,10 +1321,12 @@ __metadata:
     remark-lint-no-unused-definitions: ^3.1.1
     remark-parse: ^10.0.1
     rimraf: ^3.0.2
+    simple-git: ^3.14.1
     to-vfile: ^7.2.3
     typescript: ^4.7.3
     unified: ^10.1.2
-    unified-lint-rule: ^2.1.1
+    unified-lint-rule: "patch:unified-lint-rule@npm:2.1.1#.yarn/patches/unified-lint-rule-npm-2.1.1-237c9e9f5f.patch"
+    unist-util-visit: ^4.1.1
     vfile: ^5.3.5
     vfile-location: ^4.0.1
     yaml: ^2.1.1

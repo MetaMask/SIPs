@@ -7,7 +7,7 @@ const reporter = (files: VFile[]) => {
     for (const message of file.messages) {
       output +=
         chalk.bold(
-          chalk.red(`error`) +
+          (message.fatal === null ? chalk.blue("info") : chalk.red("error")) +
             `: ${message.reason} ` +
             chalk.gray(`(${message.source}:${message.ruleId})`)
         ) + "\n";
@@ -18,6 +18,13 @@ const reporter = (files: VFile[]) => {
           output += `:${message.column}`;
         }
       }
+      let at: any = message;
+      do {
+        if (at.stack) {
+          output += chalk.gray("\n" + at.stack + "\n---");
+        }
+        at = at.cause;
+      } while (at && at.cause !== undefined);
       output += "\n\n";
     }
   }

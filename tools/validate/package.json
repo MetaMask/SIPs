@@ -36,12 +36,17 @@
     "remark-lint-no-undefined-references": "^4.2.0",
     "remark-lint-no-unused-definitions": "^3.1.1",
     "remark-parse": "^10.0.1",
+    "simple-git": "^3.14.1",
     "to-vfile": "^7.2.3",
     "unified": "^10.1.2",
-    "unified-lint-rule": "^2.1.1",
+    "unified-lint-rule": "patch:unified-lint-rule@npm:2.1.1#.yarn/patches/unified-lint-rule-npm-2.1.1-237c9e9f5f.patch",
+    "unist-util-visit": "^4.1.1",
     "vfile": "^5.3.5",
     "vfile-location": "^4.0.1",
     "yaml": "^2.1.1",
     "yargs": "^17.5.1"
+  },
+  "resolutions": {
+    "unified-lint-rule@2.1.1": "patch:unified-lint-rule@npm:2.1.1#.yarn/patches/unified-lint-rule-npm-2.1.1-237c9e9f5f.patch"
   }
 }

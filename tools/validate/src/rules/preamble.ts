@@ -4,6 +4,7 @@ import { Root } from "mdast";
 import { lintRule } from "unified-lint-rule";
 import { URL } from "url";
 import YAML from "yaml";
+import { isValidISO8601Date } from "../utils.js";
 
 const debug = Debug("validate:rule:preamble");
 
@@ -57,7 +58,6 @@ const STATUES = new Set([
   "Withdrawn",
   "Living",
 ]);
-const ISO8601 = /^\d\d\d\d\-\d\d\-\d\d$/;
 const HEADERS_REGEX = /^([a-z]+):.+$/m;
 
 const GITHUB_USERNAME = String.raw`[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}`;
@@ -67,16 +67,6 @@ const AUTHOR = new RegExp(
 );
 
 const EXTRACT_PATH_SIP = /sip-(?<sipNumber>[1-9][0-9]*)\.md$/;
-
-function isValidDate(data: string): boolean {
-  const result = data.match(ISO8601);
-  if (result === null) {
-    return false;
-  }
-  const date = new Date(data);
-  const now = new Date();
-  return date <= now;
-}
 
 interface Preamble {
   sip?: number;
@@ -197,7 +187,7 @@ const rule = lintRule<Root>("sip:preamble", (tree, file) => {
   HEADER_DATES.forEach((dateHeader) => {
     if (
       dateHeader in preamble &&
-      !isValidDate(preamble[dateHeader] as string)
+      !isValidISO8601Date(preamble[dateHeader] as string)
     ) {
       file.message(
         `Preamble header \"${dateHeader}\" is not a valid date in ISO 8601 format`,
