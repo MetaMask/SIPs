@@ -11,6 +11,7 @@ import remarkLintNoUnusedDefinitions from "remark-lint-no-unused-definitions";
 import remarkParse from "remark-parse";
 import { Processor, unified } from "unified";
 import { VFile, VFileCompatible } from "vfile";
+import parseYaml from "./plugins/parseYaml.js";
 import * as sipRules from "./rules/index.js";
 
 const parser = unified()
@@ -18,6 +19,7 @@ const parser = unified()
   .use(voidCompiler)
   .use(remarkGfm)
   .use(remarkFrontMatter, "yaml")
+  .use(parseYaml)
   .use({
     plugins: [
       remarkLintHardBreakSpaces,

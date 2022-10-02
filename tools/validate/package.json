@@ -37,6 +37,7 @@
     "remark-lint-no-unused-definitions": "^3.1.1",
     "remark-parse": "^10.0.1",
     "simple-git": "^3.14.1",
+    "superstruct": "^0.16.5",
     "to-vfile": "^7.2.3",
     "unified": "^10.1.2",
     "unified-lint-rule": "patch:unified-lint-rule@npm:2.1.1#.yarn/patches/unified-lint-rule-npm-2.1.1-237c9e9f5f.patch",

@@ -36,7 +36,7 @@ const argv = await yargs(hideBin(process.argv))
 assert(argv.glob !== undefined);
 
 const filePaths: string[] = argv.glob as unknown as string[]; // Typescript types fail here
-if (filePaths.length) {
+if (!filePaths.length) {
   debug("No files analyzed");
 }
 const files = await Promise.all(filePaths.map((path) => read(path)));

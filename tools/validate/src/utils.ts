@@ -74,3 +74,18 @@ export function isValidISO8601Date(data: string): boolean {
   const now = new Date();
   return date <= now;
 }
+
+export function isValidURL(url: string, protocols?: string[]): boolean {
+  try {
+    const parsed = new URL(url);
+    return protocols === undefined
+      ? true
+      : protocols.includes(parsed.protocol.slice(0, -1)); // remove ':' at end
+  } catch (e) {
+    return false;
+  }
+}
+
+export function lowercaseFirst(string: string) {
+  return string.charAt(0).toLowerCase() + string.slice(1);
+}
