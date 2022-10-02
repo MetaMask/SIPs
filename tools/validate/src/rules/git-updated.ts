@@ -3,7 +3,7 @@ import { Root } from "mdast";
 import simpleGit from "simple-git";
 import { lintRule } from "unified-lint-rule";
 import { EXIT, visit } from "unist-util-visit";
-import YAML from "yaml";
+import { isParsed } from "../plugins/parseYaml.js";
 import { isValidISO8601Date } from "../utils.js";
 const debug = Debug("validate:rule:git-updated");
 
@@ -19,7 +19,7 @@ const rule = lintRule<Root>(
       }
       if ((await git.revparse("--is-shallow-repository")) === "true") {
         file.info(
-          "The file is located in shallow repository. Can't get correct last edited time"
+          "File is located in shallow repository. Can't get correct last edited time"
         );
         return end();
       }
@@ -36,19 +36,17 @@ const rule = lintRule<Root>(
 
       visit(tree, "yaml", (node): typeof EXIT => {
         (async () => {
-          let preamble;
-          try {
-            preamble = YAML.parse(node.value);
-          } catch (e) {
-            debug("Invalid preamble, silently dropping", e);
+          if (!isParsed(node)) {
+            debug("Invalid preamble, silently dropping");
             return end();
           }
+          const preamble = node.data.parsed;
           if (!("updated" in preamble)) {
             debug('No "updated" preamble property, silently dropping');
             return end();
           }
           if (!isValidISO8601Date(preamble.updated)) {
-            debug("updated property is not a valid date, silently dropping");
+            debug('"updated" property is not a valid date, silently dropping');
             return end();
           }
           if (new Date(preamble.updated) < new Date(gitDate.latest!.date)) {
