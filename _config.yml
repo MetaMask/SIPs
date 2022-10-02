@@ -45,3 +45,4 @@ defaults:
 
 exclude:
   - sip-template.md
+  - tools/
