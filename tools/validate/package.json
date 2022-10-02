@@ -41,6 +41,7 @@
     "to-vfile": "^7.2.3",
     "unified": "^10.1.2",
     "unified-lint-rule": "patch:unified-lint-rule@npm:2.1.1#.yarn/patches/unified-lint-rule-npm-2.1.1-237c9e9f5f.patch",
+    "unist-util-select": "^4.0.1",
     "unist-util-visit": "^4.1.1",
     "vfile": "^5.3.5",
     "vfile-location": "^4.0.1",

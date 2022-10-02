@@ -130,6 +130,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"boolbase@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "boolbase@npm:1.0.0"
+  checksum: 3e25c80ef626c3a3487c73dbfc70ac322ec830666c9ad915d11b701142fab25ec1e63eff2c450c74347acfd2de854ccde865cd79ef4db1683f7c7b046ea43bb0
+  languageName: node
+  linkType: hard
+
 "brace-expansion@npm:^1.1.7":
   version: 1.1.11
   resolution: "brace-expansion@npm:1.1.11"
@@ -201,6 +208,13 @@ __metadata:
   version: 0.0.1
   resolution: "concat-map@npm:0.0.1"
   checksum: 902a9f5d8967a3e2faf138d5cb784b9979bad2e6db5357c5b21c568df4ebe62bcb15108af1b2253744844eb964fc023fbd9afbbbb6ddd0bcc204c6fb5b7bf3af
+  languageName: node
+  linkType: hard
+
+"css-selector-parser@npm:^1.0.0":
+  version: 1.4.1
+  resolution: "css-selector-parser@npm:1.4.1"
+  checksum: 31948754e579eedb918c2fb2d5a4c643ec769ff4a0d03a7bd10b43b25d44973f8cbe86d7ec00c4494269f7ff38b3d2ab0f6ea801cece0ef0974e74469dff770c
   languageName: node
   linkType: hard
 
@@ -904,6 +918,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nth-check@npm:^2.0.0":
+  version: 2.1.1
+  resolution: "nth-check@npm:2.1.1"
+  dependencies:
+    boolbase: ^1.0.0
+  checksum: 5afc3dafcd1573b08877ca8e6148c52abd565f1d06b1eb08caf982e3fa289a82f2cae697ffb55b5021e146d60443f1590a5d6b944844e944714a5b549675bcd3
+  languageName: node
+  linkType: hard
+
 "once@npm:^1.3.0":
   version: 1.4.0
   resolution: "once@npm:1.4.0"
@@ -1240,6 +1263,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"unist-util-select@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "unist-util-select@npm:4.0.1"
+  dependencies:
+    "@types/unist": ^2.0.0
+    css-selector-parser: ^1.0.0
+    nth-check: ^2.0.0
+    unist-util-is: ^5.0.0
+    zwitch: ^2.0.0
+  checksum: da9a69edf03d0c1a633945aae2ddf7153b4d75ff9d51085c55bf742ac0a13df327e6f2925abe863dfb6c451a8865838f28dd029cfb841356b18df56cf8872877
+  languageName: node
+  linkType: hard
+
 "unist-util-stringify-position@npm:^3.0.0":
   version: 3.0.2
   resolution: "unist-util-stringify-position@npm:3.0.2"
@@ -1334,6 +1370,7 @@ __metadata:
     typescript: ^4.7.3
     unified: ^10.1.2
     unified-lint-rule: "patch:unified-lint-rule@npm:2.1.1#.yarn/patches/unified-lint-rule-npm-2.1.1-237c9e9f5f.patch"
+    unist-util-select: ^4.0.1
     unist-util-visit: ^4.1.1
     vfile: ^5.3.5
     vfile-location: ^4.0.1

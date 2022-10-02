@@ -1,66 +1,58 @@
 import Debug from "debug";
 import { Root } from "mdast";
 import simpleGit from "simple-git";
+import { is, pick } from "superstruct";
 import { lintRule } from "unified-lint-rule";
-import { EXIT, visit } from "unist-util-visit";
-import { isParsed } from "../plugins/parseYaml.js";
-import { isValidISO8601Date } from "../utils.js";
+import { select } from "unist-util-select";
+import { ParsedYaml } from "../plugins/parseYaml.js";
+import { Preamble } from "./preamble-data.js";
 const debug = Debug("validate:rule:git-updated");
 
-const rule = lintRule<Root>(
-  "sip:git-updated",
-  (tree, file) =>
-    new Promise(async (end) => {
-      const git = simpleGit(file.cwd);
+const Updated = pick(Preamble, ["updated"]);
 
-      if (!(await git.checkIsRepo())) {
-        file.info("The file is not in a git repository");
-        return end();
-      }
-      if ((await git.revparse("--is-shallow-repository")) === "true") {
-        file.info(
-          "File is located in shallow repository. Can't get correct last edited time"
-        );
-        return end();
-      }
+const rule = lintRule<Root>("sip:git-updated", async (tree, file) => {
+  const node = select("parsedYaml", tree) as ParsedYaml | null;
+  if (!node) {
+    return;
+  }
+  if (!is(node.data.parsed, Updated)) {
+    debug("Malformed preamble, silently dropping");
+    return;
+  }
+  const updated = node.data.parsed.updated;
+  if (updated === undefined) {
+    return;
+  }
 
-      const gitDate = await git.log({
-        format: { date: "%as" },
-        file: file.path,
-        maxCount: 1,
-      });
-      if (gitDate.latest === null) {
-        file.info("File is not committed to git repository");
-        return end();
-      }
+  const git = simpleGit(file.cwd);
 
-      visit(tree, "yaml", (node): typeof EXIT => {
-        (async () => {
-          if (!isParsed(node)) {
-            debug("Invalid preamble, silently dropping");
-            return end();
-          }
-          const preamble = node.data.parsed;
-          if (!("updated" in preamble)) {
-            debug('No "updated" preamble property, silently dropping');
-            return end();
-          }
-          if (!isValidISO8601Date(preamble.updated)) {
-            debug('"updated" property is not a valid date, silently dropping');
-            return end();
-          }
-          if (new Date(preamble.updated) < new Date(gitDate.latest!.date)) {
-            file.message(
-              'The "updated" preamble property is older than last git updated time',
-              node
-            );
-          }
-          return end();
-        })();
+  if (!(await git.checkIsRepo())) {
+    file.info("The file is not in a git repository");
+    return;
+  }
+  if ((await git.revparse("--is-shallow-repository")) === "true") {
+    file.info(
+      "File is located in shallow repository. Can't get correct last edited time"
+    );
+    return;
+  }
+  const result = await git.log({
+    format: { date: "%as" },
+    file: file.path,
+    maxCount: 1,
+  });
+  const gitDate = result.latest;
+  if (gitDate === null) {
+    file.info("File is not committed to git repository");
+    return;
+  }
 
-        return EXIT;
-      });
-    })
-);
+  if (new Date(updated) < new Date(gitDate.date)) {
+    file.message(
+      'The "updated" preamble property is older than last git updated time',
+      node
+    );
+  }
+});
 
 export default rule;
