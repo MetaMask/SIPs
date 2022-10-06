@@ -27,10 +27,10 @@ const rule = lintRule<Root>("sip:preamble-filename", (tree, file) => {
   let extractedSip: number | undefined = undefined;
   if (match !== null && match !== undefined) {
     assert(match.groups?.sipNumber !== undefined);
-    extractedSip = Number(match.groups?.sipNumber);
+    extractedSip = Number(match.groups.sipNumber);
   }
 
-  if (extractedSip === null || extractedSip !== node.data.parsed.sip) {
+  if (extractedSip !== node.data.parsed.sip) {
     file.message(
       'Front-matter property "sip" doesn\'t match the filename number',
       node
