@@ -84,9 +84,7 @@ type Json =
 
 ### DApp Developer
 
-The wallet implementation SHOULD support [WalletConnect v2.0](https://docs.walletconnect.com/2.0/) protocol.
-
-Wallet MAY also inject into DApp a global provider `window.blockchain` that directly communicates with the wallet instead of using relay servers of WalletConnect v2.0. The optional provider MUST minimally implement following API:
+Wallet MUST support DApp to snap communication. This SIP deprecates the use of `window.ethereum` injected provider in lieu of a new, multi-chain API specified below.
 
 ```typescript
 interface Namespace {
@@ -109,9 +107,6 @@ interface ConnectArguments {
   };
 }
 
-/**
- * One of events requested in the snap manifest.
- */
 interface Event {
   name: string;
   data: unknown;
@@ -134,15 +129,17 @@ interface Provider {
   removeListener(eventName: string, listener: Function): this;
   removeAllListeners(eventName: string): this;
 }
-
-declare global {
-  const blockchain: Provider;
-}
 ```
 
-The above API is a minimal API based on WalletConnect v2.0 Sign API, that skips the bridge server functionality and is transport protocol independent. All operations SHOULD behave the same as WalletConnect v2.0.
+The above API is a minimal API based on [WalletConnect v2.0 Sign](https://docs.walletconnect.com/2.0/introduction/sign) API, that skips the bridge server functionality and is transport protocol independent. All operations SHOULD behave the same as WalletConnect v2.0.
 
-The wallet MUST support at least one of WalletConnect v2.0 or the injected provider.
+- `Provider.connect` - Establishes connection with the wallet.
+  - `.approval` - Requests user approval for connection.
+- `Session.namespaces` - Returned namespaces MAY differ from the ones requested by the DApp.
+
+The wallet MUST support at least one of WalletConnect v2.0 or a provider with the above API.
+
+> See [Appendix I](#appendix-i-metamask-support) for MetaMask specific implementation.
 
 ### Application Routing
 
@@ -219,13 +216,13 @@ The interface for the exported object is as follows
 
 ```typescript
 interface SnapKeyring {
-  getAccounts(): Promise<AccountId[]>;
   handleRequest(data: {
     chainId: ChainId;
     origin: string;
     request: RequestArguments;
   }): Promise<Json>;
-  on(
+
+  on?(
     data: {
       chainId: ChainId;
       origin: string;
@@ -233,7 +230,9 @@ interface SnapKeyring {
     },
     listener: (...args: unknown[]) => void
   ): void;
-  off(data: { chainId: ChainId; origin: string; eventName: string }): void;
+  off?(data: { chainId: ChainId; origin: string; eventName: string }): void;
+
+  getAccounts?(): Promise<AccountId[]>;
 
   addAccount?(chainId: ChainId): Promise<AccountId>;
   removeAccount?(accountId: AccountId): Promise<void>;
@@ -244,16 +243,18 @@ interface SnapKeyring {
 ```
 
 - Required
-  - `getAccounts()` - Returns a list of all managed accounts of all supported chains.
   - `handleRequest()` - The main way DApps can communicate with the snap. The returned data MUST be JSON serializable.
+- DApp events
   - `on()` - The wallet will use this function to register callbacks for events declared in permission specification. The wallet SHALL register at most one listener per each unique `[origin, chainId, eventName]` tuple.
   - `off()` - The wallet will use this function to unsubscribe from events registered using `on()`.
-- Creation
-  - `addAccounts?()` - Creates new account.
-  - `removeAccount?()` - Removes specific account.
-- Importing
-  - `importAccount?()` - Imports an account of supported chain type into the keyring. The data is Snap-specific. The data format MUST be JSON serializable, and SHOULD be in the same format as the one returned from `exportAccount()`.
-  - `exportAccount?()` - Returns snap-specific data that, on its own, is enough to recreate that specific account. The data format MUST be JSON serializable, and SHOULD be the same as one passed to `importAccount()`.
+- UI hooks
+  - `getAccounts()` - Returns a list of all managed accounts of all supported chains.
+  - Creation
+    - `addAccounts?()` - Creates new account.
+    - `removeAccount?()` - Removes specific account.
+  - Importing
+    - `importAccount?()` - Imports an account of supported chain type into the keyring. The data is Snap-specific. The data format MUST be JSON serializable, and SHOULD be in the same format as the one returned from `exportAccount()`.
+    - `exportAccount?()` - Returns snap-specific data that, on its own, is enough to recreate that specific account. The data format MUST be JSON serializable, and SHOULD be the same as one passed to `importAccount()`.
 
 The snaps SHOULD implement all methods inside a specific group that it wants to support (such as "Creation"), instead of implementing only some methods. The wallet MAY disable functionality of a specific group if not all methods inside that group are implemented by the snap.
 
@@ -274,6 +275,10 @@ The implementation MAY also hold its own copy of accounts of a snap to avoid mul
 ## History
 
 The Keyring interface has been inspired by Keyring protocol used in Metamask.
+
+## Appendix I: MetaMask support
+
+MetaMask has introduced an NPM package [`@metamask/multichain-provider`](https://www.npmjs.com/package/@metamask/multichain-provider) that implements the provider interface [specified above](#manifest).
 
 ## Copyright
 
