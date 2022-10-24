@@ -65,16 +65,20 @@ interface JWTPayload {
   iat?: number;
   [claims: string]: any;
 }
-
-type HashingFunction = (data: string | Uint32Array) => string | Uint32Array;
 ```
 
 ### JWT Signing Implementation
 
 This implementation is modeled after implementations from libraries [did-jwt](https://github.com/decentralized-identity/did-jwt) and [jose](https://github.com/panva/jose).
 
+All hash functions that are implemented in the library [ethereum-cryptography](https://github.com/ethereum/js-ethereum-cryptography) are supported, e.g., SHA256, SHA512, and keccak256.
+
 ```typescript
 import * as u8a from "uint8arrays";
+const { sha256 } = require("ethereum-cryptography/sha256");
+const { keccak256 } = require("ethereum-cryptography/keccak");
+// import other hash functions
+const { utf8ToBytes } = require("ethereum-cryptography/utils");
 
 function hexToBytes(s: string): Uint8Array {
   const input = s.startsWith("0x") ? s.substring(2) : s;
@@ -97,7 +101,7 @@ export async function createJWT(
   header: Partial<JWTHeader> = {},
   payload: Partial<JWTPayload> = {},
   address: string,
-  hashingFunction: HashingFucntion
+  hashFunction: string
 ): Promise<string> {
   if (!header.typ) header.typ = "JWT";
     
@@ -105,11 +109,21 @@ export async function createJWT(
   const signingInput: string = [encodeSection(header), encodedPayload].join(
     "."
   );
+  const bytes: Uint8Array = utf8ToBytes(signingInput);
 
-  const hash = hashingFunction(signingInput);
-  const bytes = hexToBytes(hash);
+  let hash: Uint8Array;
 
-  let signature = /* eth_sign MetaMask RPC method that creates the signature (showing the user header and payload that will be signed) */;
+  switch(hashFunction) {
+    case 'sha256':
+      hash = sha256(bytes);
+      break;
+    case 'keccak256':
+      hash = keccak256(bytes);
+      break;
+    ... // other hash functions
+  }
+
+  let signature = sign(hash);  // Function sign can be the same as the MetaMask RPC method eth_sign. The header and payload that will be signed MUST be shown to the user.
   signature = hexToBytes(signature.slice(0, -2)); // remove byte appended by MetaMask
   const encodedSignature = bytesToBase64url(signature);
 
@@ -122,8 +136,6 @@ export async function createJWT(
 Any snap that needs the capability of creating JWTs can do that by calling the JSON-RPC method in the following way:
 
 ```typescript
-import {sha256} from 'js-sha256';
-
 const jwt = await wallet.request({
   method: 'snap_signJwt',
   params: [
@@ -140,7 +152,7 @@ const jwt = await wallet.request({
             "role": "employee"
         },
       address: '0x12345...',
-      hashingFunction: sha256 // a custom hashing function can be used instead
+      hashFunction: 'sha256'
     },
   ],
 });
@@ -152,7 +164,7 @@ Example of signed JWT:
 
 ```eyJhbGciOiJFUzI1NksiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJDb21wYW55Iiwic3ViIjoiQWxpY2UiLCJyb2xlIjoiZW1wbG95ZWUifQ.E_QJXlLHIgO6xifadQRcsPty2LounknXq_O7HK3c1kZ0jGAG0pXgyAmkjqvpBtLsLNLonj3ilrrUEe5I_n9Clw```
 
-In the example above, the header contains fields ``alg`` and ``typ``. Algorithm ``ES256K`` uses the elliptic curve ``secp256k1`` (used in Ethereum) and hashing algorithm SHA-256.
+In the example above, the header contains fields ``alg`` and ``typ``. Algorithm ``ES256K`` uses the elliptic curve ``secp256k1`` (used in Ethereum) and hash function SHA256.
 
 ```json 
 {
