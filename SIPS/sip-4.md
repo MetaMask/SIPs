@@ -89,7 +89,7 @@ The snap's `package.json` MUST adhere to `package.json` schema as [defined by th
 
 ### HTTP / HTTPS
 
-> Test vectors for HTTP are considered the same expect the differing scheme
+> Test vectors for HTTP are considered the same except the differing scheme
 
 - `https://localhost:8080`
   - `scheme` - `https`
