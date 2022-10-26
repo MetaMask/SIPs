@@ -1,7 +1,7 @@
 ---
 sip: 4
 title: Merging of snap.manifest.json and package.json
-status: Draft
+status: Review
 discussions-to: https://github.com/MetaMask/SIPs/discussions/51
 author: Olaf Tomalka (@ritave)
 created: 2022-09-23
