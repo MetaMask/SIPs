@@ -42,7 +42,7 @@
             },
             "hash": {
               "description": "The actual checksum hash",
-              "type": "string",
+              "$ref": "#/$defs/base64",
               "minLength": 44,
               "maxLength": 44
             }
@@ -57,6 +57,12 @@
           "type": "string"
         }
       }
+    }
+  },
+  "$defs": {
+    "base64": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+\\/]*={0,2}$"
     }
   }
 }
