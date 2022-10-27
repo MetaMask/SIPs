@@ -2,7 +2,7 @@
 sip: 6
 title: Deterministic Snap-specific entropy
 status: Draft
-discussions-to: (Http/Https URL)
+discussions-to: https://github.com/MetaMask/SIPs/discussions/69
 author: Maarten Zuidhoorn (@Mrtenz)
 created: 2022-10-27
 ---
