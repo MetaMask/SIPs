@@ -2,7 +2,7 @@
 sip: 7
 title: Snaps UI
 status: Draft
-discussions-to (*optional): (Http/Https URL)
+discussions-to: https://github.com/MetaMask/SIPs/discussions/71
 author: Frederik Bolding (@FrederikBolding), Maarten Zuidhoorn (@Mrtenz)
 created: 2022-10-27
 ---
@@ -305,4 +305,4 @@ export const onUserInput = async ({ event, id }) => {
 
 ## Copyright
 
-Copyright and related rights waived via [CC0](https://github.com/MetaMask/SIPs/blob/main/LICENSE).
+Copyright and related rights waived via [CC0](../LICENSE).
