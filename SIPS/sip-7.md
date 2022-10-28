@@ -274,7 +274,7 @@ export const onRpcRequest = async () => {
     method: 'snap_updateInterface',
     params: {
       id,
-      json: {
+      ui: {
         type: 'panel',
         children: [
           /* Some components based on the `data`. */
@@ -297,7 +297,7 @@ export const onUserInput = async ({ event, id }) => {
     method: 'snap_resolveInterface',
     params: {
       id,
-      result: 'foo',
+      value: 'foo',
     },
   });
 };
