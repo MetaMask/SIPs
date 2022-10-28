@@ -145,6 +145,7 @@ const getDerivationPath = (indices: number[]) => {
  * @param snapId - The ID of the Snap.
  * @param salt - An optional salt to use in the derivation. If not provided, an
  * empty string is used.
+ * @returns The derived entropy.
  */
 const getEntropy = async (
   mnemonicPhrase: string,
@@ -177,7 +178,53 @@ const getEntropy = async (
 
 ## Test vectors
 
-TODO.
+These test vectors are generated using the reference implementation, and the following mnemonic phrase:
+
+```
+test test test test test test test test test test test ball
+```
+
+### Test vector 1
+
+```json
+{
+  "snapId": "foo",
+  "derivationPath": "m/1399742832'/1323571613'/1848851859'/458888073'/1339050117'/513522582'/1371866341'/2121938770'/1014285256'",
+  "entropy": "0x8bbb59ec55a4a8dd5429268e367ebbbe54eee7467c0090ca835c64d45c33a155"
+}
+```
+
+### Test vector 2
+
+```json
+{
+  "snapId": "bar",
+  "derivationPath": "m/1399742832'/767024459'/1206550137'/1427647479'/1048031962'/1656784813'/1860822351'/1362389435'/2133253878'",
+  "entropy": "0xbdae5c0790d9189d8ae27fd4860b3b57bab420b6594c420ae9ae3a9f87c1ea14"
+}
+```
+
+### Test vector 3
+
+```json
+{
+  "snapId": "foo",
+  "salt": "bar",
+  "derivationPath": "m/1399742832'/2002032866'/301374032'/1159533269'/453247377'/187127851'/1859522268'/152471137'/187531423'",
+  "entropy": "0x59cbec1fa877ecb38d88c3a2326b23bff374954b39ad9482c9b082306ac4b3ad"
+}
+```
+
+### Test vector 4
+
+```json
+{
+  "snapId": "bar",
+  "salt": "baz",
+  "derivationPath": "m/1399742832'/734358031'/701613791'/1618075622'/1535938847'/1610213550'/18831365'/356906080'/2095933563'",
+  "entropy": "0x814c1f121eb4067d1e1d177246461e8a1cc6a1b1152756737aba7fa9c2161ba2"
+}
+```
 
 ## Copyright
 
