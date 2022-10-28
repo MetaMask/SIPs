@@ -43,6 +43,9 @@ path. This derivation path MUST start with the magic value `0xd36e6170` (`139974
 following eight indices are based on a hash of the Snap ID, with an optional salt. The hashing algorithm of choice is
 `keccak256`.
 
+To prevent other Snaps from getting the same entropy, Snaps MUST NOT be able to manually derive using the magic value
+`0xd36e6170`, i.e., through the `snap_getBip32Entropy` JSON-RPC method.
+
 The hash of the Snap ID is calculated as follows:
 
 ```typescript
