@@ -1,7 +1,7 @@
 ---
 sip: 4
 title: Merging of snap.manifest.json and package.json
-status: Draft
+status: Review
 discussions-to: https://github.com/MetaMask/SIPs/discussions/51
 author: Olaf Tomalka (@ritave)
 created: 2022-09-23
@@ -89,7 +89,7 @@ The snap's `package.json` MUST adhere to `package.json` schema as [defined by th
 
 ### HTTP / HTTPS
 
-> Test vectors for HTTP are considered the same expect the differing scheme
+> Test vectors for HTTP are considered the same except the differing scheme
 
 - `https://localhost:8080`
   - `scheme` - `https`
