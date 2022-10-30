@@ -3,7 +3,7 @@ sip: 5
 title: Creating JSON Web Tokens (JWTs)
 status: Draft
 discussions-to: https://github.com/MetaMask/SIPs/discussions/64
-author: Vid Kersic <vid.kersic@yahoo.com> (@Vid201), Andraz Vrecko (@andyv09)
+author: Vid Kersic (@Vid201), Andraz Vrecko (@andyv09)
 created: 2022-10-20
 ---
 
@@ -182,6 +182,10 @@ Payload is a simple JSON object:
   "role": "employee"
 }
 ```
+
+## Appendix II: Suggested Alternative Approach
+
+There is another alternative approach for creating JWTs, which does not require the RPC signing method provided by MetaMask. Any Snap can already retrieve a private key for any account using the RPC method ``snap_getBip44Entropy``, which can be used to create signed JWTs (and for any other custom signing solution) - but this requires Snap to ask the user for special permission.
 
 ## Copyright
 
