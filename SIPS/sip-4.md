@@ -82,7 +82,7 @@ The snap's `package.json` MUST adhere to `package.json` schema as [defined by th
   - `scheme` - `npm`
   - `authority` - `https://registry.npmjs.com`
   - `path` - `my-snap`
-- `npm:root@my-registry.com:8080/my-snap`
+- `npm://root@my-registry.com:8080/my-snap`
   - `scheme` - `npm`
   - `authority` - `https://root@my-registry.com:8080`
   - `path` - `my-snap`
