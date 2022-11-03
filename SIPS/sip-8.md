@@ -1,5 +1,5 @@
 ---
-sip: 7
+sip: 8
 title: Snap Locations
 status: Draft
 discussions-to (*optional): (Http/Https URL)
