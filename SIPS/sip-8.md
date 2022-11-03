@@ -83,10 +83,6 @@ The location of a snap MUST be an URI as defined in [RFC-3986](https://datatrack
   - `path` - _(zero-length)_
   - `package.json:main: "dist/index.js"` - `ipfs://bafybeifpaez32hlrz5tmr7scndxtjgw3auuloyuyxblynqmjw5saapewmu/dist/index.js`
 
-## Backwards compatibility
-
-Any SIPs that break backwards compatibility MUST include a section describing those incompatibilities and their severity. The SIP SHOULD describe how the author plans on proposes to deal with such these incompatibilities.
-
 ## Copyright
 
 Copyright and related rights waived via [CC0](../LICENSE).
