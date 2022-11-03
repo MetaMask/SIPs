@@ -60,7 +60,7 @@ The snap's `package.json` MUST adhere to `package.json` schema as [defined by th
 
 The checksum SHALL be calculated using SHA-256 algorithm as specified in NIST's [FIPS PUB 180-4](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf).
 
-The checksum SHALL be calculated over the file located under `package.json:.main` path and saved under `package.json:.snap.checksum.hash` as Base64 field with 44 characters. The Base64 character set MUST be `A-Z`, `a-z`, `0-9`, `+`, `/` and `=` used for padding.
+The checksum SHALL be calculated over the file located under `package.json:.main` path and saved under `package.json:.snap.checksum.hash` as Base64 field with 44 characters. The Base64 character set MUST be `A-Z`, `a-z`, `0-9`, `+`, `/` with `=` used for padding.
 
 ## Test vectors
 
