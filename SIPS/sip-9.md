@@ -47,6 +47,8 @@ The `package.json` file MUST adhere to [the requirements of npm](https://docs.np
 
 ### `snap.manifest.json`
 
+> A complete JSON Schema can be [found in the assets](../assets/sip-9/snap.manifest.schema.json).
+
 > Note that the manifest intentionally does not contain any information explicitly identifying its author.
 > Author information should be verifiable out-of-band at the point of Snap installation, and is beyond the scope of this specification.
 
@@ -56,7 +58,7 @@ The `package.json` file MUST adhere to [the requirements of npm](https://docs.np
   - `.proposedName` - MUST be a string less than or equal to 214 characters. <!-- This is what npm uses for the `name` field. -->
     The proposed name SHOULD be human-readable.
 
-    > The Snap author's proposed name for the Snap.
+    > The snap's author proposed name for the snap.
     >
     > The Snap host application may display this name unmodified in its user interface.
 
@@ -67,16 +69,22 @@ The `package.json` file MUST adhere to [the requirements of npm](https://docs.np
     > The Snap host application may display this name unmodified in its user interface.
   - `.repository` - MAY be omitted. If present, MUST be equal to the [corresponding `package.json` field](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#repository).
   - `.source`
-    - `.shasum` - MUST be the [Base64][]-encoded string representation of the [SHA-256][] hash of the [Snap source file](#dist-bundle-js).
+    - `.shasum` - MUST hash of the [Snap source file](#dist-bundle-js) calculated using SHA-256 as specified in (Checksum)[#checksum] paragraph.
     - `.location` - MUST be an object containing the [`npm` field](#npm) as specified in the [Location-Specific Manifest Fields](#hosting-platform-manifest-fields) section.
       - `.npm`
         - `.filePath` - MUST be the [Unix-style][unix filesystem] path relative to the package root directory pointing to the Snap source file.
         - `.packageName` - MUST be equal to the [`name` filed of `package.json`](<[#packagejson](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#name)>).
-        - `.iconPath` - MAY be omitted. If preset, MUST be [Unix-style][unix filesystem] path relative to the package root directory pointing to an `.svg` file.
-        - `.registry` - MUST be string `https://registry.npmjs.org`. If `package.json:.publishConfig` field is present, `snap.manifest.json:.source.npm.registry` MUST have the same value.
+        - `.iconPath` - MAY be omitted. If present, MUST be [Unix-style][unix filesystem] path relative to the package root directory pointing to an `.svg` file.
+        - `.registry` - MAY be omitted. If present, MUST be string `https://registry.npmjs.org`.
   - `.initialPermissions` - MUST be a valid [EIP-2255][] `wallet_requestPermissions` parameter object.
     > Specifies the initial permissions that will be requested when the Snap is added to the host application.
   - `.manifestVersion` - MUST be the string `0.1`.
+
+### Checksum
+
+The checksum SHALL be calculated using SHA-256 algorithm as specified in NIST's [FIPS PUB 180-4](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf).
+
+The checksum SHALL be calculated over the file located under `snap.manifest.json:.source.location.npm.filePath` path and saved under `snap.manifest.json:.source.shasum` as Base64 field with exactly 44 characters. The Base64 character set MUST be `A-Z`, `a-z`, `0-9`, `+`, `/` with `=` used for padding. The padding SHALL NOT be optional.
 
 ### Snap Source File
 

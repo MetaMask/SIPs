@@ -1,0 +1,114 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+
+  "title": "JSON Schema for MetaMask Snaps snap.manifest.json",
+
+  "type": "object",
+  "required": [
+    "version",
+    "proposedName",
+    "description",
+    "source",
+    "initialPermissions",
+    "manifestVersion"
+  ],
+  "properties": {
+    "version": {
+      "title": "Snap's version in SemVer format",
+      "description": "Must be the same as in package.json",
+
+      "type": "string"
+    },
+    "proposedName": {
+      "title": "Snap author's proposed name for the snap",
+      "description": "The wallet may display this name in its user interface",
+
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 214
+    },
+    "description": {
+      "title": "A short description of snap",
+      "description": "The wallet may display this description in its user interface",
+
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 280
+    },
+    "repository": {
+      "$comment": "Taken from https://github.com/SchemaStore/schemastore/blob/master/src/schemas/json/package.json",
+
+      "description": "Specify the place where your code lives. This is helpful for people who want to contribute.",
+
+      "type": ["object", "string"],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "directory": {
+          "type": "string"
+        }
+      }
+    },
+    "source": {
+      "title": "Information about snaps source files",
+
+      "type": "object",
+      "required": ["shasum", "location"],
+      "properties": {
+        "shasum": {
+          "title": "SHA-256 shasum of the source file",
+
+          "type": "string",
+          "minLength": 44,
+          "maxLength": 44,
+          "pattern": "^[A-Za-z0-9+\\/]{42}==$"
+        },
+        "location": {
+          "title": "The location of the snap source",
+          "description": "Points to a single JavaScript file which will be run under Snaps sandbox",
+
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["npm"],
+          "properties": {
+            "npm": {
+              "type": "object",
+              "required": ["filePath", "packageName"],
+              "properties": {
+                "filePath": {
+                  "title": "Unix-style location of the JavaScript source file",
+                  "type": "string"
+                },
+                "packageName": {
+                  "$comment": "Taken from https://github.com/SchemaStore/schemastore/blob/master/src/schemas/json/package.json",
+
+                  "description": "The name of the npm package.",
+                  "type": "string",
+                  "maxLength": 214,
+                  "minLength": 1,
+                  "pattern": "^(?:@[a-z0-9-*~][a-z0-9-*._~]*/)?[a-z0-9-~][a-z0-9-._~]*$"
+                },
+                "iconPath": {
+                  "title": "Optional path of .svg icon",
+
+                  "type": "string"
+                },
+                "registry": { "enum": ["https://registry.npmjs.org"] }
+              }
+            }
+          }
+        }
+      },
+      "initialPermissions": {
+        "title": "Permissions requested by the snap from the user",
+
+        "type": "object"
+      },
+      "manifestVersion": { "enum": ["0.1"] }
+    }
+  }
+}
