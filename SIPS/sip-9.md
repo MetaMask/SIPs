@@ -109,9 +109,7 @@ The snap source file, located under `snap.manifest.json:.source.location.npm.fil
 
 Copyright and related rights waived via [CC0](../LICENSE).
 
-[base64]: https://developer.mozilla.org/en-US/docs/Glossary/Base64
 [eip-2255]: https://eips.ethereum.org/EIPS/eip-2255
-[sha-256]: https://en.wikipedia.org/wiki/SHA-2
 [semver]: https://semver.org/
 [ses]: https://agoric.com/documentation/guides/js-programming/ses/ses-guide.html
 [unix filesystem]: https://en.wikipedia.org/wiki/Unix_filesystem
