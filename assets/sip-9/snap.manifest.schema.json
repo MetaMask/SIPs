@@ -65,7 +65,7 @@
           "type": "string",
           "minLength": 44,
           "maxLength": 44,
-          "pattern": "^[A-Za-z0-9+\\/]{42}==$"
+          "pattern": "^[A-Za-z0-9+\\/]{43}=$"
         },
         "location": {
           "title": "The location of the snap source",

@@ -37,7 +37,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 > ├─ snap.manifest.json
 > ```
 
-> A full example package can be found in the [assets](../assets/sip-9/).
+> A full example snap directory can be found in the [assets](../assets/sip-9/example-snap/).
 
 The snap MUST contain both [`package.json`](#packagejson) and [`snap.manifest.json`](#snapmanifestjson) files in the root directory of the snap package.
 
@@ -69,11 +69,11 @@ The `package.json` file MUST adhere to [the requirements of npm](https://docs.np
     > The Snap host application may display this name unmodified in its user interface.
   - `.repository` - MAY be omitted. If present, MUST be equal to the [corresponding `package.json` field](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#repository).
   - `.source`
-    - `.shasum` - MUST hash of the [Snap source file](#dist-bundle-js) calculated using SHA-256 as specified in (Checksum)[#checksum] paragraph.
+    - `.shasum` - MUST hash of the snap source file as specified in [Checksum](#checksum) paragraph.
     - `.location` - MUST be an object containing the [`npm` field](#npm) as specified in the [Location-Specific Manifest Fields](#hosting-platform-manifest-fields) section.
       - `.npm`
         - `.filePath` - MUST be the [Unix-style][unix filesystem] path relative to the package root directory pointing to the Snap source file.
-        - `.packageName` - MUST be equal to the [`name` filed of `package.json`](<[#packagejson](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#name)>).
+        - `.packageName` - MUST be equal to the [`name` filed of `package.json`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#name).
         - `.iconPath` - MAY be omitted. If present, MUST be [Unix-style][unix filesystem] path relative to the package root directory pointing to an `.svg` file.
         - `.registry` - MAY be omitted. If present, MUST be string `https://registry.npmjs.org`.
   - `.initialPermissions` - MUST be a valid [EIP-2255][] `wallet_requestPermissions` parameter object.
@@ -95,6 +95,15 @@ The snap source file, located under `snap.manifest.json:.source.location.npm.fil
 - have the `.js` file extension.
 - contain the entire source of the Snap program, including all dependencies.
 - execute under [SES][].
+
+## Test vectors
+
+### Checksum
+
+> The shashum was generated using `shasum -a 256 assets/sip-9/source.js | cut -d ' ' -f 1 | xxd -r -p | base64` command
+
+- [`assets/sip-9/source.js`](../assets/sip-9/source.js) - `x3coXGvZxPMsVCqPA1zr9SG/bw8SzrCPncClIClCfwA=`
+- `<empty file>` - `47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=`
 
 ## Copyright
 
