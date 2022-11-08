@@ -52,7 +52,7 @@ The `package.json` file MUST adhere to [the requirements of npm](https://docs.np
 > Note that the manifest intentionally does not contain any information explicitly identifying its author.
 > Author information should be verifiable out-of-band at the point of Snap installation, and is beyond the scope of this specification.
 
-- `snap.manifest.json`
+- `snap.manifest.json` - The contents of the file MUST be a JSON object.
 
   - `.version` - MUST be a valid [SemVer][] version string and equal to the [corresponding `package.json` field](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#version).
   - `.proposedName` - MUST be a string less than or equal to 214 characters. <!-- This is what npm uses for the `name` field. -->
@@ -68,10 +68,10 @@ The `package.json` file MUST adhere to [the requirements of npm](https://docs.np
     >
     > The Snap host application may display this name unmodified in its user interface.
   - `.repository` - MAY be omitted. If present, MUST be equal to the [corresponding `package.json` field](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#repository).
-  - `.source`
+  - `.source` - MUST be a JSON object.
     - `.shasum` - MUST hash of the snap source file as specified in [Checksum](#checksum) paragraph.
     - `.location` - MUST be an object containing the [`npm` field](#npm) as specified in the [Location-Specific Manifest Fields](#hosting-platform-manifest-fields) section.
-      - `.npm`
+      - `.npm` - MUST be a JSON object
         - `.filePath` - MUST be the [Unix-style][unix filesystem] path relative to the package root directory pointing to the Snap source file.
         - `.packageName` - MUST be equal to the [`name` filed of `package.json`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#name).
         - `.iconPath` - MAY be omitted. If present, MUST be [Unix-style][unix filesystem] path relative to the package root directory pointing to an `.svg` file.
