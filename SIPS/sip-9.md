@@ -1,7 +1,7 @@
 ---
 sip: 9
 title: snap.manifest.json v0.1
-status: Review
+status: Final
 author: Erik Marks (@rekmarks), Olaf Tomalka (@ritave)
 created: 2022-11-07
 ---
