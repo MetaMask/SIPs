@@ -221,6 +221,7 @@ interface SnapKeyring {
     origin: string;
     request: RequestArguments;
   }): Promise<Json>;
+  getAccounts(): Promise<AccountId[]>;
 
   on?(
     data: {
@@ -232,8 +233,6 @@ interface SnapKeyring {
   ): void;
   off?(data: { chainId: ChainId; origin: string; eventName: string }): void;
 
-  getAccounts?(): Promise<AccountId[]>;
-
   addAccount?(chainId: ChainId): Promise<AccountId>;
   removeAccount?(accountId: AccountId): Promise<void>;
 
@@ -244,11 +243,12 @@ interface SnapKeyring {
 
 - Required
   - `handleRequest()` - The main way DApps can communicate with the snap. The returned data MUST be JSON serializable.
+  - `getAccounts()` - Returns a list of all managed accounts of all supported chains.
+    > This is used to ask user which accounts to connect to a dApp. Only those accounts will be exposed in the returned `Session`.
 - DApp events
   - `on()` - The wallet will use this function to register callbacks for events declared in permission specification. The wallet SHALL register at most one listener per each unique `[origin, chainId, eventName]` tuple.
   - `off()` - The wallet will use this function to unsubscribe from events registered using `on()`.
 - UI hooks
-  - `getAccounts()` - Returns a list of all managed accounts of all supported chains.
   - Creation
     - `addAccounts?()` - Creates new account.
     - `removeAccount?()` - Removes specific account.
