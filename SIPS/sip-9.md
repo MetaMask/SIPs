@@ -75,7 +75,7 @@ The `package.json` file MUST adhere to [the requirements of npm](https://docs.np
         - `.filePath` - MUST be the [Unix-style][unix filesystem] path relative to the package root directory pointing to the Snap source file.
         - `.packageName` - MUST be equal to the [`name` filed of `package.json`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#name).
         - `.iconPath` - MAY be omitted. If present, MUST be [Unix-style][unix filesystem] path relative to the package root directory pointing to an `.svg` file.
-        - `.registry` - MAY be omitted. If present, MUST be string `https://registry.npmjs.org`.
+        - `.registry` - MUST be string `https://registry.npmjs.org`.
   - `.initialPermissions` - MUST be a valid [EIP-2255][] `wallet_requestPermissions` parameter object.
     > Specifies the initial permissions that will be requested when the Snap is added to the host application.
   - `.manifestVersion` - MUST be the string `0.1`.
