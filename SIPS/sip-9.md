@@ -19,6 +19,8 @@ It additionally provides a JSON Schema for the manifest.
 
 > Such sections are considered non-normative.
 
+Paths that traverse JSON objects are using [jq syntax](https://stedolan.github.io/jq/manual/#Basicfilters).
+
 ### Language
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
@@ -37,8 +39,6 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 > ├─ snap.manifest.json
 > ```
 
-> A full example snap directory can be found in the [assets](../assets/sip-9/example-snap/).
-
 The snap MUST contain both [`package.json`](#packagejson) and [`snap.manifest.json`](#snapmanifestjson) files in the root directory of the snap package.
 
 ### `package.json`
@@ -46,8 +46,6 @@ The snap MUST contain both [`package.json`](#packagejson) and [`snap.manifest.js
 The `package.json` file MUST adhere to [the requirements of npm](https://docs.npmjs.com/cli/v7/configuring-npm/package-json).
 
 ### `snap.manifest.json`
-
-> A complete JSON Schema can be [found in the assets](../assets/sip-9/snap.manifest.schema.json).
 
 > Note that the manifest intentionally does not contain any information explicitly identifying its author.
 > Author information should be verifiable out-of-band at the point of Snap installation, and is beyond the scope of this specification.
@@ -63,18 +61,18 @@ The `package.json` file MUST adhere to [the requirements of npm](https://docs.np
     > The Snap host application may display this name unmodified in its user interface.
 
   - `.description` - MUST be a non-empty string less than or equal to 280 characters. <!-- As of 2021, a Twitter post. -->
-    MAY differ from the [corresponding `package.json` field](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#description-1)
+    MAY differ from the [corresponding `package.json:.description` field](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#description-1)
     > A short description of the Snap.
     >
-    > The Snap host application may display this name unmodified in its user interface.
-  - `.repository` - MAY be omitted. If present, MUST be equal to the [corresponding `package.json` field](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#repository).
+    > The Snap host application may display this description unmodified in its user interface.
+  - `.repository` - MAY be omitted. If present, MUST be equal to the [corresponding `package.json:.repository` field](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#repository).
   - `.source` - MUST be a JSON object.
     - `.shasum` - MUST hash of the snap source file as specified in [Checksum](#checksum) paragraph.
-    - `.location` - MUST be an object containing the [`npm` field](#npm) as specified in the [Location-Specific Manifest Fields](#hosting-platform-manifest-fields) section.
-      - `.npm` - MUST be a JSON object
-        - `.filePath` - MUST be the [Unix-style][unix filesystem] path relative to the package root directory pointing to the Snap source file.
-        - `.packageName` - MUST be equal to the [`name` filed of `package.json`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#name).
-        - `.iconPath` - MAY be omitted. If present, MUST be [Unix-style][unix filesystem] path relative to the package root directory pointing to an `.svg` file.
+    - `.location` - MUST be a JSON object.
+      - `.npm` - MUST be a JSON object.
+        - `.filePath` - MUST be a [Unix-style][unix filesystem] path relative to the package root directory pointing to the Snap source file.
+        - `.packageName` - MUST be equal to the [`package.json:.main` field](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#name).
+        - `.iconPath` - MAY be omitted. If present, MUST be a [Unix-style][unix filesystem] path relative to the package root directory pointing to an `.svg` file.
         - `.registry` - MUST be string `https://registry.npmjs.org`.
   - `.initialPermissions` - MUST be a valid [EIP-2255][] `wallet_requestPermissions` parameter object.
     > Specifies the initial permissions that will be requested when the Snap is added to the host application.
@@ -88,7 +86,7 @@ The checksum SHALL be calculated over the file located under `snap.manifest.json
 
 ### Snap Source File
 
-> Represented in the example as `dist/bundle.js`. The Snap "source" or "bundle" file can be named anything and kept anywhere in the package file hierarchy
+> Represented in the [example](../assets/sip-9/example-snap/) as `dist/bundle.js`. The Snap "source" or "bundle" file can be named anything and kept anywhere in the package file hierarchy
 
 The snap source file, located under `snap.manifest.json:.source.location.npm.filePath` path MUST:
 
@@ -97,6 +95,14 @@ The snap source file, located under `snap.manifest.json:.source.location.npm.fil
 - execute under [SES][].
 
 ## Test vectors
+
+### Snap package
+
+> A full example snap package can be found in the [assets](../assets/sip-9/example-snap/).
+
+### Manifest
+
+> A complete JSON Schema can be [found in the assets](../assets/sip-9/snap.manifest.schema.json).
 
 ### Checksum
 
