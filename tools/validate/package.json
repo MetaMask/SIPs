@@ -13,9 +13,14 @@
   "files": [
     "dist/"
   ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "devDependencies": {
     "@types/glob": "^7.2.0",
+    "@types/is-valid-path": "^0.1.0",
     "@types/node": "^17.0.41",
+    "@types/unist": "^2.0.6",
     "@types/yargs": "^17.0.10",
     "mdast": "^3.0.0",
     "rimraf": "^3.0.2",
@@ -25,6 +30,7 @@
     "chalk": "^5.0.1",
     "debug": "^4.3.4",
     "glob": "^8.0.3",
+    "is-valid-path": "^0.1.1",
     "remark-frontmatter": "^4.0.1",
     "remark-gfm": "^3.0.1",
     "remark-lint-hard-break-spaces": "^3.1.1",

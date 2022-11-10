@@ -117,5 +117,5 @@ Copyright and related rights waived via [CC0](../LICENSE).
 
 [eip-2255]: https://eips.ethereum.org/EIPS/eip-2255
 [semver]: https://semver.org/
-[ses]: https://agoric.com/documentation/guides/js-programming/ses/ses-guide.html
+[ses]: https://www.npmjs.com/package/ses
 [unix filesystem]: https://en.wikipedia.org/wiki/Unix_filesystem

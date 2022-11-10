@@ -40,7 +40,7 @@ The snap's `package.json` MUST adhere to `package.json` schema as [defined by th
   - `.description` - The wallet MAY use this field to display information about the snap to the user.
   - `.version` - MUST be a valid [SemVer](https://semver.org/spec/v2.0.0.html) string. DApps MAY request specific version ranges. If a mismatch occurs between requested version range and the version inside the fetched snap, that snap MUST NOT be installed.
     > Additionally, wallet MAY allow updating snaps to the requested version in some schemes.
-    > For example, if the installed snap is `npm:my-snap@1.0.0` while the dapp requests `npm:my-snap@^2.0.0`, the wallet will try to get the newest version from [npm.js](https://npm.js) and will update the snap a version that satisfies `^2.0.0`.
+    > For example, if the installed snap is `npm:my-snap@1.0.0` while the dapp requests `npm:my-snap@^2.0.0`, the wallet will try to get the newest version from [npm.js](https://npmjs.com) and will update the snap a version that satisfies `^2.0.0`.
   - `.main` - Filepath relative to `package.json` with location of the snaps bundled source code to be executed.
   - `.engines` - The wallet SHALL introduce `snaps` engine which will follow semver versioning. If the requested SemVer is not satisfied by the extension run by the end-user, the snap MUST NOT be executed.
     - The first version of `snaps` engine after implementing this SIP SHALL be `1.0.0`.
