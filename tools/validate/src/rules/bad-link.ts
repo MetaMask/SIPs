@@ -39,29 +39,45 @@ function isExternal(url: string | URL): boolean {
 }
 
 const rule = lintRule<Root>("sip:bad-link", async (tree, file) => {
+  const fetchWithLog =
+    (node: Node) =>
+    async (...args: Parameters<typeof fetch>): ReturnType<typeof fetch> => {
+      try {
+        return await fetch(...args);
+      } catch (e) {
+        const url = args[0].toString();
+        file.message(
+          `Url "${url}" is invalid, the server doesn't exist or there's no internet access.`,
+          node
+        );
+        debug("Fetch failed", url, e);
+
+        throw e;
+      }
+    };
+
   const testUrl = async (url: string, node: Node) => {
     if (!isExternal(url)) {
       return;
     }
-    debug("Fetch", url);
-    let response;
-    try {
-      response = await fetch(url, { method: "HEAD" });
-    } catch (e) {
-      debug("Fetch failed", url, e);
-      file.message(
-        `Url "${url}" is invalid, the server doesn't exist or there's no internet access.`,
-        node
-      );
-      return;
-    }
+    const fetch = fetchWithLog(node);
+    let response = await fetch(url, { method: "HEAD" });
     debug("Fetch responded", "url:", url, "is ok:", response.ok);
+    const headStatus = response.status;
     if (!response.ok) {
-      debug("Fetch not ok", url, response.status, response.statusText);
-      file.info(
-        `Url "${url}" responded with ${response.status} (using HEAD). Might be invalid link.`,
-        node
-      );
+      debug("Fetch (HEAD) not ok, trying GET", url, response.status);
+      response = await fetch(url);
+      if (response.ok) {
+        file.info(
+          `The server responded with ${headStatus} using HEAD for url "${url}" but succeeded using GET. That server is not following http specification.`,
+          node
+        );
+      } else {
+        file.message(
+          `Url "${url}" is invalid, the server responded with ${response.status}`,
+          node
+        );
+      }
     }
   };
 
