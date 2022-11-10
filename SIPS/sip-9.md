@@ -8,16 +8,15 @@ created: 2022-11-07
 
 ## Abstract
 
-Specification of `snap.manifest.json` file in version 0.1.
+This document specifies version `0.1` of the Snaps manifest file, `snap.manifest.json`.
 
 ## Motivation
 
 The goal of this SIP is to supersede [Snaps Publishing Specification v0.1](https://github.com/MetaMask/specifications/blob/c226cbaca1deb83d3e85941d06fc7534ff972336/snaps/publishing.md), and move Snaps specifications into one place - Snaps Improvement Proposals.
-It additionally provides a JSON Schema for the manifest.
 
 ## Specification
 
-> Such sections are considered non-normative.
+> Indented sections like this are considered non-normative.
 
 Paths that traverse JSON objects are using [jq syntax](https://stedolan.github.io/jq/manual/#Basicfilters).
 
@@ -80,13 +79,13 @@ The `package.json` file MUST adhere to [the requirements of npm](https://docs.np
 
 ### Checksum
 
-The checksum SHALL be calculated using SHA-256 algorithm as specified in NIST's [FIPS PUB 180-4](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf).
+The checksum MUST be calculated using SHA-256 algorithm as specified in NIST's [FIPS PUB 180-4](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf).
 
-The checksum SHALL be calculated over the file located under `snap.manifest.json:.source.location.npm.filePath` path and saved under `snap.manifest.json:.source.shasum` as Base64 field with exactly 44 characters. The Base64 character set MUST be `A-Z`, `a-z`, `0-9`, `+`, `/` with `=` used for padding. The padding SHALL NOT be optional.
+The checksum MUST be calculated over the file located under `snap.manifest.json:.source.location.npm.filePath` path and saved under `snap.manifest.json:.source.shasum` as Base64 field with exactly 44 characters. The Base64 character set MUST be `A-Z`, `a-z`, `0-9`, `+`, `/` with `=` used for padding. The padding MUST NOT be optional.
 
 ### Snap Source File
 
-> Represented in the [example](../assets/sip-9/example-snap/) as `dist/bundle.js`. The Snap "source" or "bundle" file can be named anything and kept anywhere in the package file hierarchy
+> Represented in the [example](../assets/sip-9/example-snap/) as `dist/bundle.js`. The Snap "source" or "bundle" file can be named anything and kept anywhere in the package file hierarchy.
 
 The snap source file, located under `snap.manifest.json:.source.location.npm.filePath` path MUST:
 
