@@ -18,7 +18,7 @@ The "why"
 
 ## Specification
 
-> Such sections are considered non-normative.
+> Indented sections like this are considered non-normative.
 
 Formal specification of the proposed changes in the SIP. The specification must be complete enough that an implementation can be created from it.
 

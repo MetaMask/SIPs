@@ -1,0 +1,13 @@
+{
+  "name": "example-snap",
+  "version": "0.2.2",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf dist/",
+    "build:clean": "yarn clean && yarn build"
+  },
+  "devDependencies": {
+    "rimraf": "^3.0.2",
+    "typescript": "^4.7.3"
+  }
+}
