@@ -80,9 +80,10 @@ node created as per
 
 ### `snap_getEntropy` JSON-RPC method
 
-The `snap_getEntropy` JSON-RPC method is used to get the entropy for a Snap. It takes a single parameter, which is an
-object with the following properties:
+The `snap_getEntropy` JSON-RPC method is used to get the entropy for a Snap. It takes an object as parameters, which has
+the following properties:
 
+- `version` (required, `number`): A version number, which MUST be the number `1`.
 - `salt` (optional, `string`): A salt to use when deriving the entropy. If provided, this MUST be interpreted as a UTF-8
   string value. If not provided, an empty string MUST be used instead.
 
@@ -90,6 +91,7 @@ object with the following properties:
 {
   "method": "snap_getEntropy",
   "params": {
+    "version": 1,
     "salt": "foo"
   }
 }
