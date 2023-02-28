@@ -70,7 +70,7 @@ The `package.json` file MUST adhere to [the requirements of npm](https://docs.np
     - `.location` - MUST be a JSON object.
       - `.npm` - MUST be a JSON object.
         - `.filePath` - MUST be a [Unix-style][unix filesystem] path relative to the package root directory pointing to the Snap source file.
-        - `.packageName` - MUST be equal to the [`package.json:.main` field](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#name).
+        - `.packageName` - MUST be equal to the [`package.json:.name` field](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#name).
         - `.iconPath` - MAY be omitted. If present, MUST be a [Unix-style][unix filesystem] path relative to the package root directory pointing to an `.svg` file.
         - `.registry` - MUST be string `https://registry.npmjs.org`.
   - `.initialPermissions` - MUST be a valid [EIP-2255][] `wallet_requestPermissions` parameter object.
