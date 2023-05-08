@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
 
-  "title": "JSON Schema for MetaMask Snaps snap.manifest.json",
+  "title": "Manifest describing capabilities of a MetaMask snap",
 
   "type": "object",
   "required": [
