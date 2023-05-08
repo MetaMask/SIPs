@@ -38,6 +38,7 @@
     "repository": {
       "$comment": "Taken from https://github.com/SchemaStore/schemastore/blob/master/src/schemas/json/package.json",
 
+      "title": "Git repository with snap's source code",
       "description": "Specify the place where your code lives. This is helpful for people who want to contribute.",
 
       "type": ["object", "string"],
@@ -54,13 +55,15 @@
       }
     },
     "source": {
-      "title": "Information about snaps source files",
+      "title": "Snap's runtime files",
+      "description": "Information needed to load and execute the snaps' code",
 
       "type": "object",
       "required": ["shasum", "location"],
       "properties": {
         "shasum": {
-          "title": "SHA-256 shasum of the source file",
+          "title": "Checksum of runtime files",
+          "description": "Checksum composed from all the files that are loaded during runtime",
 
           "type": "string",
           "minLength": 44,
@@ -68,7 +71,7 @@
           "pattern": "^[A-Za-z0-9+\\/]{43}=$"
         },
         "location": {
-          "title": "The location of the snap source",
+          "title": "Location of the snap runtime code",
           "description": "Points to a single JavaScript file which will be run under Snaps sandbox",
 
           "type": "object",
@@ -76,39 +79,58 @@
           "required": ["npm"],
           "properties": {
             "npm": {
+              "title": "Runtime file location in Npm",
+              "description": "Information on how to locate the runtime file in an Npm package",
+
               "type": "object",
               "required": ["filePath", "packageName"],
               "properties": {
                 "filePath": {
-                  "title": "Unix-style location of the JavaScript source file",
+                  "title": "Runtime code filepath",
+                  "description": "Unix-style location of the JavaScript source file relative to root of the Npm package",
                   "type": "string"
                 },
                 "packageName": {
                   "$comment": "Taken from https://github.com/SchemaStore/schemastore/blob/master/src/schemas/json/package.json",
 
-                  "description": "The name of the npm package.",
+                  "title": "Npm package name",
+                  "description": "The name of the npm package. Currently required to be the same one as the one containing the manifest.",
                   "type": "string",
                   "maxLength": 214,
                   "minLength": 1,
                   "pattern": "^(?:@[a-z0-9-*~][a-z0-9-*._~]*/)?[a-z0-9-~][a-z0-9-._~]*$"
                 },
                 "iconPath": {
-                  "title": "Optional path of .svg icon",
+                  "title": "Snap icon filepath",
+                  "description": "Optional path of .svg icon that will be shown to the user in the UI",
 
                   "type": "string"
                 },
-                "registry": { "enum": ["https://registry.npmjs.org"] }
+                "registry": {
+                  "title": "Npm registry",
+                  "description": "URL pointing to Npm registry used to load the package",
+
+                  "enum": [
+                    "https://registry.npmjs.org",
+                    "https://registry.npmjs.org/"
+                  ]
+                }
               }
             }
           }
         }
-      },
-      "initialPermissions": {
-        "title": "Permissions requested by the snap from the user",
+      }
+    },
+    "initialPermissions": {
+      "title": "Snap permissions",
+      "description": "Permissions requested by the snap from the user",
 
-        "type": "object"
-      },
-      "manifestVersion": { "enum": ["0.1"] }
+      "type": "object"
+    },
+    "manifestVersion": {
+      "title": "snap.manifest.json version",
+      "description": "The version of this file used to detect compatibility",
+      "enum": ["0.1"]
     }
   }
 }

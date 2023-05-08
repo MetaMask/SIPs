@@ -110,6 +110,14 @@ The snap source file, located under `snap.manifest.json:.source.location.npm.fil
 - [`assets/sip-9/source.js`](../assets/sip-9/source.js) - `x3coXGvZxPMsVCqPA1zr9SG/bw8SzrCPncClIClCfwA=`
 - `<empty file>` - `47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=`
 
+## Errata
+
+2023-05-08:
+
+- Fix [JSON Schema](../assets/sip-9/snap.manifest.schema.json) having some properties at the wrong nesting level.
+- Fix [JSON Schema](../assets/sip-9/snap.manifest.schema.json) not supporting NPM registry with `/` suffix.
+- Added titles and descriptions to all properties in [JSON Schema](../assets/sip-9/snap.manifest.schema.json) which are required for suggestions in Visual Studio Code.
+
 ## Copyright
 
 Copyright and related rights waived via [CC0](../LICENSE).

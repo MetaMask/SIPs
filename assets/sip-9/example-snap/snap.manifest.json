@@ -1,4 +1,5 @@
 {
+  "$schema": "../snap.manifest.schema.json",
   "version": "0.2.2",
   "proposedName": "@metamask/example-snap",
   "description": "An example snap.",
