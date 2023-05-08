@@ -7,6 +7,7 @@
   "private": true,
   "scripts": {
     "build": "tsc",
+    "lint": "validate '../../SIPS/**'",
     "clean": "rimraf dist/",
     "build:clean": "yarn clean && yarn build"
   },
