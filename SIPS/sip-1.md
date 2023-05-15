@@ -91,9 +91,9 @@ The role of SIP repository editors is to enforce the inclusion process. They do 
 The current SIP editors, sorted alphabetically, are:
 
 - Christian Montoya ([@Montoya](https://github.com/Montoya))
-- Erik Marks ([@rekmarks](https://github.com/rekmarks))
 - Hassan Malik ([@hmalik88](https://github.com/hmalik88))
 - Olaf Tomalka ([@ritave](https://github.com/ritave))
+- Ziad Saab ([@ziad-saab](https://github.com/ziad-saab))
 
 At least one of the editors has to approve any incoming pull requests that update files in the [SIPs folder](./).
 
