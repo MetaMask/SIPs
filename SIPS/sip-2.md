@@ -1,7 +1,7 @@
 ---
 sip: 2
 title: Snap Keyrings
-status: Implementation
+status: Withdrawn
 discussions-to: https://github.com/MetaMask/SSIPs/discussions/10
 author: Olaf Tomalka (@ritave), Muji (@tmpfs)
 created: 2022-06-10
