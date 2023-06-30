@@ -2,7 +2,7 @@
 sip: 10
 title: wallet_getLocale
 status: Draft
-discussions-to (*optional): (Http/Https URL)
+discussions-to: https://github.com/MetaMask/SIPs/discussions/99
 author: Frederik Bolding (@FrederikBolding)
 created: 2023-06-30
 ---
