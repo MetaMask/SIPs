@@ -3,7 +3,7 @@ sip: 7
 title: Snaps UI
 status: Draft
 discussions-to: https://github.com/MetaMask/SIPs/discussions/71
-author: Frederik Bolding (@FrederikBolding), Maarten Zuidhoorn (@Mrtenz)
+author: Frederik Bolding (@FrederikBolding), Maarten Zuidhoorn (@Mrtenz), Guillaume Roux (@GuillaumeRx)
 created: 2022-10-27
 ---
 
@@ -65,12 +65,20 @@ This SIP describes a couple of components for the initial version of the UI:
 4. A button component, rendering the text as a HTML button (`button`), with an optional ID for handling user input.
     1. The button can have two variants: `primary` and `secondary`.
     2. If the variant is not specified, `primary` SHOULD be used.
+    3. The button can have two types: `button` and `submit`.
+    4. If the type is not specified, `button` SHOULD be used.
 5. A divider component, rendering a HTML thematic break (`hr`).
 6. A spacer component, pushing content around it to the top and bottom, similar to how `flex-grow` works.
 7. A spinner component, rendering a spinner to indicate loading data.
+8. A copyable component, rendering the value along a copy icon that copies the value in the clipboard.
+9. A Form component, which renders a list of `children` components and define a form, with an ID for handling user input.
+10. An input component, rendering an HTML input (`input`) with an ID for handling user input.
+  1. The input can be of 4 different types: `text`, `password`, `number`, `search`
+  2. If the type is not specified, `text` SHOULD be used.
+  3. An aditional label MUST optionally be rendered if defined in the `label` field.
 
 ```tsx
-type ComponentType = 'panel' | 'heading' | 'text' | 'button' | 'divider' | 'spacer' | 'spinner';
+type ComponentType = 'panel' | 'heading' | 'text' | 'button' | 'divider' | 'spacer' | 'spinner' | 'copyable' | 'form' | 'input';
 
 interface PanelComponent extends BaseComponent {
   type: 'panel';
@@ -84,13 +92,14 @@ interface HeadingComponent extends BaseComponent {
 
 interface TextComponent extends BaseComponent {
   type: 'text';
-  text: string;
+  value: string;
 }
 
 interface ButtonComponent extends BaseComponent {
   type: 'button';
   variant?: 'primary' | 'secondary';
-  text: string;
+  buttonType?: 'button' | 'submit';
+  value: string;
   name?: string;
 }
 
@@ -106,6 +115,26 @@ interface SpinnerComponent extends BaseComponent {
   type: 'spinner';
 }
 
+interface CopyableComponent extends BaseComponent {
+  type: 'copyable';
+  value: string;
+}
+
+interface FormComponent extends BaseComponent {
+  type: 'form';
+  name: string;
+  children: Component[];
+}
+
+interface InputComponent extends BaseComponent {
+  type: 'input';
+  value?: string;
+  name: string;
+  inputType?: 'text' | 'password' | 'number' | 'search';
+  placeholder?: string;
+  label?: string;
+}
+
 type Component =
   | PanelComponent
   | HeadingComponent
@@ -113,7 +142,10 @@ type Component =
   | ButtonComponent
   | DividerComponent
   | SpacerComponent
-  | SpinnerComponent;
+  | SpinnerComponent
+  | CopyableComponent
+  | FormComponent
+  | InputComponent;
 ```
 
 ### JSON-RPC methods
@@ -214,22 +246,38 @@ The args MUST be an object, with the following properties:
 
 The entry point will be called with appropriate events for the user’s interaction with the Snaps UI.
 
-This SIP only defines one event, `ButtonClickEvent`, but other SIPs can expand on this in the future.
-
 ```tsx
 interface ButtonClickEvent extends UserInputEvent {
   type: 'ButtonClickEvent';
   name?: string;
 }
 
-// For now we only need one event, but in the future this can be extended with
-// other events.
-type UserInputEvent = ButtonClickEvent;
+interface InputChangeEvent extends UserInputEvent {
+  type: 'InputChangeEvent';
+  name: string;
+  value: string;
+}
+
+interface FormSubmitEvent extends UserInputEvent {
+  type: 'FormSubmitEvent';
+  name: string;
+  value: Record<string, string>;
+}
+
+type UserInputEvent = ButtonClickEvent | InputChangeEvent | FormSubmitEvent;
 ```
 
 #### `ButtonClickEvent`
 
 This event SHOULD be called when a button, outside of a form context (submit button), is pressed. If the button component specifies a name, this name MUST be set as `name` on the event.
+
+#### `InputChangeEvent`
+
+This event SHOULD be called when an input value is changed. The input name MUST be set as `name` on the event and the new value MUST be set as `value` on the event.
+
+#### `FormSubmitEvent`
+
+This event SHOULD be called when a form is submited via a type `submit` button. The form name MUST be set as `name` on the event and the record containing the form input values MUST be set as `value` on the event.
 
 ### Transaction insights
 
