@@ -230,6 +230,25 @@ interface SnapReadInterfaceRequest {
 type SnapReadInterfaceResponse = Json;
 ```
 
+#### `snap_getInterfaceState`
+
+The `snap_getInterfaceState` method lets Snaps retrive an existing user interface state. The params MUST be an object, with the following properties:
+
+- `id` (`string`): The ID of the custom UI to read.
+
+This method returns the interface state.
+
+```tsx
+interface SnapGetInterfaceStateRequest {
+  method: 'snap_getInterfaceState';
+  params: {
+    id: string;
+  };
+}
+
+type SnapReadInterfaceResponse = Json;
+```
+
 ### User input
 
 To handle user input in Snaps UI, a snap can expose a new entry point `onUserInput`.
