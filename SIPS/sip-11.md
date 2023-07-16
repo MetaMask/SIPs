@@ -19,9 +19,7 @@ This warning could be injected at any point where there are insights provided.
 
 ## Specification
 
-> Formal specifications are written in Typescript. Usage of `CAIP-N` specifications, where `N` is a number, are references to [Chain Agnostic Improvement Proposals](https://github.com/ChainAgnostic/CAIPs).
-
-Please see SIP-3 for more information on the original transaction insights API.
+Please see [SIP-3](https://github.com/MetaMask/SIPs/blob/main/SIPS/sip-3.md) for more information on the original transaction insights API.
 
 ### Language
 
@@ -57,13 +55,7 @@ interface OnTransactionReturn {
 
 ### MetaMask Integration
 
-The `insights` object returned by the snap will be displayed alongside the confirmation for the `transaction` that `onTransaction` was called with.
-Keys and values will be displayed in the order received, with each key rendered as a title and each value rendered as follows:
-
-- If the value is an array or an object, it will be rendered as text after being converted to a string.
-- If the value is neither an array nor an object, it will be rendered directly as text.
-
-The `warning` key's value will be displayed in a modal alongside any warnings from other transaction insight snaps. The modal will require a checkbox to be checked before the user can continue with the transaction.
+The `warning` key is added to the return object and it's value will be displayed in a modal alongside any warnings from other transaction insight snaps. The modal will require a checkbox to be checked before the user can continue with the transaction.
 
 ## Copyright
 
