@@ -1,5 +1,5 @@
 ---
-sip: 10
+sip: 11
 title: Transaction Insights V2 - Transaction Warnings
 status: Draft
 discussions-to: https://github.com/MetaMask/SIPs/discussions/101
