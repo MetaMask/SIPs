@@ -21,7 +21,7 @@ This warning could be injected at any point where there are insights provided.
 
 Please see [SIP-3](https://github.com/MetaMask/SIPs/blob/main/SIPS/sip-3.md) for more information on the original transaction insights API.
 
-Please see the [snaps-ui](https://github.com/MetaMask/snaps/blob/main/packages/snaps-ui/src/nodes.ts) package for more information on the `Component` type returned in the `OnTransactionResponse`.
+Please see the [@metamask/snaps-ui](https://github.com/MetaMask/snaps/blob/main/packages/snaps-ui/src/nodes.ts) package for more information on the `Component` type returned in the `OnTransactionResponse`.
 
 ### Language
 
@@ -64,7 +64,11 @@ interface OnTransactionResponse {
 
 ### MetaMask Integration
 
-The `severity` key is added to the return object to indicate to the extension if the content returned should be displayed in the modal. Insights with a severity level of `critical` will be surfaced to the modal. The modal will require a checkbox to be checked before the user can continue with the transaction.
+The `severity` key is added to the return object to indicate the severity level of the content being returned to the extension. This will help trigger certain UI in the extension. Currently, a warning modal will be triggered for content with a severity level of `critical`. The modal will require a checkbox to be checked before the user can continue with the transaction.
+
+In the future, the `SeverityLevel` enum can be expanded to include other levels that can be also be used to influence the UI in the extension.
+
+Transaction insight snaps were previously triggered on view of their respective tabs, but with the addition of the `severity` key, execution would become unprompted in order to determine if a modal needs to be displayed as you reach the confirmation screen.
 
 ## Copyright
 
