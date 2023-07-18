@@ -1,28 +1,22 @@
 ---
 sip: 12
 title: Domain Resolution
-status: Final
+status: Draft
 discussions-to: https://github.com/MetaMask/SIPs/discussions/31
-author: Hassan Malik (@hmalik88), Frederik Bolding (@frederikbolding)
-created: 2022-08-23
+author: Hassan Malik (@hmalik88)
+created: 2023-07-18
 ---
 
 ## Abstract
 
-This SIP proposes a way for snaps to provide "insights" into transactions that users are signing. These insights can then be displayed in the MetaMask confirmation UI, helping the user to make informed decisions about signing transactions.
-
-Example use cases for transaction insights are phishing detection, malicious contract detection and transaction simulation.
+This SIP proposes a new endowment, `endowment:name-lookup`, that enables a way for snaps to resolve a `domain` and `address` to their respective counterparts.
 
 ## Motivation
 
-One of the most difficult problems blockchain wallets solve for their users is "signature comprehension", i.e. making cryptographic signature inputs intelligible to the user.
-Blockchain transactions are signed before being submitted to a node, and constitute an important subset of this problem space.
-A single wallet may not be able to provide all relevant information to any given user for any given transaction.
-To alleviate this problem, this SIP aims to expand the kinds of information MetaMask provides to a user before signing a transaction.
-
-The current MetaMask extension already has a "transaction insights" feature that decodes transactions and displays the result to the user.
-To expand on this feature, this SIP allows the community to build snaps that provide arbitrary "insights" into transactions.
-These insights can then be displayed in the MetaMask UI alongside any information provided by MetaMask itself.
+Currently, the MetaMask wallet allows for ENS domain resolution. The implementation is hardcoded and limited to just the ENS protocol. In an effort to
+increasingly modularize the wallet and allow for resolution beyond ENS, we decided to open up domain/address resolution to snaps. A snap would be able
+to provide resolution based on a domain or address provided with a chain ID. The address resolution is in essence "reverse resolution". The functionality provided by
+this API is also beneficial as a base layer for a petname system. Resolutions can eventually be fed into the petname system and used as a means for cache invalidation.
 
 ## Specification
 
@@ -46,108 +40,81 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 ### Snap Manifest
 
-This SIP specifies a permission named `endowment:transaction-insight`.
-The permission grants a snap read-only access to raw transaction payloads, before they are accepted for signing by the user.
+This SIP specifies a permission named `endowment:name-lookup`.
+The permission grants a snap access to a object with `chainId` and `domain` OR `address` fields in an `onNameLookup` export.
 
 This permission is specified as follows in `snap.manifest.json` files:
 
 ```json
 {
   "initialPermissions": {
-    "endowment:transaction-insight": {}
+    "endowment:name-lookup": {
+        "chains": ["eip155:1", "bip122:000000000019d6689c085ae165831e93"],
+    }
   }
 }
 ```
 
+`chains` - An array of CAIP-2 chain IDs that the snap supports. This field is useful to the extension to avoid unnecessary overhead.
+
 ### Snap Implementation
 
-Any snap that wishes to provide transaction insight features **MUST** implement the following API:
+Any snap that wishes to provide name lookup features **MUST** implement the following API:
 
 ```typescript
-import { OnTransactionHandler } from "@metamask/snap-types";
+import { OnNameLookupHandler } from "@metamask/snap-types";
 
-export const onTransaction: OnTransactionHandler = async ({
-  transaction,
+export const onNameLookup: OnNameLookupHandler = async ({
   chainId,
+  domain,
+  address
 }) => {
-  const insights = /* Get insights */;
-  return { insights };
+  let resolution;
+  if (domain) {
+    const getAddress = (domain) => /* Get address */;
+    resolution = getAddress(domain);
+  } else if (address) {
+    const getDomain = (address) => /* Get domain */;
+    resolution = getDomain(address);
+  } else {
+    return null;
+  }
+
+  return { resolution };
 };
 ```
 
-The interface for an `onTransaction` handler function’s arguments is:
+The type for an `onNameLookup` handler function’s arguments is:
 
 ```typescript
-interface OnTransactionArgs {
-  transaction: Record<string, unknown>;
-  chainId: string;
-}
-```
+type OnNameLookupArgs = {
+  chainId: Caip2ChainId;
+} & ({ domain: string, address: undefined } | { address: string, domain: undefined });
 
-`transaction` - The transaction object is intentionally not defined in this SIP because different chains may specify different transaction formats.
-It is beyond the scope of the SIP standards to define interfaces for every chain.
-Instead, it is the Snap developer's responsibility to be cognizant of the shape of transaction objects for relevant chains.
-Nevertheless, you can refer to [Appendix I](#appendix-i-ethereum-transaction-objects) for the interfaces of the Ethereum transaction objects available in MetaMask at the time of this SIP's creation.
+```
 
 `chainId` - This is a [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) `chainId` string.
 The snap is expected to parse and utilize this string as needed.
 
-The interface for the return value of an `onTransaction` export is:
+`domain` - This is a human-readable address. If the `domain` property is defined, the request is looking for resolution to an address.
+
+`address` - This is a non-readable address, this should be the native address format of the currently selected chain/protocol. If the `address` property is defined,
+the request is looking for resolution to a domain.
+
+The interface for the return value of an `onNameLookup` export is:
 
 ```typescript
-interface OnTransactionReturn {
-  insights: Record<string, Json>;
-}
+type Domain = string;
+
+type OnNameLookupResponse = {
+  resolution: AccountAddress | Domain;
+} | null;
 ```
 
 ### MetaMask Integration
 
-The `insights` object returned by the snap will be displayed alongside the confirmation for the `transaction` that `onTransaction` was called with.
-Keys and values will be displayed in the order received, with each key rendered as a title and each value rendered as follows:
-
-- If the value is an array or an object, it will be rendered as text after being converted to a string.
-- If the value is neither an array nor an object, it will be rendered directly as text.
-
-## Appendix I: Ethereum Transaction Objects
-
-The following transaction objects may appear for any `chainId` of `eip155:*` where `*` is some positive integer.
-This includes all Ethereum or "EVM-compatible" chains.
-As of the time of creation of this SIP, they are the only possible transaction objects for Ethereum chains.
-
-### EIP-1559
-
-```typescript
-interface TransactionObject {
-  from: string;
-  to: string;
-  nonce: string;
-  value: string;
-  data: string;
-  gas: string;
-  maxFeePerGas: string;
-  maxPriorityFeePerGas: string;
-  type: string;
-  estimateSuggested: string;
-  estimateUsed: string;
-}
-```
-
-### Legacy (non-EIP-1559)
-
-```typescript
-interface LegacyTransactionObject {
-  from: string;
-  to: string;
-  nonce: string;
-  value: string;
-  data: string;
-  gas: string;
-  gasPrice: string;
-  type: string;
-  estimateSuggested: string;
-  estimateUsed: string;
-}
-```
+The resolution returned by the snap will be displayed in the send flow for those chains that have integrated UI for their send flow, which currently are EVM chains. The intention is for this to
+exist across non-EVM chains when we reach the stage of send flow integration for protocol snaps.
 
 ## Copyright
 
