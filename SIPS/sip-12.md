@@ -2,7 +2,7 @@
 sip: 12
 title: Domain Resolution
 status: Draft
-discussions-to: https://github.com/MetaMask/SIPs/discussions/31
+discussions-to: https://github.com/MetaMask/SIPs/discussions/103
 author: Hassan Malik (@hmalik88)
 created: 2023-07-18
 ---
