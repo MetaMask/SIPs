@@ -21,6 +21,8 @@ This warning could be injected at any point where there are insights provided.
 
 Please see [SIP-3](https://github.com/MetaMask/SIPs/blob/main/SIPS/sip-3.md) for more information on the original transaction insights API.
 
+Please see the [snaps-ui](https://github.com/MetaMask/snaps/blob/main/packages/snaps-ui/src/nodes.ts) package for more information on the `Component` type returned in the `OnTransactionResponse`.
+
 ### Language
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
@@ -39,23 +41,30 @@ export const onTransaction: OnTransactionHandler = async ({
   chainId,
 }) => {
   const insights = /* Get insights */;
+  const constructComponent = (insights) => /* Return Component */;
+  const content = constructComponent(insights);
   const willFail = () => /* Return boolean */;
-  return willFail(insights) ? { insights, warning: 'Some warning message' } : { insights };
+  return willFail(insights) ? { content, severity: 'critical' } : { content, severity: 'none' };
 };
 ```
 
 The interface for the return value of an `onTransaction` export is:
 
 ```typescript
-interface OnTransactionReturn {
-  insights: Record<string, Json>;
-  warning?: string;
+enum SeverityLevel {
+  None = 'none',
+  Critical = 'critical',
+}
+
+interface OnTransactionResponse {
+  content: Component | null;
+  severity: SeverityLevel;
 }
 ```
 
 ### MetaMask Integration
 
-The `warning` key is added to the return object and it's value will be displayed in a modal alongside any warnings from other transaction insight snaps. The modal will require a checkbox to be checked before the user can continue with the transaction.
+The `severity` key is added to the return object to indicate to the extension if the content returned should be displayed in the modal. Insights with a severity level of `critical` will be surfaced to the modal. The modal will require a checkbox to be checked before the user can continue with the transaction.
 
 ## Copyright
 
