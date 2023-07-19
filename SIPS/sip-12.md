@@ -13,10 +13,7 @@ This SIP proposes a new endowment, `endowment:name-lookup`, that enables a way f
 
 ## Motivation
 
-Currently, the MetaMask wallet allows for ENS domain resolution. The implementation is hardcoded and limited to just the ENS protocol. In an effort to
-increasingly modularize the wallet and allow for resolution beyond ENS, we decided to open up domain/address resolution to snaps. A snap would be able
-to provide resolution based on a domain or address provided with a chain ID. The address resolution is in essence "reverse resolution". The functionality provided by
-this API is also beneficial as a base layer for a petname system. Resolutions can eventually be fed into the petname system and used as a means for cache invalidation.
+Currently, the MetaMask wallet allows for ENS domain resolution. The implementation is hardcoded and limited to just the ENS protocol. In an effort to increasingly modularize the wallet and allow for resolution beyond ENS, we decided to open up domain/address resolution to snaps. A snap would be able to provide resolution based on a domain or address provided with a chain ID. The address resolution is in essence "reverse resolution". The functionality provided by this API is also beneficial as a base layer for a petname system. Resolutions can eventually be fed into the petname system and used as a means for cache invalidation.
 
 ## Specification
 
@@ -38,10 +35,12 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
     - `Namespace` - a class of similar blockchains. For example EVM-based blockchains.
     - `Reference` - a way to identify a concrete chain inside a `Namespace`. For example Ethereum Mainnet or one of its test networks.
 
+- `AccountAddress` - The account address portion of a [CAIP-10](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) ID.
+
 ### Snap Manifest
 
 This SIP specifies a permission named `endowment:name-lookup`.
-The permission grants a snap access to a object with `chainId` and `domain` OR `address` fields in an `onNameLookup` export.
+The permission grants a snap the ability to expose an `onNameLookup` export that receives an object with `chainId` and `domain` OR `address` fields.
 
 This permission is specified as follows in `snap.manifest.json` files:
 
@@ -55,7 +54,7 @@ This permission is specified as follows in `snap.manifest.json` files:
 }
 ```
 
-`chains` - An array of CAIP-2 chain IDs that the snap supports. This field is useful to the extension to avoid unnecessary overhead.
+`chains` - An array of CAIP-2 chain IDs that the snap supports. This field is useful for a client in order to avoid unnecessary overhead.
 
 ### Snap Implementation
 
@@ -110,12 +109,6 @@ type OnNameLookupResponse = {
   resolution: AccountAddress | Domain;
 } | null;
 ```
-
-### MetaMask Integration
-
-The resolution returned by the snap will be displayed in the send flow for those chains that have integrated UI for their send flow, which currently are EVM chains. The intention is for this to
-exist across non-EVM chains when we reach the stage of send flow integration for protocol snaps.
-
 ## Copyright
 
 Copyright and related rights waived via [CC0](../LICENSE).
