@@ -37,7 +37,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 - `AccountAddress` - The account address portion of a [CAIP-10](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) ID.
 
-- `Petname system` - A naming system that finds balance between global, collision-free and memorable names. Please see the [research paper](https://www.hpl.hp.com/techreports/2005/HPL-2005-148.pdf) on this topic.
+- `Petname system` - A naming system that finds balance between global, collision-free and memorable names. Please see this [article](http://www.skyhunter.com/marcs/petnames/IntroPetNames.html) on this topic.
 
 ### Snap Manifest
 
