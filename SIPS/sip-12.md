@@ -70,16 +70,15 @@ export const onNameLookup: OnNameLookupHandler = async ({
   domain,
   address
 }) => {
-  let resolution;
   if (domain) {
-    const getAddress = (domain) => /* Get address */;
-    resolution = getAddress(domain);
-  } else if (address) {
-    const getDomain = (address) => /* Get domain */;
-    resolution = getDomain(address);
+    return { resolution: /* Get domain resolution */ }
+  } 
+  
+  if (address) {
+    return { resolution: /* Get address resolution */ };
   }
 
-  return { resolution };
+  return null;
 };
 ```
 
