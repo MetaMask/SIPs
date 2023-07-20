@@ -90,10 +90,10 @@ type OnNameLookupBaseArgs = {
   chainId: ChainId
 }
 
-type DomainLookupArgs = { domain: string, address: undefined };
-type AddressLookupArgs = { address: string, domain: undefined };
+type DomainLookupArgs = OnNameLookUpBaseArgs & { domain: string; };
+type AddressLookupArgs = OnNameLookUpBaseArgs & { address: string; };
 
-type OnNameLookupArgs = OnNameLookupBaseArgs & (DomainLookupArgs | AddressLookupArgs);
+type OnNameLookupArgs = DomainLookupArgs | AddressLookupArgs;
 
 ```
 
