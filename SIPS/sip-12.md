@@ -13,7 +13,7 @@ This SIP proposes a new endowment, `endowment:name-lookup`, that enables a way f
 
 ## Motivation
 
-Currently, the MetaMask wallet allows for ENS domain resolution. The implementation is hardcoded and limited to just the ENS protocol. In an effort to increasingly modularize the wallet and allow for resolution beyond ENS, we decided to open up domain/address resolution to snaps. A snap would be able to provide resolution based on a domain or address provided with a chain ID. The address resolution is in essence "reverse resolution". The functionality provided by this API is also beneficial as a base layer for a petname system. Resolutions can eventually be fed into the petname system and used as a means for cache invalidation.
+Currently, the MetaMask wallet allows for ENS domain resolution. The implementation is hardcoded and limited to just the ENS protocol. In an effort to increasingly modularize the wallet and allow for resolution beyond ENS, we decided to open up domain/address resolution to snaps. A snap would be able to provide resolution based on a domain or address provided with a chain ID. The address resolution is in essence "reverse resolution". The functionality provided by this API is also beneficial as a base layer for a petname system (**see definition**). With plans to bring petnames to MetaMask, resolutions would be fed into the petname system and used as a means for cache invalidation.
 
 ## Specification
 
@@ -37,6 +37,8 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 - `AccountAddress` - The account address portion of a [CAIP-10](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) ID.
 
+- `Petname system` - A naming system that finds balance between global, collision-free and memorable names. Please see the [research paper](https://www.hpl.hp.com/techreports/2005/HPL-2005-148.pdf) on this topic.
+
 ### Snap Manifest
 
 This SIP specifies a permission named `endowment:name-lookup`.
@@ -58,7 +60,7 @@ This permission is specified as follows in `snap.manifest.json` files:
 
 ### Snap Implementation
 
-Any snap that wishes to provide name lookup features **MUST** implement the following API:
+Please see below for an example implementation of the API:
 
 ```typescript
 import { OnNameLookupHandler } from "@metamask/snap-types";
@@ -75,20 +77,23 @@ export const onNameLookup: OnNameLookupHandler = async ({
   } else if (address) {
     const getDomain = (address) => /* Get domain */;
     resolution = getDomain(address);
-  } else {
-    return null;
   }
 
   return { resolution };
 };
 ```
 
-The type for an `onNameLookup` handler function’s arguments is:
+The type for an `onNameLookup` handler function's arguments is:
 
 ```typescript
-type OnNameLookupArgs = {
-  chainId: Caip2ChainId;
-} & ({ domain: string, address: undefined } | { address: string, domain: undefined });
+type OnNameLookupBaseArgs = { 
+  chainId: ChainId
+}
+
+type DomainLookupArgs = { domain: string, address: undefined };
+type AddressLookupArgs = { address: string, domain: undefined };
+
+type OnNameLookupArgs = OnNameLookupBaseArgs & (DomainLookupArgs | AddressLookupArgs);
 
 ```
 
@@ -106,8 +111,8 @@ The interface for the return value of an `onNameLookup` export is:
 type Domain = string;
 
 type OnNameLookupResponse = {
-  resolution: AccountAddress | Domain;
-} | null;
+  resolution: AccountAddress | Domain | null;
+};
 ```
 ## Copyright
 
