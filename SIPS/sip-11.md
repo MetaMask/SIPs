@@ -44,7 +44,7 @@ export const onTransaction: OnTransactionHandler = async ({
   const constructComponent = (insights) => /* Return Component */;
   const content = constructComponent(insights);
   const willFail = () => /* Return boolean */;
-  return willFail(insights) ? { content, severity: 'critical' } : { content, severity: 'none' };
+  return willFail(insights) ? { content, severity: 'critical' } : { content };
 };
 ```
 
@@ -52,15 +52,16 @@ The interface for the return value of an `onTransaction` export is:
 
 ```typescript
 enum SeverityLevel {
-  None = 'none',
   Critical = 'critical',
 }
 
 interface OnTransactionResponse {
   content: Component | null;
-  severity: SeverityLevel;
+  severity?: SeverityLevel;
 }
 ```
+
+**Note:** `severity` is an optional field and the omission of such means that there is no escalation of the content being returned.
 
 ### MetaMask Integration
 
