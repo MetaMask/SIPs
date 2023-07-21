@@ -111,7 +111,7 @@ type Domain = string;
 
 type OnNameLookupResponse = {
   resolution: AccountAddress | Domain | null;
-};
+} | null;
 ```
 ## Copyright
 
