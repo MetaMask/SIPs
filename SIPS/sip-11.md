@@ -32,23 +32,23 @@ The following is an example implementation of the API:
 ```typescript
 import { OnTransactionHandler } from "@metamask/snap-types";
 
+enum SeverityLevel {
+  Critical = 'critical',
+}
+
 export const onTransaction: OnTransactionHandler = async ({
   transaction,
   chainId,
 }) => {
   const content = /* Get UI component with insights */;
   const isContentCritical = /* Boolean checking if content is critical */
-  return isContentCritical ? { content, severity: 'critical' } : { content };
+  return isContentCritical ? { content, severity: SeverityLevel.Critical } : { content };
 };
 ```
 
 The interface for the return value of an `onTransaction` export is:
 
 ```typescript
-enum SeverityLevel {
-  Critical = 'critical',
-}
-
 interface OnTransactionResponse {
   content: Component | null;
   severity?: SeverityLevel;
