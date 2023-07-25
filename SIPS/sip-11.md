@@ -17,12 +17,6 @@ One of the biggest issues with wallet users is a loss of funds through executing
 
 This warning could be injected at any point where there are insights provided.
 
-### Language
-
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-"SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
-"OPTIONAL" written in uppercase in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt)
-
 ### MetaMask Integration
 
 The `severity` key is added to the return object to indicate the severity level of the content being returned to the extension. This will help trigger certain UI in the extension. Currently, a warning modal will be triggered for content with a severity level of `critical`. The modal will require a checkbox to be checked before the user can continue with the transaction.
