@@ -31,6 +31,8 @@ The proposed RPC method `wallet_getLocale` SHOULD be a restricted RPC method req
 
 The implementation MUST use a `getLocale` method hook for accessing the user locale. This lets each implementing client specify the function themselves, letting the RPC implementation remain platform-agnostic.
 
+The client MUST return an [IETF BCP 47](https://www.ietf.org/rfc/bcp/bcp47.txt) formatted locale string.  
+
 ```tsx
 /**
  * Builds the method implementation for `wallet_getLocale`.
