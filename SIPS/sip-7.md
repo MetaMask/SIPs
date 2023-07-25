@@ -65,17 +65,23 @@ This SIP describes a couple of components for the initial version of the UI:
 4. A button component, rendering the text as a HTML button (`button`), with an optional ID for handling user input.
     1. The button can have two variants: `primary` and `secondary`.
     2. If the variant is not specified, `primary` SHOULD be used.
-    3. The button can have two types: `button` and `submit`.
-    4. If the type is not specified, `button` SHOULD be used.
+4. A submit button component, rendering the text as a HTML button (`button`) of type `submit`, with an optional ID for handling user input.
+    1. The button can have two variants: `primary` and `secondary`.
+    2. If the variant is not specified, `primary` SHOULD be used.
 5. A divider component, rendering a HTML thematic break (`hr`).
 6. A spacer component, pushing content around it to the top and bottom, similar to how `flex-grow` works.
 7. A spinner component, rendering a spinner to indicate loading data.
 8. A copyable component, rendering the value along a copy icon that copies the value in the clipboard.
 9. A form component, which renders a list of `children` components to define a form, with an ID for handling user input.
-10. An input component, rendering an HTML input (`input`) with an ID for handling user input.
-  1. The input can be of 4 different types: `text`, `password`, `number`, `search`
-  2. If the type is not specified, `text` SHOULD be used.
-  3. An additional label MUST optionally be rendered if defined in the `label` field.
+10. A text input component, rendering an HTML input (`input`) of type `text` with an ID for handling user input.
+  1. An aditional label MUST optionally be rendered if defined in the `label` field.
+11. A password input component, rendering an HTML input (`input`) of type `password` with an ID for handling user input.
+  1. An aditional label MUST optionally be rendered if defined in the `label` field.
+12. A number input component, rendering an HTML input (`input`) of type `number` with an ID for handling user input.
+  3. An aditional label MUST optionally be rendered if defined in the `label` field.
+13. A search input component, rendering an HTML input (`input`) of type `search` with an ID for handling user input.
+  3. An aditional label MUST optionally be rendered if defined in the `label` field.
+
 
 ```tsx
 type ComponentType = 'panel' | 'heading' | 'text' | 'button' | 'divider' | 'spacer' | 'spinner' | 'copyable' | 'form' | 'input';
@@ -98,7 +104,15 @@ interface TextComponent extends BaseComponent {
 interface ButtonComponent extends BaseComponent {
   type: 'button';
   variant?: 'primary' | 'secondary';
-  buttonType?: 'button' | 'submit';
+  buttonType: 'button'
+  value: string;
+  name?: string;
+}
+
+interface SubmitButtonComponent extends BaseComponent {
+  type: 'button';
+  variant?: 'primary' | 'secondary';
+  buttonType: 'submit'
   value: string;
   name?: string;
 }
@@ -126,11 +140,37 @@ interface FormComponent extends BaseComponent {
   children: Component[];
 }
 
-interface InputComponent extends BaseComponent {
+interface TextInputComponent extends BaseComponent {
   type: 'input';
   value?: string;
   name: string;
-  inputType?: 'text' | 'password' | 'number' | 'search';
+  inputType: 'text'
+  placeholder?: string;
+  label?: string;
+}
+
+interface PasswordInputComponent extends BaseComponent {
+  type: 'input';
+  value?: string;
+  name: string;
+  inputType: 'password'
+  placeholder?: string;
+  label?: string;
+}
+
+interface NumberInputComponent extends BaseComponent {
+  type: 'input';
+  value?: string;
+  name: string;
+  inputType: 'number'
+  placeholder?: string;
+  label?: string;
+}
+interface SearchInputComponent extends BaseComponent {
+  type: 'input';
+  value?: string;
+  name: string;
+  inputType: 'search'
   placeholder?: string;
   label?: string;
 }
@@ -140,12 +180,16 @@ type Component =
   | HeadingComponent
   | TextComponent
   | ButtonComponent
+  | SubmitButtonComponent
   | DividerComponent
   | SpacerComponent
   | SpinnerComponent
   | CopyableComponent
   | FormComponent
-  | InputComponent;
+  | TextInputComponent
+  | PasswordInputComponent
+  | NumberInputComponent
+  | SearchInputComponent;
 ```
 
 ### JSON-RPC methods
