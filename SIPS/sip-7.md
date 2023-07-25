@@ -71,11 +71,11 @@ This SIP describes a couple of components for the initial version of the UI:
 6. A spacer component, pushing content around it to the top and bottom, similar to how `flex-grow` works.
 7. A spinner component, rendering a spinner to indicate loading data.
 8. A copyable component, rendering the value along a copy icon that copies the value in the clipboard.
-9. A Form component, which renders a list of `children` components and define a form, with an ID for handling user input.
+9. A form component, which renders a list of `children` components to define a form, with an ID for handling user input.
 10. An input component, rendering an HTML input (`input`) with an ID for handling user input.
   1. The input can be of 4 different types: `text`, `password`, `number`, `search`
   2. If the type is not specified, `text` SHOULD be used.
-  3. An aditional label MUST optionally be rendered if defined in the `label` field.
+  3. An additional label MUST optionally be rendered if defined in the `label` field.
 
 ```tsx
 type ComponentType = 'panel' | 'heading' | 'text' | 'button' | 'divider' | 'spacer' | 'spinner' | 'copyable' | 'form' | 'input';
@@ -232,7 +232,7 @@ type SnapReadInterfaceResponse = Json;
 
 #### `snap_getInterfaceState`
 
-The `snap_getInterfaceState` method lets Snaps retrive an existing user interface state. The params MUST be an object, with the following properties:
+The `snap_getInterfaceState` method lets snaps retrieve an existing user interface state. The params MUST be an object, with the following properties:
 
 - `id` (`string`): The ID of the custom UI to read.
 
