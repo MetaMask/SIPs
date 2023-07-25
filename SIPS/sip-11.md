@@ -67,7 +67,7 @@ interface OnTransactionResponse {
 
 Please see [SIP-3](https://github.com/MetaMask/SIPs/blob/main/SIPS/sip-3.md) for more information on the original transaction insights API.
 
-Please see the [@metamask/snaps-ui](https://github.com/MetaMask/snaps/blob/main/packages/snaps-ui/src/nodes.ts) package for more information on the `Component` type returned in the `OnTransactionResponse`.
+Please see the [SIP-7](https://github.com/MetaMask/SIPs/blob/main/SIPS/sip-7.md) package for more information on the `Component` type returned in the `OnTransactionResponse`.
 
 ## Copyright
 
