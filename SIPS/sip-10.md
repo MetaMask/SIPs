@@ -1,19 +1,19 @@
 ---
 sip: 10
-title: wallet_getLocale
+title: snap_getLocale
 status: Draft
 discussions-to: https://github.com/MetaMask/SIPs/discussions/99
-author: Frederik Bolding (@FrederikBolding)
+author: Frederik Bolding (@FrederikBolding), Hassan Malik (@hmalik88)
 created: 2023-06-30
 ---
 
 ## Abstract
 
-This SIP proposes an RPC method that lets Snaps access the user selected locale in MetaMask, as a way to inform their localization efforts. This proposal will outline implementation details of said RPC method.
+This SIP proposes an RPC method that lets snaps access the user selected locale in MetaMask, as a way to inform their localization efforts. This proposal will outline implementation details of said RPC method.
 
 ## Motivation
 
-Snaps that want to localize their copy used in custom interfaces etc currently has to implement their own system for letting a user select their preferred language. The proposed RPC method provides a developer experience improvement to snap developers by letting them use the user's existing and preferred localization settings.
+Snaps that want to localize their copy used in custom interfaces etc. currently have to implement their own system for letting a user select their preferred language. The proposed RPC method provides a developer experience improvement to snap developers by letting them use the user's existing and preferred localization settings.
 
 ## Specification
 
@@ -27,7 +27,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 ### Proposed implementation
 
-The proposed RPC method `wallet_getLocale` SHOULD be a restricted RPC method requiring user consent before usage via the permission system. The RPC method SHOULD only be available to Snaps.
+The proposed RPC method `snap_getLocale` SHOULD be a restricted RPC method requiring user consent before usage via the permission system. The RPC method SHOULD only be available to Snaps.
 
 The implementation MUST use a `getLocale` method hook for accessing the user locale. This lets each implementing client specify the function themselves, letting the RPC implementation remain platform-agnostic.
 
@@ -35,7 +35,7 @@ The client MUST return an [IETF BCP 47](https://www.ietf.org/rfc/bcp/bcp47.txt) 
 
 ```tsx
 /**
- * Builds the method implementation for `wallet_getLocale`.
+ * Builds the method implementation for `snap_getLocale`.
  *
  * @param hooks - The RPC method hooks.
  * @param hooks.getLocale - A function that returns the user selected locale.
