@@ -79,8 +79,6 @@ This SIP describes a couple of components for the initial version of the UI:
   1. An aditional label MUST optionally be rendered if defined in the `label` field.
 12. A number input component, rendering an HTML input (`input`) of type `number` with an ID for handling user input.
   3. An aditional label MUST optionally be rendered if defined in the `label` field.
-13. A search input component, rendering an HTML input (`input`) of type `search` with an ID for handling user input.
-  3. An aditional label MUST optionally be rendered if defined in the `label` field.
 
 
 ```tsx
@@ -166,14 +164,6 @@ interface NumberInputComponent extends BaseComponent {
   placeholder?: string;
   label?: string;
 }
-interface SearchInputComponent extends BaseComponent {
-  type: 'input';
-  value?: string;
-  name: string;
-  inputType: 'search'
-  placeholder?: string;
-  label?: string;
-}
 
 type Component =
   | PanelComponent
@@ -189,7 +179,6 @@ type Component =
   | TextInputComponent
   | PasswordInputComponent
   | NumberInputComponent
-  | SearchInputComponent;
 ```
 
 ### JSON-RPC methods
