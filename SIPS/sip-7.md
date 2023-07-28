@@ -74,11 +74,11 @@ This SIP describes a couple of components for the initial version of the UI:
 8. A copyable component, rendering the value along a copy icon that copies the value in the clipboard.
 9. A form component, which renders a list of `children` components to define a form, with an ID for handling user input.
 10. A text input component, rendering an HTML input (`input`) of type `text` with an ID for handling user input.
-  1. An aditional label MUST optionally be rendered if defined in the `label` field.
+  1. An aditional label MUST be rendered if defined in the `label` field.
 11. A password input component, rendering an HTML input (`input`) of type `password` with an ID for handling user input.
-  1. An aditional label MUST optionally be rendered if defined in the `label` field.
+  1. An aditional label MUST be rendered if defined in the `label` field.
 12. A number input component, rendering an HTML input (`input`) of type `number` with an ID for handling user input.
-  3. An aditional label MUST optionally be rendered if defined in the `label` field.
+  3. An aditional label MUST be rendered if defined in the `label` field.
 
 
 ```tsx
