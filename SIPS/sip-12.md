@@ -71,11 +71,11 @@ export const onNameLookup: OnNameLookupHandler = async ({
   address
 }) => {
   if (domain) {
-    return { resolution: /* Get domain resolution */ }
+    return { resolvedAddress: /* Get domain resolution */ }
   } 
   
   if (address) {
-    return { resolution: /* Get address resolution */ };
+    return { resolvedDomain: /* Get address resolution */ };
   }
 
   return null;
@@ -89,8 +89,8 @@ type OnNameLookupBaseArgs = {
   chainId: ChainId
 }
 
-type DomainLookupArgs = OnNameLookUpBaseArgs & { domain: string, address: undefined };
-type AddressLookupArgs = OnNameLookUpBaseArgs & { address: string, domain: undefined };
+type DomainLookupArgs = OnNameLookUpBaseArgs & { domain: string; address?: never };
+type AddressLookupArgs = OnNameLookUpBaseArgs & { address: string; domain?: never };
 
 type OnNameLookupArgs = DomainLookupArgs | AddressLookupArgs;
 
@@ -107,11 +107,13 @@ the request is looking for resolution to a domain.
 The interface for the return value of an `onNameLookup` export is:
 
 ```typescript
-type Domain = string;
-
-type OnNameLookupResponse = {
-  resolution: AccountAddress | Domain | null;
-} | null;
+type OnNameLookupResponse =
+  | {
+      resolvedAddress: AccountAddress;
+      resolvedDomain?: never;
+    }
+  | { resolvedDomain: string; resolvedAddress?: never }
+  | null;
 ```
 ## Copyright
 
