@@ -115,6 +115,9 @@ type OnNameLookupResponse =
   | { resolvedDomain: string; resolvedAddress?: never }
   | null;
 ```
+
+**Note:** `resolvedDomain` and `resolvedAddress` MUST be the keys that the resolved address/domain being queried is indexed by in the protocol that the snap is resolving for. These returned values are un-opinionated at the API layer to allow the client to use them as they see fit.
+
 ## Copyright
 
 Copyright and related rights waived via [CC0](../LICENSE).
