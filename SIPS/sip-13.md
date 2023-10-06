@@ -39,13 +39,13 @@ import { OnConnectHandler, showConnectWarning } from "@metamask/snap-types";
 export const onConnect: OnConnectHandler = async ({ 
   domain, address 
 } ) => {
-  let checkConnectionDetails: { message, dangerType } = ajaxCallToRemoteAPI();
+  let checkConnectionDetails: { message, dangerType } = ajaxCallToRemoteAPI(domain);
 
   if ( dangerType === 'danger' | dangerType === 'warn' ) {
 
     // The end user will be shown the message and dangerType (danger | warming | none) and also be 
     // asked the question: 'Do you wish to proceed and connect your wallet to the {domain}?'
-    let connect: boolean = showConnectWarning(message, dangerType );
+    let connect: boolean = showConnectMessage(message, dangerType );
 
     // If the user clicked the 'No' button connect will be false, else true.
     return connect;
@@ -55,6 +55,44 @@ export const onConnect: OnConnectHandler = async ({
   return true;
 };
 ```
+
+Note that OnConnectHandler is a new Handler which is part of the same event mechanism used by 
+existing SNAP handlers like OnTransactionHandler, OnCronjobHandler, OnRpcRequestHandler.
+
+See: [Snaps exports](https://docs.metamask.io/snaps/reference/exports/)
+
+OnConnectHandler fires when    the end user is attempting to connect the dApp to their wallet.
+
+In the above usage example, The hook can return true or false.  It returns true if the connection
+should be allowed to go ahead and false if the wallet should not connect to the dApp.
+
+There is a new function which needs to be added to the SNAP API called:
+
+    showConnectMessage(message: string, dangerType: string): boolean
+
+This function takes in a message and dangerType.  The message could be something like:
+
+"Domain gooooogle.com is a phishing website.  Be Careful"
+
+dangerType can have the following values:   danger | warning | none
+
+"danger" means the domain is a dangerous one and one should be very vigilant.
+"warning" means the domain has had some issues so one should be careful.
+"none" means the domain has no reported issues.
+
+Note that the implementation of showConnectMessage(..) MUST show the message and dangerType and also have a dialog with the additional text:
+
+"Do you wish to proceed and connect your wallet to the {domain}?'"
+
+This dialog has 2 buttons to respond with:
+
+Yes - means the user wishes to connect to their wallet
+No - means the user does not wish to connect to their wallet
+
+The showConnectMessage() returns true to connect and false to not connect.
+
+Note that the ajaxCallToRemoteAPI(domain) function above is not part of the API and is an example
+of integrating this functionality with the UTU Trust network.
 
 ## Copyright
 
