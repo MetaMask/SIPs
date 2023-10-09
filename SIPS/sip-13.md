@@ -37,7 +37,7 @@ The following is an example implementation / usage of the API:
 import { OnConnectHandler, showConnectWarning } from "@metamask/snap-types";
 
 export const onConnect: OnConnectHandler = async ({ 
-  domain, address 
+  domain: string, address: string
 } ) => {
   let checkConnectionDetails: { message: string, dangerType: string } = ajaxCallToRemoteAPI(domain);
 
