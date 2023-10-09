@@ -37,8 +37,8 @@ The following is an example implementation / usage of the API:
 import { OnConnectHandler, showConnectWarning } from "@metamask/snap-types";
 
 export const onConnect: OnConnectHandler = async ({ 
-  domain: string, address: string
-} ) => {
+  domain, address
+} ) : {domain: string, address: string} => {
   let checkConnectionDetails: { message: string, dangerType: string } = ajaxCallToRemoteAPI(domain);
 
   if ( checkConnectionDetails.dangerType === 'danger' | checkConnectionDetails.dangerType === 'warn' ) {
@@ -72,7 +72,7 @@ There is a new function which needs to be added to the SNAP API called:
 
 This function takes in a message and dangerType.  The message could be something like:
 
-"Domain gooooogle.com is a phishing website.  Be Careful"
+    "Domain gooooogle.com is a phishing website.  Be Careful"
 
 dangerType can have the following values:   danger | warning | none
 
@@ -82,7 +82,7 @@ dangerType can have the following values:   danger | warning | none
 
 Note that the implementation of showConnectMessage(..) MUST show the message and dangerType and also have a dialog with the additional text:
 
-"Do you wish to proceed and connect your wallet to the {domain}?'"
+    "Do you wish to proceed and connect your wallet to the {domain}?'"
 
 This dialog has 2 buttons to respond with:
 
