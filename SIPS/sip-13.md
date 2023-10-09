@@ -39,13 +39,13 @@ import { OnConnectHandler, showConnectWarning } from "@metamask/snap-types";
 export const onConnect: OnConnectHandler = async ({ 
   domain, address 
 } ) => {
-  let checkConnectionDetails: { message, dangerType } = ajaxCallToRemoteAPI(domain);
+  let checkConnectionDetails: { message: string, dangerType: string } = ajaxCallToRemoteAPI(domain);
 
-  if ( dangerType === 'danger' | dangerType === 'warn' ) {
+  if ( checkConnectionDetails.dangerType === 'danger' | checkConnectionDetails.dangerType === 'warn' ) {
 
     // The end user will be shown the message and dangerType (danger | warming | none) and also be 
     // asked the question: 'Do you wish to proceed and connect your wallet to the {domain}?'
-    let connect: boolean = showConnectMessage(message, dangerType );
+    let connect: boolean = showConnectMessage(checkConnectionDetails.message, checkConnectionDetails.dangerType );
 
     // If the user clicked the 'No' button connect will be false, else true.
     return connect;
