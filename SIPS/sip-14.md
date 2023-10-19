@@ -9,11 +9,11 @@ created: 2023-10-19
 
 ## Abstract
 
-This SIP proposes changes to the snap manifest and new RPC methods that would allow snap developers to request additional permissions dynamically at runtime. This proposal outlines some of the details around this feature.
+This SIP proposes changes to the Snap manifest and new RPC methods that would allow Snap developers to request additional permissions dynamically at runtime. This proposal outlines some of the details around this feature.
 
 ## Motivation
 
-Snaps currently have to request all permissions that they plan to use at install-time. This becomes a problem when a snap wants to use many permissions as the installation experience suffers and the user has to either accept all permissions requested or deny the installation. This proposal provides an improvement to the experience by letting snaps request permissions at run-time as long as those permissions are statically defined in the manifest at build-time.
+Snaps currently have to request all permissions that they plan to use at install-time. This becomes a problem when a Snap wants to use many permissions as the installation experience suffers and the user has to either accept all permissions requested or deny the installation. This proposal provides an improvement to the experience by letting Snaps request permissions at run-time as long as those permissions are statically defined in the manifest at build-time.
 
 ## Specification
 
@@ -27,8 +27,8 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 ### Snap Manifest
 
-This SIP adds a new field to the snap manifest called `dynamicPermissions`.
-This field can be used in tandem with the existing `initialPermissions`, but keep in mind that permissions in this field are not granted by installation, they MUST be requested when needed.
+This SIP adds a new field to the Snap manifest called `dynamicPermissions`.
+This field can be used in tandem with the existing `initialPermissions`, but keep in mind that permissions in this field are not granted by installation: They MUST be requested when needed.
 
 The new field can be specified as follows in a `snap.manifest.json` file:
 
@@ -59,17 +59,20 @@ Furthermore, permissions specified in `dynamicPermissions` MUST contain the cave
 
 ### RPC Methods
 
-This SIP also proposes new RPC methods to manage these new permissions:
+This SIP proposes the following RPC methods to manage the dynamic permissions:
 
 #### snap_requestPermissions
-This RPC method SHOULD function as a subset of the existing `wallet_requestPermissions` RPC method and take the same parameters and have the same return value. This function MAY be a middleware that rewrites requests to `wallet_requestPermissions` if needed. 
+
+This RPC method SHOULD function as a subset of the existing `wallet_requestPermissions` RPC method and take the same parameters and have the same return value.
 
 This RPC method MUST prompt the user to get consent for any requested permissions and MUST validate that the requested permissions are specified in the manifest before continuing its execution (including caveats matching).
 
 #### snap_getPermissions
+
 This RPC method SHOULD be an alias for `wallet_getPermissions`, MAY be used by the snap for verifying whether it already has the permissions needed for operating. The return value and parameters SHOULD match the existing specification.
 
 #### snap_revokePermissions
+
 The RPC method parameters and return value are TBD.
 
 Note: This RPC method does not currently have a `wallet_` counterpart. Coordinate with dapp API team as they may be shipping one.
