@@ -131,7 +131,7 @@ interface Provider {
 }
 ```
 
-The above API is a minimal API based on [WalletConnect v2.0 Sign](https://docs.walletconnect.com/2.0/introduction/sign) API, that skips the bridge server functionality and is transport protocol independent. All operations SHOULD behave the same as WalletConnect v2.0.
+The above API is a minimal API based on WalletConnect v2.0 Sign API, that skips the bridge server functionality and is transport protocol independent. All operations SHOULD behave the same as WalletConnect v2.0.
 
 - `Provider.connect` - Establishes connection with the wallet.
   - `.approval` - Requests user approval for connection.
