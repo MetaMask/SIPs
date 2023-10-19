@@ -38,10 +38,24 @@ The new field can be specified as follows in a `snap.manifest.json` file:
     "endowment:transaction-insight": {}
   },
   "dynamicPermissions": {
-    "snap_dialog": {}
+    "snap_dialog": {},
+    "snap_getBip44Entropy": [
+      {
+        "coinType": 1
+      },
+      {
+        "coinType": 3
+      }
+    ]
   }
 }
 ```
+
+### Permission caveats and merging
+
+In this initial version, duplicated permissions in `initialPermissions` and `dynamicPermissions` MUST NOT be allowed. A permission MUST only be able to exist in one of the manifest fields.
+
+Furthermore, permissions specified in `dynamicPermissions` MUST contain the caveats that will be requested at runtime and the permission request MUST fully match the caveats specified in the manifest.
 
 ### RPC Methods
 
@@ -50,7 +64,7 @@ This SIP also proposes new RPC methods to manage these new permissions:
 #### snap_requestPermissions
 This RPC method SHOULD function as a subset of the existing `wallet_requestPermissions` RPC method and take the same parameters and have the same return value. This function MAY be a middleware that rewrites requests to `wallet_requestPermissions` if needed. 
 
-This RPC method MUST prompt the user to get consent for any requested permissions and MUST validate that the requested permissions are specified in the manifest before continuing its execution.
+This RPC method MUST prompt the user to get consent for any requested permissions and MUST validate that the requested permissions are specified in the manifest before continuing its execution (including caveats matching).
 
 #### snap_getPermissions
 This RPC method SHOULD be an alias for `wallet_getPermissions`, MAY be used by the snap for verifying whether it already has the permissions needed for operating. The return value and parameters SHOULD match the existing specification.
@@ -61,9 +75,6 @@ The RPC method parameters and return value are TBD.
 Note: This RPC method does not currently have a `wallet_` counterpart. Coordinate with dapp API team as they may be shipping one.
 
 This RPC method MUST validate that the permissions requested to be revoked does not contain or overlap with the `initialPermissions`.
-
-### Permission Caveats
-TBD
 
 ## Copyright
 
