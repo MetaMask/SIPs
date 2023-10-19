@@ -28,7 +28,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 ### Snap Manifest
 
 This SIP adds a new field to the Snap manifest called `dynamicPermissions`.
-This field can be used in tandem with the existing `initialPermissions`, but keep in mind that permissions in this field are not granted by installation: They MUST be requested when needed.
+This field can be used in tandem with the existing `initialPermissions`, but keep in mind that permissions in this field are not granted by installation: They MUST be requested when needed. The field follows the same format as `initialPermissions`.
 
 The new field can be specified as follows in a `snap.manifest.json` file:
 
@@ -56,6 +56,8 @@ The new field can be specified as follows in a `snap.manifest.json` file:
 In this initial version, duplicated permissions in `initialPermissions` and `dynamicPermissions` MUST NOT be allowed. A permission MUST only be able to exist in one of the manifest fields.
 
 Furthermore, permissions specified in `dynamicPermissions` MUST contain the caveats that will be requested at runtime and the permission request MUST fully match the caveats specified in the manifest.
+
+This MAY change in a future SIP.
 
 ### RPC Methods
 
