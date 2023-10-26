@@ -2,7 +2,7 @@
 sip: 14
 title: Dynamic Permissions
 status: Draft
-discussions-to: 
+discussions-to: https://github.com/MetaMask/SIPs/discussions/114
 author: Frederik Bolding (@frederikbolding)
 created: 2023-10-19
 ---
