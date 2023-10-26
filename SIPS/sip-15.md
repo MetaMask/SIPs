@@ -2,7 +2,7 @@
 sip: 15
 title: Snaps Home Page
 status: Draft
-discussions-to: 
+discussions-to: https://github.com/MetaMask/SIPs/discussions/115
 author: Frederik Bolding (@frederikbolding)
 created: 2023-10-26
 ---
