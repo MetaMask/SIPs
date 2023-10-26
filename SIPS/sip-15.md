@@ -19,7 +19,7 @@ This new surface differs from the existing custom UI surfaces as it isn't reacti
 
 ## Specification
 
-> Formal specifications are written in Typescript. Usage of `CAIP-N` specifications, where `N` is a number, are references to [Chain Agnostic Improvement Proposals](https://github.com/ChainAgnostic/CAIPs).
+> Formal specifications are written in Typescript.
 
 ### Language
 
