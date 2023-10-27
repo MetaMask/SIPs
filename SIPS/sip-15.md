@@ -29,7 +29,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 ### Snap Manifest
 
-This SIP specifies a permission named `endowment:snaps-home`.
+This SIP specifies a permission named `endowment:home-page`.
 The permission signals to the platform that the snap wants to use the home page functionality. This MAY change routing in the client or change how the snap is displayed to the user.
 
 This permission is specified as follows in `snap.manifest.json` files:
@@ -37,7 +37,7 @@ This permission is specified as follows in `snap.manifest.json` files:
 ```json
 {
   "initialPermissions": {
-    "endowment:snaps-home": {}
+    "endowment:home-page": {}
   }
 }
 ```
