@@ -44,7 +44,7 @@ This permission is specified as follows in `snap.manifest.json` files:
 
 ### Snap Implementation
 
-When a user navigates to the snap home page, the `onHomePage` handler will be invoked. This handler MUST be used to generate the static UI content for the home page.
+When a user navigates to the snap home page, the `onHomePage` handler will be invoked. This handler MUST be used to generate the UI content for the home page.
 
 Any snap that wishes to expose a home page MUST implement the following API:
 
