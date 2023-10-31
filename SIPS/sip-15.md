@@ -29,40 +29,40 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 ### Snap Manifest
 
-This SIP specifies a permission named `endowment:home-page`.
-The permission signals to the platform that the snap wants to use the home page functionality. This MAY change routing in the client or change how the snap is displayed to the user.
+This SIP specifies a permission named `endowment:page-home`.
+The permission signals to the platform that the snap wants to use the home page functionality.
 
 This permission is specified as follows in `snap.manifest.json` files:
 
 ```json
 {
   "initialPermissions": {
-    "endowment:home-page": {}
+    "endowment:page-home": {}
   }
 }
 ```
 
 ### Snap Implementation
 
-When a user navigates to the snap home page, the `onHome` handler will be invoked. This handler MUST be used to generate the static UI content for the home page.
+When a user navigates to the snap home page, the `onHomePage` handler will be invoked. This handler MUST be used to generate the static UI content for the home page.
 
 Any snap that wishes to expose a home page MUST implement the following API:
 
 ```typescript
 import { panel, text } from "@metamask/snap-ui";
-import { OnHomeHandler } from "@metamask/snap-types";
+import { OnHomePageHandler } from "@metamask/snap-types";
 
-export const onHome: OnHomeHandler = async () => {
+export const onHomePage: OnHomePageHandler = async () => {
   const content = panel([text('Hello world!')])
   return { content };
 };
 ```
 
-The `onHome` handler takes no arguments and MUST return a value that matches the following interface:
+The `onHomePage` handler takes no arguments and MUST return a value that matches the following interface:
  
 ```typescript
 import { Component } from "@metamask/snap-ui";
-interface OnHomeResponse {
+interface OnHomePageResponse {
   content: Component;
 }
 ```
