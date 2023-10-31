@@ -13,7 +13,7 @@ This SIP proposes a new endowment, `endowment:name-lookup`, that enables a way f
 
 ## Motivation
 
-Currently, the MetaMask wallet allows for ENS domain resolution. The implementation is hardcoded and limited to just the ENS protocol. In an effort to increasingly modularize the wallet and allow for resolution beyond ENS, we decided to open up domain/address resolution to snaps. A snap would be able to provide resolution based on a domain or address provided with a chain ID. The address resolution is in essence "reverse resolution". The functionality provided by this API is also beneficial as a base layer for a petname system (**see definition**). With plans to bring petnames to MetaMask, resolutions would be fed into the petname system and used as a means for cache invalidation.
+Currently, the MetaMask wallet allows for ENS domain resolution. The implementation is hardcoded and limited to just the ENS protocol. In an effort to increasingly modularize the wallet and allow for resolution beyond ENS, we decided to open up domain/address resolution to snaps. A snap would be able to provide resolutions based on a domain or address provided with a chain ID. The address resolution is in essence "reverse resolution". The functionality provided by this API is also beneficial as a base layer for a petname system (**see definition**). With plans to bring petnames to MetaMask, resolutions would be fed into the petname system and used as a means for cache invalidation.
 
 ## Specification
 
@@ -51,12 +51,14 @@ This permission is specified as follows in `snap.manifest.json` files:
   "initialPermissions": {
     "endowment:name-lookup": {
         "chains": ["eip155:1", "bip122:000000000019d6689c085ae165831e93"],
+        "tlds": [".lens"],
     }
   }
 }
 ```
 
 `chains` - An array of CAIP-2 chain IDs that the snap supports. This field is useful for a client in order to avoid unnecessary overhead.
+`tlds` - An array of top level domains that the snap will provide resolution for. This field is useful for a client for validating input for domain resolution, also helpful in reducing overhead.
 
 ### Snap Implementation
 
@@ -71,11 +73,11 @@ export const onNameLookup: OnNameLookupHandler = async ({
   address
 }) => {
   if (domain) {
-    return { resolvedAddress: /* Get domain resolution */ }
+    return { resolvedAddresses: /* Get domain resolution */ }
   } 
   
   if (address) {
-    return { resolvedDomain: /* Get address resolution */ };
+    return { resolvedDomains: /* Get address resolution */ };
   }
 
   return null;
@@ -107,16 +109,28 @@ the request is looking for resolution to a domain.
 The interface for the return value of an `onNameLookup` export is:
 
 ```typescript
+type AddressResolution = {
+  protocol: string;
+  resolvedAddress: AccountAddress;
+};
+
+type DomainResolution = {
+  protocol: string;
+  resolvedDomain: string;
+};
+
 type OnNameLookupResponse =
   | {
-      resolvedAddress: AccountAddress;
-      resolvedDomain?: never;
+      resolvedAddresses: AddressResolution[];
+      resolvedDomains?: never;
     }
-  | { resolvedDomain: string; resolvedAddress?: never }
+  | { resolvedDomains: DomainResolution[]; resolvedAddresses?: never }
   | null;
 ```
 
-**Note:** `resolvedDomain` and `resolvedAddress` MUST be the keys that the resolved address/domain being queried is indexed by in the protocol that the snap is resolving for. These returned values are un-opinionated at the API layer to allow the client to use them as they see fit.
+**Note:** 
+1. The `resolvedDomain` or `resolvedAddress` in a resolution object MUST be the key that the address or domain being queried is indexed by in the protocol that the snap is resolving for. These returned values are un-opinionated at the API layer to allow the client to use them as they see fit.
+2. There MUST NOT be duplicate resolutions for the same protocol in either `resolvedAddresses` or `resolvedDomains`.
 
 ## Copyright
 
