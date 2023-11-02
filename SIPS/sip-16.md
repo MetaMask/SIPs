@@ -60,7 +60,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 This SIP specifies a permission named `endowment:signature-insight`.
 The permission grants a Snap read-only access to raw signature payloads, before they are accepted for signing by the user.
 
-This permission is specified as follows in `snap.manifest.json` files:
+The permission is specified as follows in `snap.manifest.json` files:
 
 ```json
 {
@@ -70,8 +70,8 @@ This permission is specified as follows in `snap.manifest.json` files:
 }
 ```
 
-The permission includes an optional caveat `allowSignatureOrigin`. 
-This caveat grants a Snap read-only access to the URL requesting the signature.
+The permission includes an OPTIONAL caveat `allowSignatureOrigin`. 
+The caveat grants a Snap read-only access to the URL requesting the signature.
 It can be specified as follows: 
 
 ```json
@@ -116,7 +116,7 @@ interface OnSignatureResponse {
 }
 ```
 
-**Note:** `severity` is an optional field and the omission of such means that there is no escalation of the content being returned.
+**Note:** `severity` is an OPTIONAL field and the omission of such means that there is no escalation of the content being returned.
 
 ## Specification
 
