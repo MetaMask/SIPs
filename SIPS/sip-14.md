@@ -75,9 +75,32 @@ This RPC method SHOULD be an alias for `wallet_getPermissions`, MAY be used by t
 
 #### snap_revokePermissions
 
-The RPC method parameters and return value are TBD.
+This RPC method SHOULD take a similar input to `wallet_requestPermissions`, an object keyed with permission names, where the values may contain caveats if applicable.
 
-Note: This RPC method does not currently have a `wallet_` counterpart. Coordinate with dapp API team as they may be shipping one.
+For example:
+
+```json
+{
+  "method": "snap_revokePermissions",
+  "params": {
+    "snap_getBip32Entropy": {
+      "caveats": [
+        {
+          "type": "permittedDerivationPaths",
+          "value": [
+            { "path": ["m", "44'", "60'"], "curve": "secp256k1" },
+            { "path": ["m", "0'", "0'"], "curve": "ed25519" }
+          ]
+        }
+      ]
+    }
+  }
+}
+```
+
+The caveat information passed SHOULD be ignored in the initial implementation of this. Instead of processing the caveats, the implementation SHOULD revoke the entire permission key. We will revisit this at a later time to make it more granular.
+
+This RPC method SHOULD return `null` if the permissions are revoked successfully and otherwise throw.
 
 This RPC method MUST validate that the permissions requested to be revoked does not contain or overlap with the `initialPermissions`.
 
