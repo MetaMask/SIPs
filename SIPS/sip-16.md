@@ -89,17 +89,17 @@ It can be specified as follows:
 The following is an example implementation of the API:
 
 ```typescript
-import { OnSignatureHandler } from "@metamask/snap-types";
+import { OnSignatureHandler } from "@metamask/snaps-types";
 
 enum SeverityLevel {
   Critical = 'critical',
 }
 
 export const onSignature: OnSignatureHandler = async ({
-  signature,
-  method,
-  chainId,
-  signatureOrigin, /* If allowSignatureOrigin is set to true */
+  signature: any,
+  method: string,
+  chainId: string,
+  signatureOrigin: string, /* If allowSignatureOrigin is set to true */
 }) => {
   const content = /* Get UI component with insights */;
   const isContentCritical = /* Boolean checking if content is critical */
