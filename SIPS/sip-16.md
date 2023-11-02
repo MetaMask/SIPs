@@ -17,7 +17,7 @@ This SIP closely follows [SIP-3: Transaction Insights](sip-3.md) and [SIP-11: Tr
 
 ## Motivation
 
-One of the most difficult problems blockchain wallets solve for their users is "signature comprehension", i.e. making cryptographic signature inputs intelligible to the user.
+One of the most difficult problems blockchain wallets solve for their users is "signature comprehension," i.e. making cryptographic signature inputs intelligible to the user.
 A signature in the wrong hands can give an attacker the ability to steal user assets. 
 A single wallet may not be able to provide all relevant information to any given user for any given signature request.
 To alleviate this problem, this SIP aims to expand the kinds of information MetaMask provides to a user before signing a message.
