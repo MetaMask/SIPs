@@ -2,7 +2,7 @@
 sip: 16
 title: Signature Insights
 status: Draft
-discussions-to: https://github.com/MetaMask/SIPs/discussions/32
+discussions-to: https://github.com/MetaMask/SIPs/discussions/118
 author: Christian Montoya (@Montoya)
 created: 2023-11-01
 ---
