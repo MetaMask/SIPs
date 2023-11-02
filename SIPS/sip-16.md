@@ -9,7 +9,7 @@ created: 2023-11-01
 
 ## Abstract
 
-This SIP proposes a way for snaps to provide "insights" into signatures requested by dapps. These insights can then be displayed in the MetaMask confirmation UI, helping the user to make informed decisions before signing messages.
+This SIP proposes a way for Snaps to provide "insights" into signatures requested by dapps. These insights can then be displayed in the MetaMask confirmation UI, helping the user to make informed decisions before signing messages.
 
 Example use cases for signature insights are phishing detection, scam prevention and signature simulation.
 
@@ -24,7 +24,7 @@ To alleviate this problem, this SIP aims to expand the kinds of information Meta
 
 The current Snaps API in the MetaMask extension already has a "transaction insights" feature that allows Snaps to decode transactions and provide insights to users. 
 These transaction insights can also specify a transaction severity level to provide extra friction in the transaction confirmation. 
-To expand on this feature, this SIP allows the community to build snaps that provide arbitrary "insights" into signatures in a similar manner.
+To expand on this feature, this SIP allows the community to build Snaps that provide arbitrary "insights" into signatures in a similar manner.
 These insights can then be displayed in the MetaMask UI alongside any information provided by MetaMask itself.
 Signature insight Snaps can also return a `severity` key to indicate the severity level of the content being returned. 
 This key uses the same `SeverityLevel` enum used by transaction insight Snaps. 
@@ -44,11 +44,11 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 > This section is non-normative, and merely recapitulates some definitions from [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md).
 
 - `ChainId` - a [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) string.
-  It identifies a specific chain among all blockchains recognized by the CAIP standards.
+  It identifies a specific chain among all blockchains recognized by the CAIP standards. The ChainId refers to the network that the signing account is connected to. It is not necessarily the network where the signed message will be broadcast. 
   - `ChainId` consists of a `Namespace` and a `Reference`
     - `Namespace` - a class of similar blockchains. For example EVM-based blockchains.
     - `Reference` - a way to identify a concrete chain inside a `Namespace`. For example Ethereum Mainnet or one of its test networks.
-- `Method` - a string which can be any of the following 5 [signing methods](https://docs.metamask.io/wallet/concepts/signing-methods/) supported by the MetaMask wallet API: 
+- `Method` - a string which can be any of the following 5 [signing methods](https://docs.metamask.io/wallet/concepts/signing-methods/) supported by the MetaMask wallet API. The signing method is required by MetaMask for the dapp to make a signature request. It is not part of the signature payload.
   1. `eth_signTypedData_v4`
   2. `eth_signTypedData_v3`
   3. `eth_signTypedData_v1`
@@ -58,7 +58,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 ### Snap Manifest
 
 This SIP specifies a permission named `endowment:signature-insight`.
-The permission grants a snap read-only access to raw signature payloads, before they are accepted for signing by the user.
+The permission grants a Snap read-only access to raw signature payloads, before they are accepted for signing by the user.
 
 This permission is specified as follows in `snap.manifest.json` files:
 
@@ -71,7 +71,7 @@ This permission is specified as follows in `snap.manifest.json` files:
 ```
 
 The permission includes an optional caveat `allowSignatureOrigin`. 
-This caveat grants a snap read-only access to the URL requesting the signature.
+This caveat grants a Snap read-only access to the URL requesting the signature.
 It can be specified as follows: 
 
 ```json
@@ -122,7 +122,7 @@ interface OnSignatureResponse {
 
 Please see [SIP-3](sip-3.md) for more information on the original transaction insights API.
 
-Please see the [SIP-7](sip-7.md) package for more information on the `Component` type returned in the `OnTransactionResponse`.
+Please see [SIP-7](sip-7.md) for more information on the `Component` type returned in the `OnTransactionResponse`.
 
 Please see [SIP-11](sip-3.md) for more information on Transaction insight severity levels.
 
