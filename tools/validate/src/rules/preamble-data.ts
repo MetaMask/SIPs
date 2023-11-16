@@ -53,7 +53,7 @@ const author = () =>
       if (match === null) {
         return "is malformed";
       }
-      if (match[2] !== undefined) {
+      if (match[1] !== undefined || match[2] !== undefined) {
         hasGithub = true;
       }
     }
