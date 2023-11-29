@@ -1,9 +1,6 @@
 {
   "name": "implementation",
   "packageManager": "yarn@4.0.2",
-  "scripts": {
-    "test": "tsx implementation.ts ../test"
-  },
   "devDependencies": {
     "@types/node": "^20.10.0",
     "typescript": "^5.3.2"

@@ -61,6 +61,10 @@ Each SIP MUST begin with a header preamble in YAML format, preceded and followed
 
 All dates in the preamble MUST be in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
 
+#### `sip` header
+
+Due to collision of numbers in open Pull Requests, the SIP number is now the GitHub number of the open Pull Request.
+
 #### `author` header
 
 A comma-separated list of the SIP authors. Each author MUST be written in the following format: `Name Surname <email> (@github-username)`. If the author wants to maintain anonymity, they MAY provide only the username instead of their name and surname. The e-mail and github username are optional and MAY be provided. At least one of the authors MUST have a Github username provided in order to be notified of the changes concerning their SIP.
