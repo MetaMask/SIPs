@@ -97,7 +97,6 @@ enum SeverityLevel {
 
 export const onSignature: OnSignatureHandler = async ({
   signature: any,
-  method: string,
   chainId: string,
   signatureOrigin: string, /* If allowSignatureOrigin is set to true */
 }) => {
