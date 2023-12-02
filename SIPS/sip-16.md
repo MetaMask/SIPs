@@ -89,11 +89,7 @@ It can be specified as follows:
 The following is an example implementation of the API:
 
 ```typescript
-import { OnSignatureHandler } from "@metamask/snaps-types";
-
-enum SeverityLevel {
-  Critical = 'critical',
-}
+import { OnSignatureHandler, SeverityLevel } from "@metamask/snaps-sdk";
 
 export const onSignature: OnSignatureHandler = async ({
   signature: any,
