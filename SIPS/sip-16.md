@@ -3,7 +3,7 @@ sip: 16
 title: Signature Insights
 status: Draft
 discussions-to: https://github.com/MetaMask/SIPs/discussions/118
-author: Christian Montoya (@Montoya)
+author: Christian Montoya (@Montoya), Hassan Malik (@hmalik88)
 created: 2023-11-01
 ---
 
@@ -124,6 +124,69 @@ Please see [SIP-3](sip-3.md) for more information on the original transaction in
 Please see [SIP-7](sip-7.md) for more information on the `Component` type returned in the `OnTransactionResponse`.
 
 Please see [SIP-11](sip-3.md) for more information on Transaction insight severity levels.
+
+## Appendix I: Ethereum Signature Objects
+
+The following signature objects may appear for any `chainId` of `eip155:*` where `*` is some positive integer. This includes all Ethereum or "EVM-compatible" chains. As of the time of the creation of this SIP, they are the only possible signature objects for Ethereum chains.
+
+### eth_sign
+
+```typescript
+interface EthSignatureObj {
+  from: string;
+  data: string;
+  metamaskId: string;
+  signatureMethod: 'eth_sign';
+}
+```
+
+### personal_sign
+
+```typescript
+interface PersonalSignatureObj {
+  from: string;
+  data: string;
+  metamaskId: string;
+  signatureMethod: 'personal_sign';
+}
+```
+
+### eth_signTypedData
+
+```typescript
+interface SignTypedDataSignatureObj {
+  from: string;
+  data: Record<string, any>;
+  metamaskId: string;
+  signatureMethod: 'eth_signTypedData';
+}
+```
+
+### eth_signTypedData_v3
+
+```typescript
+interface SignTypedDataV3SignatureObj {
+  from: string;
+  data: Record<string, any>;
+  metamaskId: string;
+  signatureMethod: 'eth_signTypedData_v3';
+  version: 'V3';
+}
+```
+
+### eth_signTypedData_v4
+
+```typescript
+interface SignTypedDataV4SignatureObj {
+  from: string;
+  data: Record<string, any>;
+  metamaskId: string;
+  signatureMethod: 'eth_signTypedData_v4';
+  version: 'V4';
+}
+```
+
+**Note**: The `metamaskId`, `signatureMethod` and `version` properties are MetaMask specific properties and not reflective of the standards defining the underlying signature methods. `signatureMethod` SHOULD be used by the signature insight snap as the source of the truth to identify the signature scheme it is providing insights for.
 
 ## Copyright
 
