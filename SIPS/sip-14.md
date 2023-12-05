@@ -65,14 +65,14 @@ This SIP proposes the following RPC methods to manage the dynamic permissions:
 
 #### snap_requestPermissions
 
-This RPC method SHOULD function as a subset of the existing `wallet_requestPermissions` RPC method and take the same parameters and have the same return value.
+This RPC method SHOULD function as a subset of the existing `wallet_requestPermissions` RPC method (as defined in [EIP-2255](https://eips.ethereum.org/EIPS/eip-2255)) and take the same parameters and have the same return value.
 
 This RPC method MUST prompt the user to get consent for any requested permissions and MUST validate that the requested permissions are specified in the manifest before continuing its execution (including matching caveats).
 
 
 #### snap_getPermissions
 
-This RPC method SHOULD be an alias for `wallet_getPermissions`, and MAY be used by the Snap for verifying whether it already has the permissions needed for operating. The return value and parameters SHOULD match the existing specification.
+This RPC method SHOULD be an alias for `wallet_getPermissions`, and MAY be used by the Snap for verifying whether it already has the permissions needed for operating. The return value and parameters SHOULD match the existing specification defined in [EIP-2255](https://eips.ethereum.org/EIPS/eip-2255).
 
 #### snap_revokePermissions
 
@@ -101,7 +101,7 @@ For example:
 
 The caveat information passed SHOULD be ignored in the initial implementation of this. Instead of processing the caveats, the implementation SHOULD revoke the entire permission key. We will revisit this at a later time to make it more granular.
 
-This RPC method SHOULD return `null` if the permissions are revoked successfully and otherwise throw.
+This RPC method SHOULD return `null` if the permissions are revoked successfully, or return an error otherwise. 
 
 This RPC method MUST validate that the permissions to be revoked do not contain any permissions specified in `initialPermissions`. Only `dynamicPermissions` can be revoked.
 
