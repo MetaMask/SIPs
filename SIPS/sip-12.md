@@ -57,8 +57,8 @@ This permission is specified as follows in `snap.manifest.json` files:
 }
 ```
 
-`chains` - An array of CAIP-2 chain IDs that the snap supports. This field is useful for a client in order to avoid unnecessary overhead.
-`tlds` - An array of top level domains that the snap will provide resolution for. This field is useful for a client for validating input for domain resolution, also helpful in reducing overhead.
+`chains` - A non-empty array of CAIP-2 chain IDs that the snap supports. This field is useful for a client in order to avoid unnecessary overhead.
+`tlds` - A non-empty array of top level domains that the snap will provide resolution for. This field is useful for a client for validating input for domain resolution, also helpful in reducing overhead.
 
 ### Snap Implementation
 
