@@ -92,7 +92,7 @@ The following is an example implementation of the API:
 import { OnSignatureHandler, SeverityLevel } from "@metamask/snaps-sdk";
 
 export const onSignature: OnSignatureHandler = async ({
-  signature: any,
+  signature: Record<string, unknown>,
   chainId: string,
   signatureOrigin: string, /* If allowSignatureOrigin is set to true */
 }) => {
@@ -148,10 +148,9 @@ The following signature objects may appear for any `chainId` of `eip155:*` where
 ### eth_sign
 
 ```typescript
-interface EthSignatureObj {
+interface EthSignature {
   from: string;
   data: string;
-  metamaskId: string;
   signatureMethod: 'eth_sign';
 }
 ```
@@ -159,10 +158,9 @@ interface EthSignatureObj {
 ### personal_sign
 
 ```typescript
-interface PersonalSignatureObj {
+interface PersonalSignature {
   from: string;
   data: string;
-  metamaskId: string;
   signatureMethod: 'personal_sign';
 }
 ```
@@ -170,10 +168,9 @@ interface PersonalSignatureObj {
 ### eth_signTypedData
 
 ```typescript
-interface SignTypedDataSignatureObj {
+interface SignTypedDataSignature {
   from: string;
   data: Record<string, any>;
-  metamaskId: string;
   signatureMethod: 'eth_signTypedData';
 }
 ```
@@ -181,28 +178,24 @@ interface SignTypedDataSignatureObj {
 ### eth_signTypedData_v3
 
 ```typescript
-interface SignTypedDataV3SignatureObj {
+interface SignTypedDataV3Signature {
   from: string;
   data: Record<string, any>;
-  metamaskId: string;
   signatureMethod: 'eth_signTypedData_v3';
-  version: 'V3';
 }
 ```
 
 ### eth_signTypedData_v4
 
 ```typescript
-interface SignTypedDataV4SignatureObj {
+interface SignTypedDataV4Signature {
   from: string;
   data: Record<string, any>;
-  metamaskId: string;
   signatureMethod: 'eth_signTypedData_v4';
-  version: 'V4';
 }
 ```
 
-**Note**: The `metamaskId`, `signatureMethod` and `version` properties are MetaMask specific properties and not reflective of the standards defining the underlying signature methods. `signatureMethod` SHOULD be used by the signature insight snap as the source of the truth to identify the signature scheme it is providing insights for.
+**Note**: The `signatureMethod` property is MetaMask specific and not reflective of the standards defining the underlying signature methods. `signatureMethod` SHOULD be used by the signature insight snap as the source of the truth to identify the signature scheme it is providing insights for.
 
 ## Copyright
 
