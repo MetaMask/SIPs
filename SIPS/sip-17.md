@@ -1,5 +1,5 @@
 ---
-sip: (To be assigned)
+sip: 17
 title: Request/Response Middleware
 status: Draft
 author: Ronny Esterluss <ronny.esterluss@hoprnet.org> (@esterlus), Tino Breddin <tino.breddin@hoprnet.org> (@tolbrino)
