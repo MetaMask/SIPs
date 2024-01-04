@@ -93,7 +93,6 @@ import { OnSignatureHandler, SeverityLevel } from "@metamask/snaps-sdk";
 
 export const onSignature: OnSignatureHandler = async ({
   signature: Record<string, unknown>,
-  chainId: string,
   signatureOrigin: string, /* If allowSignatureOrigin is set to true */
 }) => {
   const content = /* Get UI component with insights */;
@@ -106,7 +105,6 @@ The interface for an `onSignature` handler function’s arguments is:
 ```typescript
 interface OnSignatureArgs {
   signature: Record<string, unknown>;
-  chainId: string;
   signatureOrigin?: string;
 }
 ```
@@ -115,9 +113,6 @@ interface OnSignatureArgs {
 It is beyond the scope of the SIP standards to define interfaces for every chain.
 Instead, it is the Snap developer's responsibility to be cognizant of the shape of signature objects for relevant chains.
 Nevertheless, you can refer to [Appendix I](#appendix-i-ethereum-signature-objects) for the interfaces of the Ethereum signature objects available in MetaMask at the time of this SIP's creation.
-
-`chainId` - This is a [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) `chainId` string.
-The snap is expected to parse and utilize this string as needed.
 
 `signatureOrigin` - The URL origin of the signature request. The existence of this property is dependent on the `allowSignatureOrigin` caveat.
 
