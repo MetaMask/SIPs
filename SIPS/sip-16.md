@@ -165,7 +165,7 @@ interface PersonalSignature {
 ```typescript
 interface SignTypedDataSignature {
   from: string;
-  data: Record<string, any>;
+  data: Record<string, any>[];
   signatureMethod: 'eth_signTypedData';
 }
 ```
