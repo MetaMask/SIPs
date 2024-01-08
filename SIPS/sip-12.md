@@ -51,7 +51,7 @@ This permission is specified as follows in `snap.manifest.json` files:
   "initialPermissions": {
     "endowment:name-lookup": {
         "chains": ["eip155:1", "bip122:000000000019d6689c085ae165831e93"],
-        "matchers": { "tlds": ["lens"], "nonTldPrefixes": ["farcaster"] }
+        "matchers": { "tlds": ["lens"], "schemes": ["farcaster"] }
     }
   }
 }
@@ -60,9 +60,9 @@ This permission is specified as follows in `snap.manifest.json` files:
 `chains` - A non-empty array of CAIP-2 chain IDs that the snap supports. This field is useful for a client in order to avoid unnecessary overhead.
 `matchers` - A non-empty object that MUST contain 1 or both of the below properties. These matchers are useful for a client for validating input for domain resolution, also helpful in reducing overhead. 
   `tlds` - An optional non-empty array of top level domains that the snap will provide resolution for.
-  `nonTldPrefixes` - An optional non-empty array of prefixes that the snap expects for non-tld domain lookup.
+  `schemes` - An optional non-empty array of prefixes that the snap expects for non-tld domain lookup.
 
-**Note:** Tld domains are presumed to end with "." and one of the `tlds`. Non-tld domains are presumed to start with one of the `nonTldPrefixes` followed by ":" then the domain. Respectively, an example of each would be `hassan.lens` and `farcaster:hbm88`.  
+**Note:** Tld domains are presumed to end with "." and one of the `tlds`. Non-tld domains are presumed to start with one of the `schemes` followed by ":" then the domain. Respectively, an example of each would be `hassan.lens` and `farcaster:hbm88`.  
 
 ### Snap Implementation
 
