@@ -13,7 +13,7 @@ This SIP describes a way for Snaps to customize the request timeouts that constr
 
 ## Motivation
 
-Snaps that have to do CPU intensive computation are currently limited by the default `1` minute timeout, causing certain use-cases to be unsupportable by Snaps (e.g. computing ZK proofs). By letting Snaps customize the request timeout (within reason) for each type of handler that they expose, the Snap developer gets more control over the user experience while the Snap platform lifecycle requirements can remain strict.
+Snaps that do CPU intensive computation are currently limited by the 1 minute timeout, causing certain use-cases to be unsupportable by Snaps (e.g., computing ZK proofs). By letting Snaps customize the request timeout (within reason) for each type of handler that they expose, the Snap developer gets more control over the user experience while the Snap platform lifecycle requirements can remain strict.
 
 ## Specification
 
