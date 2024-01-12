@@ -2,6 +2,7 @@
 sip: 21
 title: Snap-defined timeouts
 status: Draft
+discussions-to: https://github.com/MetaMask/SIPs/discussions/128
 author: Frederik Bolding (@frederikbolding)
 created: 2024-01-12
 ---
