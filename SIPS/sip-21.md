@@ -29,7 +29,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 This SIP specifies an addendum that MUST be applied to existing and future Snap handler permissions (`endowment:rpc`, `endowment:transaction-insight` etc.). The addendum is an optional caveat value called `maxRequestTime`.
 
-The value MUST be a valid integer between `5000` (5 seconds) and `180000` (3 minutes) and specifies the request timeout for the given handler in milliseconds. If no value is provided the default timeout of 1 minute (`30000` ms) MUST be used.
+The value MUST be a valid integer between `5000` (5 seconds) and `180000` (3 minutes) and specifies the request timeout for the given handler in milliseconds. If no value is provided the default timeout of 1 minute (`60000` ms) MUST be used.
 
 The caveat is specified as follows in the manifest:
 
