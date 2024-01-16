@@ -52,7 +52,7 @@
     "unist-util-visit": "^4.1.1",
     "vfile": "^5.3.5",
     "vfile-location": "^4.0.1",
-    "yaml": "^2.1.1",
+    "yaml": "^2.2.2",
     "yargs": "^17.5.1"
   },
   "resolutions": {
