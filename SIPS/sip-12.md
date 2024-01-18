@@ -57,8 +57,8 @@ This permission is specified as follows in `snap.manifest.json` files:
 }
 ```
 
-`chains` - A non-empty array of CAIP-2 chain IDs that the snap supports. This field is useful for a client in order to avoid unnecessary overhead.
-`matchers` - A non-empty object that MUST contain 1 or both of the below properties. These matchers are useful for a client for validating input for domain resolution, also helpful in reducing overhead. 
+`chains` - An optional non-empty array of CAIP-2 chain IDs that the snap supports. This field is useful for a client in order to avoid unnecessary overhead.
+`matchers` - An optional non-empty object that MUST contain 1 or both of the below properties. These matchers are useful for a client for validating input for domain resolution, also helpful in reducing overhead. 
   `tlds` - An optional non-empty array of top level domains that the snap will provide resolution for.
   `schemes` - An optional non-empty array of prefixes that the snap expects for non-tld domain lookup.
 
