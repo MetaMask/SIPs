@@ -1167,14 +1167,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"simple-git@npm:^3.14.1":
-  version: 3.14.1
-  resolution: "simple-git@npm:3.14.1"
+"simple-git@npm:^3.16.0":
+  version: 3.22.0
+  resolution: "simple-git@npm:3.22.0"
   dependencies:
     "@kwsites/file-exists": ^1.1.1
     "@kwsites/promise-deferred": ^1.1.1
     debug: ^4.3.4
-  checksum: f9d2282e1483f8f42325a7e80803389eb540101a88968bf9fd277c1eade8621d4c24dcf2677be5d611df8716934fb4c9676356052ac03e2fcec7517b4b922e8b
+  checksum: 118c43a3e1e27aecd8487205ed509acf925112de6edf1feb304d180c673f6e08279a13bcfae33c948de8b0809f2b929f9263fa7033ec7ef84908904eda0c3e2d
   languageName: node
   linkType: hard
 
@@ -1408,7 +1408,7 @@ __metadata:
     remark-lint-no-unused-definitions: ^3.1.1
     remark-parse: ^10.0.1
     rimraf: ^3.0.2
-    simple-git: ^3.14.1
+    simple-git: ^3.16.0
     superstruct: ^0.16.5
     to-vfile: ^7.2.3
     typescript: ^4.7.3
@@ -1418,7 +1418,7 @@ __metadata:
     unist-util-visit: ^4.1.1
     vfile: ^5.3.5
     vfile-location: ^4.0.1
-    yaml: ^2.1.1
+    yaml: ^2.2.2
     yargs: ^17.5.1
   bin:
     validate: dist/main.js
@@ -1494,10 +1494,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "yaml@npm:2.1.1"
-  checksum: f48bb209918aa57cfaf78ef6448d1a1f8187f45c746f933268b7023dc59e5456004611879126c9bb5ea55b0a2b1c2b392dfde436931ece0c703a3d754562bb96
+"yaml@npm:^2.2.2":
+  version: 2.3.4
+  resolution: "yaml@npm:2.3.4"
+  checksum: e6d1dae1c6383bcc8ba11796eef3b8c02d5082911c6723efeeb5ba50fc8e881df18d645e64de68e421b577296000bea9c75d6d9097c2f6699da3ae0406c030d8
   languageName: node
   linkType: hard
 

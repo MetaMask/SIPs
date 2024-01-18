@@ -1,7 +1,7 @@
 ---
 sip: 8
 title: Snap Locations
-status: Draft
+status: Implementation
 discussions-to: https://github.com/MetaMask/SIPs/discussions/75
 author: Olaf Tomalka (@ritave)
 created: 2022-11-03
