@@ -13,7 +13,12 @@ This SIP proposes a new endowment, `endowment:name-lookup`, that enables a way f
 
 ## Motivation
 
-Currently, the MetaMask wallet allows for ENS domain resolution. The implementation is hardcoded and limited to just the ENS protocol. In an effort to increasingly modularize the wallet and allow for resolution beyond ENS, we decided to open up domain/address resolution to snaps. A snap would be able to provide resolutions based on a domain or address provided with a chain ID. The address resolution is in essence "reverse resolution". The functionality provided by this API is also beneficial as a base layer for a petname system (**see definition**). With plans to bring petnames to MetaMask, resolutions would be fed into the petname system and used as a means for cache invalidation.
+Currently, the MetaMask wallet allows for ENS domain resolution.
+The implementation is hardcoded and limited to just the ENS protocol.
+In an effort to increasingly modularize the wallet and allow for resolution beyond ENS, we decided to open up domain/address resolution to snaps.
+A snap would be able to provide resolutions based on a domain or address provided with a chain ID.
+The address resolution is in essence "reverse resolution".
+The functionality provided by this API is also beneficial as a base layer for a petname system (**see definition**). With plans to bring petnames to MetaMask, resolutions would be fed into the petname system and used as a means for cache invalidation.
 
 ## Specification
 
@@ -58,9 +63,11 @@ This permission is specified as follows in `snap.manifest.json` files:
 ```
 
 `chains` - An optional non-empty array of CAIP-2 chain IDs that the snap supports. This field is useful for a client in order to avoid unnecessary overhead.
-`matchers` - An optional non-empty object that MUST contain 1 or both of the below properties. These matchers are useful for a client for validating input for domain resolution, also helpful in reducing overhead. 
-  `tlds` - An optional non-empty array of top level domains that the snap will provide resolution for.
-  `schemes` - An optional non-empty array of prefixes that the snap expects for non-tld domain lookup.
+
+`matchers` - An optional non-empty object that MUST contain 1 or both of the below properties. These matchers are useful for a client for validating input for domain resolution, also helpful in reducing overhead.
+  1. `tlds` - An optional non-empty array of top level domains that the snap will provide resolution for.
+
+  2. `schemes` - An optional non-empty array of prefixes that the snap expects for non-tld domain lookup.
 
 **Note:** Tld domains are presumed to end with "." and one of the `tlds`. Non-tld domains are presumed to start with one of the `schemes` followed by ":" then the domain. Respectively, an example of each would be `hassan.lens` and `farcaster:hbm88`.  
 
