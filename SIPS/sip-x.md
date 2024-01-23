@@ -2,7 +2,7 @@
 
 **Title:** Address Insights
 
-**SIP Number:** [To be assigned]
+**SIP Number:** 22
 
 **Author:** Dan Finlay <dan.finlay@consensys.net> 
 
