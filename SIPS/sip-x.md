@@ -12,7 +12,7 @@ This SIP proposes a new permission for MetaMask Snaps. The permission will enabl
 
 #### Specification
 
-1.  **Permission Name:** `endowment:address-annotation`
+1.  **Permission Name:** `address-insights`
 
 2.  **Permission Description:**
 
