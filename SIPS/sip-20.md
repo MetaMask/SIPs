@@ -16,7 +16,7 @@ The Snap can then do whatever it wants with the data. This initial version only 
 
 ## Motivation
 
-Snaps are currently limited in their ability to receive data from external sources: Either they have to rely on user actions or cron jobs to fetch data, so they can't react to events in real time. Snaps also cannot use WebSocket connections to receive data from external sources, and are limited to HTTP requests.
+Snaps are currently limited in their ability to receive data from external sources; they have to rely on user actions or cron jobs to fetch data, so they can't react to events in real time. Snaps also cannot use WebSocket connections to receive data from external sources, and are limited to HTTP requests.
 
 ## Specification
 
