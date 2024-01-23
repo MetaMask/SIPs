@@ -1,6 +1,6 @@
 ### Snap Improvement Proposal (SIP)
 
-**Title:** Custom Permission for Address Annotation in MetaMask Snaps
+**Title:** Address Insights
 
 **SIP Number:** [To be assigned]
 
