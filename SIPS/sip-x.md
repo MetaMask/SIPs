@@ -8,7 +8,7 @@
 
 #### Abstract
 
-This SIP proposes a new custom permission for MetaMask Snaps. The permission will enable Snaps to provide additional UI annotations when an Ethereum address is presented within the MetaMask interface. The Snap will respond to events involving Ethereum addresses with a custom UI, enhancing user experience with contextual information or actions related to the address.
+This SIP proposes a new permission for MetaMask Snaps. The permission will enable Snaps to provide additional UI annotations when an Ethereum address is presented within the MetaMask interface. The Snap will respond to events involving Ethereum addresses with a custom UI, enhancing user experience with contextual information or actions related to the address.
 
 #### Specification
 
