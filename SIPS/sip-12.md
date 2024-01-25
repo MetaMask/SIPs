@@ -132,10 +132,10 @@ type DomainResolution = {
 
 type OnNameLookupResponse =
   | {
-      resolvedAddresses: AddressResolution[];
+      resolvedAddresses: NonEmptyArray<AddressResolution>;
       resolvedDomains?: never;
     }
-  | { resolvedDomains: DomainResolution[]; resolvedAddresses?: never }
+  | { resolvedDomains: NonEmptyArray<DomainResolution>; resolvedAddresses?: never }
   | null;
 ```
 
