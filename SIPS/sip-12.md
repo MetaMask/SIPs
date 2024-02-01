@@ -69,7 +69,7 @@ This permission is specified as follows in `snap.manifest.json` files:
 
   2. `schemes` - An optional non-empty array of prefixes that the snap expects for non-tld domain lookup.
 
-**Note:** Tld domains are presumed to end with "." and one of the `tlds`. Non-tld domains are presumed to start with one of the `schemes` followed by ":" then the domain. Respectively, an example of each would be `hassan.lens` and `farcaster:hbm88`.  
+**Note:** TLD domains are presumed to end with "." and one of the `tlds`. Non-tld domains are presumed to start with one of the `schemes` followed by ":" then the domain. Respectively, an example of each would be `hassan.lens` and `farcaster:hbm88`.  
 
 ### Snap Implementation
 
@@ -83,12 +83,17 @@ export const onNameLookup: OnNameLookupHandler = async ({
   domain,
   address
 }) => {
+  let resolution;
+
   if (domain) {
-    return { resolvedAddresses: /* Get domain resolution */ }
+
+    resolution = { protocol: /* Domain protocol */ , resolvedAddress: /* Get domain resolution */ };
+    return { resolvedAddresses: [insight] };
   } 
   
   if (address) {
-    return { resolvedDomains: /* Get address resolution */ };
+    resolution = { protocol: /* Domain protocol */, resolvedDomain: /* Get address resolution */ };
+    return { resolvedDomains: [insight] };
   }
 
   return null;
