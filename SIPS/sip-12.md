@@ -13,7 +13,12 @@ This SIP proposes a new endowment, `endowment:name-lookup`, that enables a way f
 
 ## Motivation
 
-Currently, the MetaMask wallet allows for ENS domain resolution. The implementation is hardcoded and limited to just the ENS protocol. In an effort to increasingly modularize the wallet and allow for resolution beyond ENS, we decided to open up domain/address resolution to snaps. A snap would be able to provide resolution based on a domain or address provided with a chain ID. The address resolution is in essence "reverse resolution". The functionality provided by this API is also beneficial as a base layer for a petname system (**see definition**). With plans to bring petnames to MetaMask, resolutions would be fed into the petname system and used as a means for cache invalidation.
+Currently, the MetaMask wallet allows for ENS domain resolution.
+The implementation is hardcoded and limited to just the ENS protocol.
+In an effort to increasingly modularize the wallet and allow for resolution beyond ENS, we decided to open up domain/address resolution to snaps.
+A snap would be able to provide resolutions based on a domain or address provided with a chain ID.
+The address resolution is in essence "reverse resolution".
+The functionality provided by this API is also beneficial as a base layer for a petname system (**see definition**). With plans to bring petnames to MetaMask, resolutions would be fed into the petname system and used as a means for cache invalidation.
 
 ## Specification
 
@@ -51,12 +56,20 @@ This permission is specified as follows in `snap.manifest.json` files:
   "initialPermissions": {
     "endowment:name-lookup": {
         "chains": ["eip155:1", "bip122:000000000019d6689c085ae165831e93"],
+        "matchers": { "tlds": ["lens"], "schemes": ["farcaster"] }
     }
   }
 }
 ```
 
-`chains` - An array of CAIP-2 chain IDs that the snap supports. This field is useful for a client in order to avoid unnecessary overhead.
+`chains` - An optional non-empty array of CAIP-2 chain IDs that the snap supports. This field is useful for a client in order to avoid unnecessary overhead.
+
+`matchers` - An optional non-empty object that MUST contain 1 or both of the below properties. These matchers are useful for a client for validating input for domain resolution, also helpful in reducing overhead.
+  1. `tlds` - An optional non-empty array of top level domains that the snap will provide resolution for.
+
+  2. `schemes` - An optional non-empty array of prefixes that the snap expects for non-tld domain lookup.
+
+**Note:** TLD domains are presumed to end with "." and one of the `tlds`. Non-tld domains are presumed to start with one of the `schemes` followed by ":" then the domain. Respectively, an example of each would be `hassan.lens` and `farcaster:hbm88`.  
 
 ### Snap Implementation
 
@@ -70,12 +83,17 @@ export const onNameLookup: OnNameLookupHandler = async ({
   domain,
   address
 }) => {
+  let resolution;
+
   if (domain) {
-    return { resolvedAddress: /* Get domain resolution */ }
+
+    resolution = { protocol: /* Domain protocol */ , resolvedAddress: /* Get domain resolution */ };
+    return { resolvedAddresses: [resolution] };
   } 
   
   if (address) {
-    return { resolvedDomain: /* Get address resolution */ };
+    resolution = { protocol: /* Domain protocol */, resolvedDomain: /* Get address resolution */ };
+    return { resolvedDomains: [resolution] };
   }
 
   return null;
@@ -107,16 +125,29 @@ the request is looking for resolution to a domain.
 The interface for the return value of an `onNameLookup` export is:
 
 ```typescript
+type AddressResolution = {
+  protocol: string;
+  resolvedAddress: AccountAddress;
+};
+
+type DomainResolution = {
+  protocol: string;
+  resolvedDomain: string;
+};
+
 type OnNameLookupResponse =
   | {
-      resolvedAddress: AccountAddress;
-      resolvedDomain?: never;
+      resolvedAddresses: NonEmptyArray<AddressResolution>;
+      resolvedDomains?: never;
     }
-  | { resolvedDomain: string; resolvedAddress?: never }
+  | { resolvedDomains: NonEmptyArray<DomainResolution>; resolvedAddresses?: never }
   | null;
 ```
 
-**Note:** `resolvedDomain` and `resolvedAddress` MUST be the keys that the resolved address/domain being queried is indexed by in the protocol that the snap is resolving for. These returned values are un-opinionated at the API layer to allow the client to use them as they see fit.
+**Note:** 
+1. The `resolvedDomain` or `resolvedAddress` in a resolution object MUST be the key that the address or domain being queried is indexed by in the protocol that the snap is resolving for. These returned values are un-opinionated at the API layer to allow the client to use them as they see fit.
+2. There MUST NOT be duplicate resolutions for the same protocol in either `resolvedAddresses` or `resolvedDomains`.
+3. `protocol` refers to the name of the protocol providing resolution for said `resolvedAddress`/`resolvedDomain`.
 
 ## Copyright
 
