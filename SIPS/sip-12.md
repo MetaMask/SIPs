@@ -88,12 +88,12 @@ export const onNameLookup: OnNameLookupHandler = async ({
   if (domain) {
 
     resolution = { protocol: /* Domain protocol */ , resolvedAddress: /* Get domain resolution */ };
-    return { resolvedAddresses: [insight] };
+    return { resolvedAddresses: [resolution] };
   } 
   
   if (address) {
     resolution = { protocol: /* Domain protocol */, resolvedDomain: /* Get address resolution */ };
-    return { resolvedDomains: [insight] };
+    return { resolvedDomains: [resolution] };
   }
 
   return null;
