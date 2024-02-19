@@ -59,8 +59,15 @@ type ExternalDataConnection = WebSocketConnection;
  *
  * This is the value of the `endowment:external-data` field in the Snap
  * manifest.
+ *
+ * @property maxRequestTime - The maximum request time for the `onExternalData`
+ * entry point, as described in SIP-21.
+ * @property connections - The external data connections.
  */
-type ExternalData = { connections: ExternalDataConnection[] };
+type ExternalData = {
+    maxRequestTime?: number;
+    connections: ExternalDataConnection[]
+};
 ```
 
 #### Example
