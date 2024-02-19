@@ -70,18 +70,21 @@ The new field can be specified as follows in a `snap.manifest.json` file:
 ```json
 {
   "initialPermissions": {
-    "endowment:external-data": [
-      {
-        "type": "websocket",
-        "url": "wss://example.com/binary/endpoint",
-        "dataType": "binary"
-      },
-      {
-        "type": "websocket",
-        "url": "wss://example.com/text/endpoint",
-        "dataType": "text"
-      }
-    ]
+    "endowment:external-data": {
+      "maxRequestTime": 50000,
+      "connections": [
+        {
+          "type": "websocket",
+          "url": "wss://example.com/binary/endpoint",
+          "dataType": "binary"
+        },
+        {
+          "type": "websocket",
+          "url": "wss://example.com/text/endpoint",
+          "dataType": "text"
+        }
+      ]
+    }
   }
 }
 ```
@@ -167,7 +170,7 @@ type OnExternalDataHandler = (args: OnExternalDataHandlerArgs) => Promise<void>;
 import { OnExternalDataHandler } from '@metamask/snaps-types';
 import { assert } from '@metamask/utils';
 
-export const onExternalData: OnExternalDataHandler = ({ id, type, data, source }) => {
+export const onExternalData: OnExternalDataHandler = ({ type, data, source }) => {
   assert(type === 'websocket'); // `data` is inferred as `WebSocketData`.
   assert(data.type === 'text'); // `message` is inferred as `string`.
 
