@@ -60,7 +60,7 @@ type ExternalDataConnection = WebSocketConnection;
  * This is the value of the `endowment:external-data` field in the Snap
  * manifest.
  */
-type ExternalData = ExternalDataConnection[];
+type ExternalData = { connections: ExternalDataConnection[] };
 ```
 
 #### Example
