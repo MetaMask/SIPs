@@ -26,7 +26,7 @@ Snaps are currently limited in their ability to receive data from external sourc
 
 The key words "MUST", "MUST NOT", "SHOULD", "RECOMMENDED" and "MAY" written in uppercase in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
-### Snap Manifest
+### Snap manifest
 
 This SIP introduces a new permission named `endowment:external-data`.
 
@@ -80,13 +80,6 @@ The new field can be specified as follows in a `snap.manifest.json` file:
         "type": "websocket",
         "url": "wss://example.com/text/endpoint",
         "dataType": "text"
-      },
-      {
-        "type": "blockchain",
-        "chainId": "eip155:1",
-        "events": [
-          "block"
-        ]
       }
     ]
   }
@@ -129,6 +122,7 @@ type WebSocketTextMessage = {
   type: 'text';
   message: string;
 };
+
 /**
  * A binary message received from a WebSocket.
  *
@@ -139,6 +133,7 @@ type WebSocketBinaryMessage = {
   type: 'binary';
   message: ArrayBuffer;
 };
+
 /**
  * A message received from a WebSocket.
  *
@@ -150,6 +145,7 @@ type WebSocketData = {
   type: 'websocket';
   data: WebSocketTextMessage | WebSocketBinaryMessage;
 };
+
 /**
  * The data received from an external source.
  *
@@ -157,9 +153,11 @@ type WebSocketData = {
  * @property data - The data received from the external data source.
  */
 type ExternalData = WebSocketData;
+
 type OnExternalDataHandlerArgs = ExternalData & {
   source: string;
 };
+
 type OnExternalDataHandler = (args: OnExternalDataHandlerArgs) => Promise<void>;
 ```
 
