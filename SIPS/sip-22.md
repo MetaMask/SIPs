@@ -50,7 +50,7 @@ await snap.request({
 });
 ```
 
-### Example 
+### Examples
 
 The proposed URL for the Starknet Snap home page: 
 
