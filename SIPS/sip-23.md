@@ -113,7 +113,7 @@ The Snap interface structure is defined using JSX components, and consists of:
 - An optional footer element, `Footer`, which appears at the bottom of the
   interface.
 
-![Snap interface structure](../assets/sip-x/interface-structure.png)
+![Snap interface structure](../assets/sip-23/interface-structure.png)
 
 #### Example
 
