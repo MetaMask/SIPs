@@ -1,8 +1,8 @@
 ---
-sip: To be assigned
+sip: 23
 title: JSX for Snap interfaces
 status: Draft
-discussions-to: ...
+discussions-to: https://github.com/MetaMask/SIPs/discussions/137
 author: Maarten Zuidhoorn (@mrtenz)
 created: 2024-03-22
 ---
