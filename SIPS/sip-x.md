@@ -577,7 +577,7 @@ rendered to a DOM directly, fragments SHOULD be rendered as box elements.
 </Box>
 ```
 
-### Backward compatibility
+## Backward compatibility
 
 To ensure backward compatibility with the previous SIP-7 format, the legacy
 components MUST be translated into the new JSX format.
@@ -593,3 +593,7 @@ replaces the Markdown syntax in the previous format, and the `Bold`, `Italic`,
 and `Link` components can be used to achieve similar effects. The `Box`
 component in the new format replaces the `panel` component in the previous
 format.
+
+## Copyright
+
+Copyright and related rights waived via [CC0](../LICENSE).
