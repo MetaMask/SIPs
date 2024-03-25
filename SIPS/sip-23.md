@@ -211,7 +211,7 @@ which can be a `string` or an array of `string`s. The component also accepts an
 ```typescript
 type ButtonProps = {
   children: string | string[];
-  onClick?: () => void | undefined;
+  onClick?: (() => void) | undefined;
 };
 
 const Button: SnapComponent<ButtonProps>;
@@ -351,13 +351,14 @@ can be one or more field elements.
 ```typescript
 type FormProps = {
   children: FieldElement | FieldElement[];
+  onSubmit?: ((formData: Record<string, string>) => void) | undefined;
 };
 ```
 
 ##### Example
 
 ```typescript jsx
-<Form>
+<Form onSubmit={handleSubmit}>
   <Field label="Name">
     <Input type="text" />
   </Field>
