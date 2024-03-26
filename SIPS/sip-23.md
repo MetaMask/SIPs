@@ -571,7 +571,7 @@ type TextProps = {
 const Text: SnapComponent<TextProps>;
 ```
 
-### Fragments
+#### Fragments
 
 JSX has a feature called fragments that allow multiple children to be grouped
 together without adding an extra DOM element. In Snap interfaces, fragments can
@@ -591,6 +591,19 @@ rendered to a DOM directly, fragments SHOULD be rendered as box elements.
   <Button onClick={handleClick}>Click me</Button>
 </Box>
 ```
+
+
+### JSX runtime
+
+The JSX runtime is a set of functions that are used to render JSX elements,
+typically provided by a library like React. Since Snap interfaces are rendered
+in a custom environment, the JSX runtime MUST be provided by the Snaps platform.
+
+The Snaps JSX runtime only supports the modern JSX factory functions, i.e.,
+`jsx` and `jsxs`. The runtime MUST NOT support the legacy `createElement` and
+`Fragment` functions.
+
+Both the `jsx` and `jsxs` functions MUST return a `SnapElement`.
 
 ## Backward compatibility
 
