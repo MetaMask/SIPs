@@ -205,14 +205,16 @@ const Box: SnapComponent<BoxProps>;
 #### Button
 
 The `Button` component renders a button element. It accepts a `children` prop
-which can be a `string` or an array of `string`s. The component also accepts an
-optional `variant` prop which can be `'primary'`, `'secondary'`, or `undefined`.
-The default value is `primary`. The component also accepts an optional `onClick`
-prop which is a function to be called when the button is clicked.
+which can be a `string` or an array of `string`s. The component also accepts
+optional `type`, `variant`, and `onClick` props. The `type` prop MUST be one of
+`'button'`, `'submit'`, or `undefined`. The `variant` prop MUST be one of
+`'primary'`, `'secondary'`, or `undefined`. The `onClick` prop is a function to
+be called when the button is clicked.
 
 ```typescript
 type ButtonProps = {
   children: string | string[];
+  type?: 'button' | 'submit' | undefined;
   variant?: 'primary' | 'secondary' | undefined;
   onClick?: (() => void) | undefined;
 };
@@ -223,7 +225,7 @@ const Button: SnapComponent<ButtonProps>;
 ##### Example
 
 ```typescript jsx
-<Button variant="primary" onClick={handleClick}>Click me</Button>
+<Button type="submit" variant="primary" onClick={handleClick}>Click me</Button>
 ```
 
 #### Container
