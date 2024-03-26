@@ -206,11 +206,14 @@ const Box: SnapComponent<BoxProps>;
 
 The `Button` component renders a button element. It accepts a `children` prop
 which can be a `string` or an array of `string`s. The component also accepts an
-`onClick` prop which is a function to be called when the button is clicked.
+optional `variant` prop which can be `'primary'`, `'secondary'`, or `undefined`.
+The default value is `primary`. The component also accepts an optional `onClick`
+prop which is a function to be called when the button is clicked.
 
 ```typescript
 type ButtonProps = {
   children: string | string[];
+  variant?: 'primary' | 'secondary' | undefined;
   onClick?: (() => void) | undefined;
 };
 
@@ -220,7 +223,7 @@ const Button: SnapComponent<ButtonProps>;
 ##### Example
 
 ```typescript jsx
-<Button onClick={handleClick}>Click me</Button>
+<Button variant="primary" onClick={handleClick}>Click me</Button>
 ```
 
 #### Container
@@ -346,7 +349,9 @@ const Footer: SnapComponent<FooterProps>;
 #### Form
 
 The `Form` component renders a form element. It accepts a `children` prop which
-can be one or more field elements.
+can be one or more field elements. The component also accepts an optional
+`onSubmit` prop which is a function to be called when the form is submitted,
+passing the form data as an object.
 
 ```typescript
 type FormProps = {
@@ -410,16 +415,23 @@ const Image: SnapComponent<ImageProps>;
 
 #### Input
 
-The `Input` component renders an input element. It accepts a `type` prop which
-is a string representing the input type. The component also accepts an optional
-`value` prop which is a string representing the input value, and a `placeholder`
-prop which is a string representing the input placeholder.
+The `Input` component renders an input element. It accepts a `name` prop which
+is a string representing the input name, a `type` prop which is a string
+representing the input type, and an optional `value` prop which is a string
+representing the input value. The component also accepts an optional
+`placeholder` prop which is a string representing the input placeholder, and an
+optional `onChange` prop which is a function to be called when the input value
+changes.
+
+The `type` MUST be one of `'text'`, `'password'`, or `'number'`.
 
 ```typescript
 type InputProps = {
+  name: string;
   type: 'text' | 'password' | 'number';
   value?: string | undefined;
   placeholder?: string | undefined;
+  onChange?: ((value: string) => void) | undefined;
 };
 
 const Input: SnapComponent<InputProps>;
@@ -428,7 +440,7 @@ const Input: SnapComponent<InputProps>;
 ##### Example
 
 ```typescript jsx
-<Input type="text" placeholder="Enter your name" />
+<Input name="name" type="text" placeholder="Enter your name" onChange={handleChange} />
 ```
 
 #### Italic
