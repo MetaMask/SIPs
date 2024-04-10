@@ -539,7 +539,7 @@ accepts a `children` prop which can be one or more `SnapNode`s.
 
 ```typescript
 type StackProps = {
-  children: SnapNode | SnapNode[];
+  children: SnapNode;
 };
 
 const Stack: SnapComponent<StackProps>;
