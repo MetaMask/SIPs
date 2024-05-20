@@ -31,7 +31,7 @@ A URL for a deep link uses the format:
 Where: 
 
 - `[Snap ID]` refers to the canonical ID of the installed Snap
-- `page` refers to a page inside of the application 
+- `page` refers to a [Snap page](/SIPS/sip-15.md)
 - `[page name]` refers to the canonical name of an individual page 
 
 ### Method for Navigating to a Deep Link
