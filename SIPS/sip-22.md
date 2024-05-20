@@ -33,6 +33,7 @@ Where:
 - `[Snap ID]` refers to the canonical ID of the installed Snap
 - `page` refers to a [Snap page](/SIPS/sip-15.md)
 - `[page name]` refers to the canonical name of an individual page 
+  - Currently, the only value that is supported is `home`
 
 ### Method for Navigating to a Deep Link
 
