@@ -73,10 +73,10 @@ type Key = string | number | null;
 A rendered JSX element, i.e., an object with a `type`, `props`, and `key`.
 
 ```typescript
-type SnapElement<Props = any> = {
+type SnapElement<Props extends JsonObject = Record<string, never>> = {
   type: string;
   props: Props;
-  key: Key;
+  key: Key | null;
 };
 ```
 
@@ -87,7 +87,7 @@ A JSX component, i.e., a function which accepts `props`, and returns a
 regular props.
 
 ```typescript
-type SnapComponent<Props = Record<string, never>> =
+type SnapComponent<Props extends JsonObject = Record<string, never>> =
   (props: Props & { key: Key }) => SnapElement<Props>;
 ```
 
@@ -157,12 +157,13 @@ const Address: SnapComponent<AddressProps>;
 #### Bold
 
 The `Bold` component renders a text element in bold. It accepts a `children`
-prop which can be a `string` or an array of `string`s. The component MUST be
-used inside a `Text` component.
+prop which can be a `string`, an italic element, null, or an array of children.
+The component MUST be used inside a `Text` component.
 
 ```typescript
+type BoldChildren = string | ItalicElement | null;
 type BoldProps = {
-  children: string | string[];
+  children: BoldChildren | BoldChildren[];
 };
 
 const Bold: SnapComponent<BoldProps>;
@@ -181,14 +182,26 @@ const Bold: SnapComponent<BoldProps>;
 The `Box` component renders a box element. It accepts a `children` prop which
 can be a `SnapNode`. The component is used to group elements together.
 
-In addition, the component accepts an optional `alignment` prop which can be
-`'start'`, `'center'`, `'end'`, or `undefined`. The default value is
-`undefined`.
+In addition, the component accepts alignment and direction props:
+
+- The `direction` prop specifies the direction of the box layout. It MUST be one
+  of `'vertical'`, `'horizontal'`, or `undefined`. The default value is
+  `horizontal`.
+- The `alignment` prop specifies the alignment of the box items. It MUST be one
+  of `'start'`, `'center'`, `'end'`, `'space-between'`, `'space-around'`, or
+  `undefined`. The default value is `start`.
 
 ```typescript
 type BoxProps = {
   children: SnapNode;
-  alignment?: 'start' | 'center' | 'end' | undefined;
+  direction?: 'vertical' | 'horizontal' | undefined;
+  alignment?:
+    | 'start'
+    | 'center'
+    | 'end'
+    | 'space-between'
+    | 'space-around'
+    | undefined;
 };
 
 const Box: SnapComponent<BoxProps>;
@@ -205,17 +218,27 @@ const Box: SnapComponent<BoxProps>;
 #### Button
 
 The `Button` component renders a button element. It accepts a `children` prop
-which can be a `string` or an array of `string`s. The component also accepts
-optional `type`, `variant`, and `onClick` props. The `type` prop MUST be one of
-`'button'`, `'submit'`, or `undefined`. The `variant` prop MUST be one of
-`'primary'`, `'secondary'`, or `undefined`. The `onClick` prop is a function to
-be called when the button is clicked.
+which can be a `string` or an array of `string`s. It also accepts the following
+optional props:
+
+- The `name` prop is a string representing the button name. It is used to
+  identify the button in a form submission.
+- The `type` prop is a string representing the button type. It MUST be one of
+  `'button'`, `'submit'`, or `undefined`. The default value is `button`.
+- The `variant` prop is a string representing the button variant. It MUST be one
+  of `'primary'`, `'destructive'`, or `undefined`. The default value is
+  `primary`.
+- The `disabled` prop is a boolean representing the button state. The default
+  value is `false`.
+- The `onClick` prop is a function to be called when the button is clicked.
 
 ```typescript
 type ButtonProps = {
   children: string | string[];
+  name?: string | undefined;
   type?: 'button' | 'submit' | undefined;
-  variant?: 'primary' | 'secondary' | undefined;
+  variant?: 'primary' | 'destructive' | undefined;
+  disabled?: boolean | undefined;
   onClick?: (() => void) | undefined;
 };
 
@@ -298,18 +321,46 @@ const Divider: SnapComponent;
 <Divider />
 ```
 
+#### Dropdown
+
+The `Dropdown` component renders a dropdown element. It accepts a name prop
+which is a string representing the dropdown name, and a `value` prop which is a
+string representing the selected value. The component also accepts one or more
+option elements, which are rendered as dropdown options.
+
+```typescript
+type DropdownProps = {
+  name: string;
+  value?: string | undefined;
+  children: OptionElement | OptionElement[];
+};
+
+const Dropdown: SnapComponent<DropdownProps>;
+```
+
+##### Example
+
+```typescript jsx
+<Dropdown name="color" value="red">
+  <Option value="red">Red</Option>
+  <Option value="green">Green</Option>
+  <Option value="blue">Blue</Option>
+</Dropdown>
+```
+
 #### Field
 
-The `Field` component renders a field element. It accepts a `label` prop which
-is a string representing the field label, and a `children` prop which can be an
-input element, and an optional button element. The component also accepts an
-`error` prop which is a string representing an error message.
+The `Field` component renders a field element. It accepts an optional `label`
+prop which is a string representing the field label, and a `children` prop
+which can be an input element, and an optional button element, OR a dropdown
+element. The component also accepts an `error` prop which is a string
+representing an error message.
 
 ```typescript
 type FieldProps = {
-  label: string;
+  label?: string | undefined;
   error?: string | undefined;
-  children: [InputElement, ButtonElement] | InputElement;
+  children: [InputElement, ButtonElement] | InputElement | DropdownElement;
 };
 ```
 
@@ -319,6 +370,16 @@ type FieldProps = {
 <Field label="Name">
   <Input type="text" />
   <Button onClick={handleClick}>Action</Button>
+</Field>
+```
+
+```typescript jsx
+<Field label="Name">
+  <Dropdown name="color" value="red">
+    <Option value="red">Red</Option>
+    <Option value="green">Green</Option>
+    <Option value="blue">Blue</Option>
+  </Dropdown>
 </Field>
 ```
 
@@ -356,8 +417,10 @@ can be one or more field elements. The component also accepts an optional
 passing the form data as an object.
 
 ```typescript
+type FormChildren = FieldElement | ButtonElement;
 type FormProps = {
-  children: FieldElement | FieldElement[];
+  children: FormChildren | FormChildren[];
+  name: string;
   onSubmit?: ((formData: Record<string, string>) => void) | undefined;
 };
 ```
@@ -369,6 +432,7 @@ type FormProps = {
   <Field label="Name">
     <Input type="text" />
   </Field>
+  <Button type="submit">Submit</Button>
 </Form>
 ```
 
@@ -379,7 +443,7 @@ which can be a `string` or an array of `string`s.
 
 ```typescript
 type HeadingProps = {
-  children: string | string[];
+  children: StringElement;
 };
 
 const Heading: SnapComponent<HeadingProps>;
@@ -430,7 +494,7 @@ The `type` MUST be one of `'text'`, `'password'`, or `'number'`.
 ```typescript
 type InputProps = {
   name: string;
-  type: 'text' | 'password' | 'number';
+  type?: 'text' | 'password' | 'number' | 'file' | undefined;
   value?: string | undefined;
   placeholder?: string | undefined;
   onChange?: ((value: string) => void) | undefined;
@@ -452,8 +516,9 @@ prop which can be a `string` or an array of `string`s. The component MUST be
 used inside a `Text` component.
 
 ```typescript
+type ItalicChildren = string | BoldElement | null;
 type ItalicProps = {
-  children: string | string[];
+  children: ItalicChildren | ItalicChildren[];
 };
 
 const Italic: SnapComponent<ItalicProps>;
@@ -470,15 +535,17 @@ const Italic: SnapComponent<ItalicProps>;
 #### Link
 
 The `Link` component renders a link element. It accepts a `children` prop which
-can be a `string` or an array of `string`s, and an `href` prop which is a string
+can be a `string`, an italic element, a bold element, or an array of these
+elements. The component also accepts an `href` prop which is a string
 representing the link URL.
 
 The `href` MUST be an absolute URL. Relative URLs are not supported. It MUST
 start with `https://` or `mailto:`.
 
 ```typescript
+type LinkChildren = string | BoldElement | ItalicElement | null;
 type LinkProps = {
-  children: string | string[];
+  children: LinkChildren | LinkChildren[];
   href: string;
 };
 
@@ -495,7 +562,7 @@ const Link: SnapComponent<LinkProps>;
 
 The `Row` component renders a key-value pair element. It accepts a `label` prop
 which is a string representing the key, and a `children` prop which can be an
-address, image, or text element.
+address, image, text, or value element.
 
 In addition, the component accepts an optional `variant` prop which can be
 `'default'`, `'warning'`, or `'error'`. The default value is `'default'`.
@@ -503,7 +570,7 @@ In addition, the component accepts an optional `variant` prop which can be
 ```typescript
 type RowProps = {
   label: string;
-  children: AddressElement | ImageElement | TextElement;
+  children: AddressElement | ImageElement | TextElement | ValueElement;
   variant?: 'default' | 'warning' | 'error';
 };
 
@@ -532,66 +599,45 @@ const Spinner: SnapComponent;
 <Spinner />
 ```
 
-#### Stack
-
-The `Stack` component renders the children elements stacked horizontally. It
-accepts a `children` prop which can be one or more `SnapNode`s.
-
-```typescript
-type StackProps = {
-  children: SnapNode;
-};
-
-const Stack: SnapComponent<StackProps>;
-```
-
-##### Example
-
-```typescript jsx
-<Stack>
-  <Image src="<svg>...</svg>" alt="Ethereum icon" />
-  <Text>Ethereum</Text>
-</Stack>
-```
-
 #### Text
 
 The `Text` component renders a text element. It accepts a `children` prop which
-can be a `string`, bold, italic, link element, or an array of these elements.
+can be a `string`, bold, italic, link element, null, or an array of these
+elements.
 
 In contrast to SIP-7, the `Text` component does NOT support Markdown syntax. The
 `Bold`, `Italic`, and `Link` components MAY be used to achieve similar effects.
 
 ```typescript
-type TextChild = string | BoldElement | ItalicElement | LinkElement;
+type TextChildren = string | BoldElement | ItalicElement | LinkElement | null;
 type TextProps = {
-  children: TextChild | TextChild[];
+  children: TextChildren | TextChildren[];
 };
 
 const Text: SnapComponent<TextProps>;
 ```
 
-#### Fragments
+#### Value
 
-JSX has a feature called fragments that allow multiple children to be grouped
-together without adding an extra DOM element. In Snap interfaces, fragments can
-be used to group multiple elements together. Since Snap interfaces aren't
-rendered to a DOM directly, fragments SHOULD be rendered as box elements.
+The `Value` component renders a value element. It accepts a `value` and `extra`
+prop, which are strings representing the value and extra information
+respectively. It can be used to render a value with additional context in a
+row element.
 
-```typescript jsx
-// This JSX element...
-<>
-  <Text>Hello, world!</Text>
-  <Button onClick={handleClick}>Click me</Button>
-</>
-
-// ...is equivalent to
-<Box>
-  <Text>Hello, world!</Text>
-  <Button onClick={handleClick}>Click me</Button>
-</Box>
+```typescript
+type ValueProps = {
+  value: string;
+  extra: string;
+};
 ```
 
+##### Example
+
+```typescript jsx
+<Row label="Amount">
+  <Value value="0.1 ETH" extra="100 EUR" />
+</Row>
+```
 
 ### JSX runtime
 
