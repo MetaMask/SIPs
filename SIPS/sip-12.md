@@ -148,7 +148,7 @@ type OnNameLookupResponse =
 1. The `resolvedDomain` or `resolvedAddress` in a resolution object MUST be the key that the address or domain being queried is indexed by in the protocol that the snap is resolving for. These returned values are un-opinionated at the API layer to allow the client to use them as they see fit.
 2. There MUST NOT be duplicate resolutions for the same protocol in either `resolvedAddresses` or `resolvedDomains`.
 3. `protocol` refers to the name of the protocol providing resolution for said `resolvedAddress`/`resolvedDomain`.
-4. The returned resolution(s) must exist on the chain specificed by the `chainId` passed into the handler.
+4. The returned resolution(s) MUST exist on the chain specificed by the `chainId` passed into the handler.
 
 ## Copyright
 
