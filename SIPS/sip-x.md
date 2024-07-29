@@ -1,6 +1,7 @@
 ---
+
 sip: x
-title: Standard Interface for Bitcoin RPC Router Snaps
+title: Standard Interface for RPC Router Snaps
 status: Draft
 discussions-to: TBD
 author: Alex Donesky (@adonesky1)
@@ -9,7 +10,7 @@ created: 2024-07-29
 
 ## Abstract
 
-This SIP proposes a standard interface for Bitcoin RPC router Snaps, which will act as intermediaries between the MetaMask wallet and account Snaps serving the Bitcoin network. These routing Snaps will handle registration of account Snaps and interpret incoming CAIP-27 requests, routing them to the appropriate account Snap for signature or processing, and broadcasting the signed transactions to the Bitcoin network.
+This SIP proposes a standard interface for RPC router Snaps, which will act as intermediaries between the MetaMask wallet and account Snaps serving various blockchain networks. These routing Snaps will handle registration of account Snaps and interpret incoming CAIP-27 requests, routing them to the appropriate account Snap for signature or processing, and broadcasting the signed transactions to the respective blockchain network.
 
 ## Motivation
 
@@ -19,7 +20,7 @@ The integration of MetaMask's MultiChain API and protocol Snaps necessitates a s
 
 ### Overview
 
-RPC router Snaps will serve as intermediaries for specific CAIP-2 identifiers, registering themselves with MetaMask and managing account Snap registrations for their respective networks. They will interpret CAIP-27 requests, route network-specific RPC requests, and facilitate user-specified account Snap options for signing requests, and broadcast signed transactions to the network.
+RPC router Snaps will serve as intermediaries for specific CAIP-2 identifiers, registering themselves with MetaMask and managing account Snap registrations for their respective networks. They will interpret CAIP-27 requests, route network-specific RPC requests, facilitate user-specified account Snap options for signing requests, and broadcast signed transactions to the network.
 
 ### Key Responsibilities
 
@@ -28,12 +29,12 @@ RPC router Snaps will serve as intermediaries for specific CAIP-2 identifiers, r
 
 2. **Account Snap Registration**:
    - RPC router Snaps will expose an interface for account Snaps to register themselves based on matching CAIP-2 identifiers.
-   - Account Snaps must declare the methods and events they support.
+   - Account Snaps must declare the signing methods they support with the router Snap.
 
 3. **Handling CAIP-27 Requests**:
    - RPC router Snaps will interpret incoming CAIP-27 requests, identify the network-specific RPC request format, and route to the appropriate account Snap.
    - They must provide an option for users to specify the account Snap for signing requests.
-   - They will broadcast the signed transactions to the Bitcoin network.
+   - They will broadcast the signed transactions to the respective blockchain network.
 
 ### Minimum Interface for Routing Snaps
 
@@ -96,7 +97,7 @@ RPC router Snaps will serve as intermediaries for specific CAIP-2 identifiers, r
    - When MetaMask receives a CAIP-27 request, it validates the request and forwards it to the appropriate RPC router Snap based on the CAIP-2 identifier.
    - The RPC router Snap interprets the request and routes it to the appropriate account Snap.
    - If the request requires a signature, the RPC router Snap either forwards the request to the appropriate account Snap or allows the user to specify which account Snap should handle the request.
-   - The signed transaction is then broadcast to the Bitcoin network by the RPC router Snap.
+   - The signed transaction is then broadcast to the respective blockchain network by the RPC router Snap.
 
 ### Identifying Methods Requiring Signatures
 
@@ -177,6 +178,86 @@ RPC router Snaps will serve as intermediaries for specific CAIP-2 identifiers, r
 }
 ```
 
+### Example Workflow for Solana
+
+#### Request Requiring Signature
+
+1. **Receive Request**: MetaMask receives a CAIP-27 request to send Solana (`method: sendTransaction`).
+2. **Identify Method**: The RPC router Snap identifies that the `sendTransaction` method requires a signature.
+3. **Route to Account Snap**: The RPC router Snap routes the request to the appropriate Solana account Snap.
+4. **Account Snap Signs**: The account Snap signs the transaction.
+5. **Broadcast Transaction**: The RPC router Snap broadcasts the signed transaction to the Solana network.
+6. **Return Result**: The RPC router Snap returns the result to MetaMask, which forwards it to the dApp.
+
+```json
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "method": "wallet_invokeMethod",
+  "params": {
+    "scope": "sol:1", // Solana Mainnet
+    "request": {
+      "method": "sendTransaction",
+      "params": [
+        {
+          "recentBlockhash": "5eykt4UsFv8P8NJdTRE4Rkk4L
+
+77eC1HbDRHUfW8rQJxa",
+          "signatures": [
+            {
+              "publicKey": "3No4UR3oHPAbSmQZo3CTsN3tFN6pQ8QyDpXdbFTc6cw2",
+              "signature": null
+            }
+          ],
+          "instructions": [
+            {
+              "programId": "11111111111111111111111111111111",
+              "data": "3BxsTbNvQBsMdFNV",
+              "keys": [
+                {
+                  "pubkey": "3No4UR3oHPAbSmQZo3CTsN3tFN6pQ8QyDpXdbFTc6cw2",
+                  "isSigner": true,
+                  "isWritable": true
+                },
+                {
+                  "pubkey": "4No4UR3oHPAbSmQZo3CTsN3tFN6pQ8QyDpXdbFTc6cw2",
+                  "isSigner": false,
+                  "isWritable": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```
+
+#### Request Not Requiring Signature
+
+1. **Receive Request**: MetaMask receives a CAIP-27 request to get the Solana account info (`method: getAccountInfo`).
+2. **Identify Method**: The RPC router Snap identifies that the `getAccountInfo` method does not require a signature.
+3. **Send Direct Request**: The RPC router Snap sends the request directly to the Solana node.
+4. **Return Result**: The RPC router Snap returns the result to MetaMask, which forwards it to the dApp.
+
+```json
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "method": "wallet_invokeMethod",
+  "params": {
+    "scope": "sol:1", // Solana Mainnet
+    "request": {
+      "method": "getAccountInfo",
+      "params": [
+        "3No4UR3oHPAbSmQZo3CTsN3tFN6pQ8QyDpXdbFTc6cw2"
+      ]
+    }
+  }
+}
+```
+
 ### Diagram
 
 ```mermaid
@@ -185,19 +266,22 @@ sequenceDiagram
     participant MetaMask as MetaMask
     participant RouterSnapBTC as Bitcoin Router Snap
     participant AccountSnapBTC as Bitcoin Account Snap
+    participant RouterSnapSOL as Solana Router Snap
+    participant AccountSnapSOL as Solana Account Snap
     participant BTCNode as Bitcoin Node
+    participant SOLNode as Solana Node
 
     %% Registration Flow
     rect rgb(255, 245, 245)
     RouterSnapBTC->>MetaMask: rpcRouter_register(bip122:000000000019d6689c085ae165831e93, methods, events)
     AccountSnapBTC->>RouterSnapBTC: accountSnap_register(bip122:000000000019d6689c085ae165831e93, methods, events)
+    RouterSnapSOL->>MetaMask: rpcRouter_register(sol:1, methods, events)
+    AccountSnapSOL->>RouterSnapSOL: accountSnap_register(sol:1, methods, events)
     end
 
-    %% CAIP-27 Flow for Request Requiring Signature
+    %% CAIP-27 Flow for Bitcoin Request Requiring Signature
     rect rgb(245, 245, 255)
-    DApp->>MetaMask: CAIP
-
--27 Request (scope: bip122:000000000019d6689c085ae165831e93, method: sendtoaddress)
+    DApp->>MetaMask: CAIP-27 Request (scope: bip122:000000000019d6689c085ae165831e93, method: sendtoaddress)
     MetaMask->>RouterSnapBTC: Forward CAIP-27 Request
     RouterSnapBTC->>AccountSnapBTC: Route Request to Account Snap
     AccountSnapBTC->>RouterSnapBTC: Return Signed Transaction
@@ -206,13 +290,34 @@ sequenceDiagram
     MetaMask->>DApp: Return Result
     end
 
-    %% CAIP-27 Flow for Request Not Requiring Signature
+    %% CAIP-27 Flow for Bitcoin Request Not Requiring Signature
     rect rgb(245, 245, 255)
     DApp->>MetaMask: CAIP-27 Request (scope: bip122:000000000019d6689c085ae165831e93, method: getblockchaininfo)
     MetaMask->>RouterSnapBTC: Forward CAIP-27 Request
     RouterSnapBTC->>BTCNode: Send Direct Request
     BTCNode->>RouterSnapBTC: Return Result
     RouterSnapBTC->>MetaMask: Forward Result
+    MetaMask->>DApp: Return Result
+    end
+
+    %% CAIP-27 Flow for Solana Request Requiring Signature
+    rect rgb(245, 245, 255)
+    DApp->>MetaMask: CAIP-27 Request (scope: sol:1, method: sendTransaction)
+    MetaMask->>RouterSnapSOL: Forward CAIP-27 Request
+    RouterSnapSOL->>AccountSnapSOL: Route Request to Account Snap
+    AccountSnapSOL->>RouterSnapSOL: Return Signed Transaction
+    RouterSnapSOL->>SOLNode: Broadcast Signed Transaction
+    RouterSnapSOL->>MetaMask: Forward Result
+    MetaMask->>DApp: Return Result
+    end
+
+    %% CAIP-27 Flow for Solana Request Not Requiring Signature
+    rect rgb(245, 245, 255)
+    DApp->>MetaMask: CAIP-27 Request (scope: sol:1, method: getAccountInfo)
+    MetaMask->>RouterSnapSOL: Forward CAIP-27 Request
+    RouterSnapSOL->>SOLNode: Send Direct Request
+    SOLNode->>RouterSnapSOL: Return Result
+    RouterSnapSOL->>MetaMask: Forward Result
     MetaMask->>DApp: Return Result
     end
 ```
