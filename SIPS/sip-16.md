@@ -48,12 +48,11 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
   - `ChainId` consists of a `Namespace` and a `Reference`
     - `Namespace` - a class of similar blockchains. For example EVM-based blockchains.
     - `Reference` - a way to identify a concrete chain inside a `Namespace`. For example Ethereum Mainnet or one of its test networks.
-- `Method` - a string which can be any of the following 5 [signing methods](https://docs.metamask.io/wallet/concepts/signing-methods/) supported by the MetaMask wallet API. The set of possible signature types may expand in the future as new signing methods are supported. The signing method is required by MetaMask for the dapp to make a signature request. It is not part of the signature payload.
+- `Method` - a string which can be any of the following 4 [signing methods](https://docs.metamask.io/wallet/concepts/signing-methods/) supported by the MetaMask wallet API. The set of possible signature types may expand in the future as new signing methods are supported. The signing method is required by MetaMask for the dapp to make a signature request. It is not part of the signature payload.
   1. `eth_signTypedData_v4`
   2. `eth_signTypedData_v3`
   3. `eth_signTypedData_v1`
   4. `personal_sign`
-  5. `eth_sign`
 
 ### Snap Manifest
 
@@ -139,16 +138,6 @@ Please see [SIP-11](sip-3.md) for more information on Transaction insight severi
 ## Appendix I: Ethereum Signature Objects
 
 The following signature objects may appear for any `chainId` of `eip155:*` where `*` is some positive integer. This includes all Ethereum or "EVM-compatible" chains. As of the time of the creation of this SIP, they are the only possible signature objects for Ethereum chains.
-
-### eth_sign
-
-```typescript
-interface EthSignature {
-  from: string;
-  data: string;
-  signatureMethod: 'eth_sign';
-}
-```
 
 ### personal_sign
 
