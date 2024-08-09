@@ -27,14 +27,14 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 ### Snap Manifest
 
-This SIP specifies an addendum that MAY be applied to existing and future Snap handler permissions for `endowment:keyring`. The addendum is that the `allowedOrigins` array may contain URLs using the `wss:` or `ws:` schemes.
+This SIP specifies an addendum that MAY be applied to existing and future Snap handler permissions for `endowment:network-access`. The addendum is that the `allowedOrigins` array may contain URLs using the `wss:` or `ws:` schemes.
 
 The caveat is specified as follows in the manifest:
 
 ```json
 {
   "initialPermissions": {
-    "endowment:keyring": {
+    "endowment:network-access": {
       "allowedOrigins": [
         "https://tss.ac",
         "wss://relay.tss.ac"
