@@ -10,17 +10,19 @@ created: 2024-07-29
 
 ## Abstract
 
-This SIP proposes a standard interface for RPC router Snaps, which will act as intermediaries between the MetaMask wallet and account Snaps serving various blockchain networks. These routing Snaps will handle registration of account Snaps and interpret incoming CAIP-27 requests, routing them to the appropriate account Snap for signature or processing, and broadcasting the signed transactions to the respective blockchain network.
+This SIP proposes a minimum standard interface for RPC router Snaps, which will act as intermediaries between the MetaMask wallet and account Snaps (TODO: add account snaps SIP link here when complete). These routing Snaps will handle registration of account Snaps and interpret incoming CAIP-27 requests, determining whether they require signature and routing them to the appropriate account Snap for signature when applicable. They will broadcast signed transactions to the matching network and return results to MetaMask.
 
 ## Motivation
 
-The integration of MetaMask's MultiChain API and protocol Snaps necessitates a standardized approach for routing RPC requests across various blockchain networks. By establishing a standard interface for RPC router Snaps, we aim to abstract the complexity of non-EVM protocol support away from the MetaMask engineering team, ensuring a seamless and scalable interaction model for decentralized applications (dApps).
+The integration of MetaMask's MultiChain API and protocol Snaps necessitates a standardized approach for routing RPC requests across various blockchain networks. By establishing a standard interface for RPC router Snaps, we aim to abstract the complexity of non-EVM protocol support away from the MetaMask engineering team, ensuring a seamless and scalable interaction model for decentralized applications (dApps). Because MetaMask is not equipped to interpret requests from non EVM networks and, for instance, identify which requests require signatures or, for methods that do require signatures, which parameters correspond to the account that should sign a transaction, the RPC router Snap will provide logic for interpreting and routing these requests accordingly.
+
+This SIP outlines the key responsibilities and minimum interface requirements for RPC router Snaps, enabling developers to build and deploy routing Snaps for specific blockchain networks.
 
 ## Specification
 
 ### Overview
 
-RPC router Snaps will serve as intermediaries for specific CAIP-2 identifiers, registering themselves with MetaMask and managing account Snap registrations for their respective networks. They will interpret CAIP-27 requests, route network-specific RPC requests, facilitate user-specified account Snap options for signing requests, and broadcast signed transactions to the network.
+RPC router Snaps will serve as intermediaries for specific CAIP-2 identifiers, registering themselves with MetaMask and managing account Snap registrations for their respective networks. They will interpret non-EVM CAIP-27 requests made to their registred CAIP-2 identifier, route these requests, facilitate user-specified account Snap options for signing requests, and broadcast signed transactions to the network.
 
 ### Key Responsibilities
 
@@ -33,8 +35,9 @@ RPC router Snaps will serve as intermediaries for specific CAIP-2 identifiers, r
 
 3. **Handling CAIP-27 Requests**:
    - RPC router Snaps will interpret incoming CAIP-27 requests, identify the network-specific RPC request format, and route to the appropriate account Snap.
-   - They must provide an option for users to specify the account Snap for signing requests.
-   - They will broadcast the signed transactions to the respective blockchain network.
+   - If the request does not specify an account the router snap must provide UI for users to select from among the eligible signer Snaps for signing the request.
+   - They will broadcast the signed transactions to the respective blockchain network and return the result to MetaMask.
+   - They will also handle requests that do not require signatures by sending them directly to the network and returning the result to MetaMask.
 
 ### Minimum Interface for Routing Snaps
 
@@ -70,7 +73,7 @@ RPC router Snaps will serve as intermediaries for specific CAIP-2 identifiers, r
     const { requiresSignature, account } = identifySignatureMethods(method, params);
 
     if (requiresSignature) {
-      const accountSnap = findAccountSnap(scope, method);
+      const accountSnap = await findOrUserSelectAccountSnap(scope, method);
       if (accountSnap) {
         const signedTransaction = await accountSnap.handleRequest(request);
         return await broadcastTransaction(signedTransaction);
@@ -184,8 +187,8 @@ RPC router Snaps will serve as intermediaries for specific CAIP-2 identifiers, r
 
 1. **Receive Request**: MetaMask receives a CAIP-27 request to send Solana (`method: sendTransaction`).
 2. **Identify Method**: The RPC router Snap identifies that the `sendTransaction` method requires a signature.
-3. **Route to Account Snap**: The RPC router Snap routes the request to the appropriate Solana account Snap.
-4. **Account Snap Signs**: The account Snap signs the transaction.
+3. **Route to Account Snap**: The RPC router Snap identifies that the CAIP-27 request does not identify an account to sign and prompts the user to select an account to sign and routes the request to the appropriate Solana account Snap.
+4. **Account Snap Signs**: The account Snap signs the transaction and sends the signed transaction back to the RPC router Snap.
 5. **Broadcast Transaction**: The RPC router Snap broadcasts the signed transaction to the Solana network.
 6. **Return Result**: The RPC router Snap returns the result to MetaMask, which forwards it to the dApp.
 
