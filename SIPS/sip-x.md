@@ -220,19 +220,6 @@ sequenceDiagram
 
 This proposal introduces new Snap interfaces and does not break existing functionality. It builds upon the CAIP-25 and CAIP-27 standards, ensuring seamless integration with the MultiChain API. Existing dApps and Snaps that do not utilize these new interfaces will continue to function as before.
 
-
-## Security Considerations
-
-Implementing this RPC routing Snap interface introduces new security considerations:
-
-1. Proper validation of incoming requests to prevent malicious actions.
-2. Secure communication between MetaMask, routing Snaps, and account Snaps.
-3. Careful management of permissions to prevent unauthorized access to accounts or sensitive operations.
-4. Robust error handling to prevent information leakage or system instability.
-
-Developers implementing these interfaces should conduct thorough security audits and follow best practices for secure coding and key management.
-
-
 ## Copyright
 
 Copyright and related rights waived via [CC0](../LICENSE).
