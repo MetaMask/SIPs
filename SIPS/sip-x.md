@@ -12,9 +12,12 @@ created: 2024-07-29
 
 This SIP proposes a minimum standard interface for RPC router Snaps, which will act as intermediaries between the MetaMask wallet and account Snaps (TODO: add account snaps SIP link here when complete). These routing Snaps will handle registration of account Snaps and interpret incoming CAIP-27 requests, determining whether they require signature and routing them to the appropriate account Snap for signature when applicable. They will broadcast signed transactions to the matching network and return results to MetaMask.
 
+
 ## Motivation
 
 The integration of MetaMask's MultiChain API and protocol Snaps necessitates a standardized approach for routing RPC requests across various blockchain networks. By establishing a standard interface for RPC router Snaps, we aim to abstract the complexity of non-EVM protocol support away from the MetaMask engineering team, ensuring a seamless and scalable interaction model for decentralized applications (dApps). Because MetaMask is not equipped to interpret requests from non EVM networks and, for instance, identify which requests require signatures or, for methods that do require signatures, which parameters correspond to the account that should sign a transaction, the RPC router Snap will provide logic for interpreting and routing these requests accordingly.
+
+This approach allows for greater flexibility and extensibility, enabling the MetaMask ecosystem to support a wide range of blockchain networks without requiring changes to the core wallet functionality.
 
 This SIP outlines the key responsibilities and minimum interface requirements for RPC router Snaps, enabling developers to build and deploy routing Snaps for specific blockchain networks.
 
@@ -67,15 +70,24 @@ RPC router Snaps will serve as intermediaries for specific CAIP-2 identifiers, r
   - `scope`: The CAIP-2 identifier of the target chain.
   - `request`: The JSON-RPC request object.
 - **Example Implementation**:
-  ```javascript
-  async function handleCaip27Request(scope, request) {
+  ```typescript
+  interface JsonRpcRequest {
+  method: string;
+  params: any[];
+  }
+
+  interface AccountSnap {
+    handleRequest(request: JsonRpcRequest): Promise<string>;
+  }
+
+  async function handleCaip27Request(scope: string, request: JsonRpcRequest): Promise<string> {
     const { method, params } = request;
     const { requiresSignature, account } = identifySignatureMethods(method, params);
 
     if (requiresSignature) {
-      const accountSnap = await findOrUserSelectAccountSnap(scope, method);
+      const accountSnap: AccountSnap | null = await findOrUserSelectAccountSnap(scope, method);
       if (accountSnap) {
-        const signedTransaction = await accountSnap.handleRequest(request);
+        const signedTransaction: string = await accountSnap.handleRequest(request);
         return await broadcastTransaction(signedTransaction);
       } else {
         throw new Error(`No account Snap found for scope: ${scope} and method: ${method}`);
@@ -85,6 +97,7 @@ RPC router Snaps will serve as intermediaries for specific CAIP-2 identifiers, r
     }
   }
   ```
+- **Error Handling**: The method should include appropriate error handling and return clear error messages for scenarios such as unsupported methods, network issues, or signature failures.
 
 ### Detailed Functionality
 
@@ -114,19 +127,23 @@ RPC router Snaps will serve as intermediaries for specific CAIP-2 identifiers, r
   - `account`: The account to be used for signing, if specified.
 
 - **Example Implementation**:
-  ```javascript
-  function identifySignatureMethods(method, params) {
-    const signatureMethods = ["sendtoaddress", "sendmany", "signrawtransactionwithkey"];
-    const requiresSignature = signatureMethods.includes(method);
-    let account = null;
+  ```typescript
+  interface SignatureMethodResult {
+    requiresSignature: boolean;
+    account: string | null;
+  }
+
+  function identifySignatureMethods(method: string, params: any[]): SignatureMethodResult {
+    const signatureMethods: string[] = ["sendtoaddress", "sendmany", "signrawtransactionwithkey"];
+    const requiresSignature: boolean = signatureMethods.includes(method);
+    let account: string | null = null;
 
     if (requiresSignature && params.length > 0) {
-      account = params[0]; // Example for extracting the account from parameters
+      account = params[0] as string; // Example for extracting the account from parameters
     }
 
     return { requiresSignature, account };
   }
-  ```
 
 ### Example Workflow for Handling Requests
 
@@ -158,6 +175,8 @@ RPC router Snaps will serve as intermediaries for specific CAIP-2 identifiers, r
   }
 }
 ```
+
+**Note:** Implementing proper security measures, such as validating the origin of requests and ensuring secure communication between Snaps, is crucial for maintaining the integrity of the system.
 
 #### Request Not Requiring Signature
 
@@ -327,7 +346,20 @@ sequenceDiagram
 
 ## Backwards Compatibility
 
-This proposal introduces new Snap interfaces and does not break existing functionality. It builds upon the CAIP-25 and CAIP-27 standards, ensuring seamless integration with the MultiChain API.
+This proposal introduces new Snap interfaces and does not break existing functionality. It builds upon the CAIP-25 and CAIP-27 standards, ensuring seamless integration with the MultiChain API. Existing dApps and Snaps that do not utilize these new interfaces will continue to function as before.
+
+
+## Security Considerations
+
+Implementing this RPC router Snap interface introduces new security considerations:
+
+1. Proper validation of incoming requests to prevent malicious actions.
+2. Secure communication between MetaMask, router Snaps, and account Snaps.
+3. Careful management of permissions to prevent unauthorized access to accounts or sensitive operations.
+4. Robust error handling to prevent information leakage or system instability.
+
+Developers implementing these interfaces should conduct thorough security audits and follow best practices for secure coding and key management.
+
 
 ## Copyright
 
