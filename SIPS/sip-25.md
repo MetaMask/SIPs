@@ -1,9 +1,9 @@
 ---
 
-sip: x
+sip: 25
 title: Standard Interface for RPC routing Snaps
 status: Draft
-discussions-to: TBD
+discussions-to: https://github.com/MetaMask/SIPs/discussions/145
 author: Alex Donesky (@adonesky1)
 created: 2024-07-29
 ---
