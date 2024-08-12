@@ -177,62 +177,42 @@ RPC routing Snaps will serve as intermediaries for specific [CAIP-2](https://git
 ```mermaid
 sequenceDiagram
     participant DApp as DApp
+    participant SnapsUI as Snaps UI
     participant MetaMask as MetaMask
     participant RouterSnapBTC as Bitcoin routing Snap
-    participant AccountSnapBTC as Bitcoin Account Snap
-    participant RouterSnapSOL as Solana routing Snap
-    participant AccountSnapSOL as Solana Account Snap
+    participant AccountSnapBTC1 as Bitcoin Account Snap 1
+    participant AccountSnapBTC2 as Bitcoin Account Snap 2
     participant BTCNode as Bitcoin Node
-    participant SOLNode as Solana Node
 
-    %% Registration Flow
     rect rgb(255, 245, 245)
-    RouterSnapBTC->>MetaMask: routingSnap_register(bip122:000000000019d6689c085ae165831e93, methods, events)
-    AccountSnapBTC->>RouterSnapBTC: accountSnap_register(bip122:000000000019d6689c085ae165831e93, methods, events)
-    RouterSnapSOL->>MetaMask: routingSnap_register(sol:1, methods, events)
-    AccountSnapSOL->>RouterSnapSOL: accountSnap_register(sol:1, methods, events)
+        Note over RouterSnapBTC,AccountSnapBTC2: Registration Flow
+        RouterSnapBTC->>MetaMask: routingSnap_register(bip122:000000000019d6689c085ae165831e93, methods, events)
+        AccountSnapBTC1->>RouterSnapBTC: accountSnap_register(bip122:000000000019d6689c085ae165831e93, methods, events)
+        AccountSnapBTC2->>RouterSnapBTC: accountSnap_register(bip122:000000000019d6689c085ae165831e93, methods, events)
     end
 
-    %% CAIP-27 Flow for Bitcoin Request Requiring Signature
     rect rgb(245, 245, 255)
-    DApp->>MetaMask: CAIP-27 Request (scope: bip122:000000000019d6689c085ae165831e93, method: sendtoaddress)
-    MetaMask->>RouterSnapBTC: Forward CAIP-27 Request
-    RouterSnapBTC->>AccountSnapBTC: Route Request to Account Snap
-    AccountSnapBTC->>RouterSnapBTC: Return Signed Transaction
-    RouterSnapBTC->>BTCNode: Broadcast Signed Transaction
-    RouterSnapBTC->>MetaMask: Forward Result
-    MetaMask->>DApp: Return Result
+        Note over DApp,MetaMask: CAIP-27 Flow: Bitcoin Request Requiring Signature (with user selection)
+        DApp->>MetaMask: CAIP-27 Request (scope: bip122:000000000019d6689c085ae165831e93, method: sendtoaddress)
+        MetaMask->>RouterSnapBTC: Forward CAIP-27 Request
+        RouterSnapBTC->>SnapsUI: Prompt to select Account Snap
+        SnapsUI->>RouterSnapBTC: Select Account Snap (AccountSnapBTC1)
+        RouterSnapBTC->>AccountSnapBTC1: Route Request to Selected Account Snap
+        AccountSnapBTC1->>RouterSnapBTC: Return Signed Transaction
+        RouterSnapBTC->>BTCNode: Broadcast Signed Transaction
+        BTCNode->>RouterSnapBTC: Return Transaction Result
+        RouterSnapBTC->>MetaMask: Forward Result
+        MetaMask->>DApp: Return Result
     end
 
-    %% CAIP-27 Flow for Bitcoin Request Not Requiring Signature
-    rect rgb(245, 245, 255)
-    DApp->>MetaMask: CAIP-27 Request (scope: bip122:000000000019d6689c085ae165831e93, method: getblockchaininfo)
-    MetaMask->>RouterSnapBTC: Forward CAIP-27 Request
-    RouterSnapBTC->>BTCNode: Send Direct Request
-    BTCNode->>RouterSnapBTC: Return Result
-    RouterSnapBTC->>MetaMask: Forward Result
-    MetaMask->>DApp: Return Result
-    end
-
-    %% CAIP-27 Flow for Solana Request Requiring Signature
-    rect rgb(245, 245, 255)
-    DApp->>MetaMask: CAIP-27 Request (scope: sol:1, method: sendTransaction)
-    MetaMask->>RouterSnapSOL: Forward CAIP-27 Request
-    RouterSnapSOL->>AccountSnapSOL: Route Request to Account Snap
-    AccountSnapSOL->>RouterSnapSOL: Return Signed Transaction
-    RouterSnapSOL->>SOLNode: Broadcast Signed Transaction
-    RouterSnapSOL->>MetaMask: Forward Result
-    MetaMask->>DApp: Return Result
-    end
-
-    %% CAIP-27 Flow for Solana Request Not Requiring Signature
-    rect rgb(245, 245, 255)
-    DApp->>MetaMask: CAIP-27 Request (scope: sol:1, method: getAccountInfo)
-    MetaMask->>RouterSnapSOL: Forward CAIP-27 Request
-    RouterSnapSOL->>SOLNode: Send Direct Request
-    SOLNode->>RouterSnapSOL: Return Result
-    RouterSnapSOL->>MetaMask: Forward Result
-    MetaMask->>DApp: Return Result
+    rect rgb(225, 225, 255)
+        Note over DApp,MetaMask: CAIP-27 Flow: Bitcoin Request Not Requiring Signature
+        DApp->>MetaMask: CAIP-27 Request (scope: bip122:000000000019d6689c085ae165831e93, method: getblockchaininfo)
+        MetaMask->>RouterSnapBTC: Forward CAIP-27 Request
+        RouterSnapBTC->>BTCNode: Forward BTC Request directly to BTC Node
+        BTCNode->>RouterSnapBTC: Return Query Result
+        RouterSnapBTC->>MetaMask: Forward Result
+        MetaMask->>DApp: Return Result
     end
 ```
 
