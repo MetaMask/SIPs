@@ -87,7 +87,7 @@ export const onNameLookup: OnNameLookupHandler = async ({
 
   if (domain) {
 
-    resolution = { protocol: /* Domain protocol */ , resolvedAddress: /* Get domain resolution */ };
+    resolution = { protocol: /* Domain protocol */ , resolvedAddress: /* Get domain resolution */, domainName: /* Domain name that the resolved address matches against */ };
     return { resolvedAddresses: [resolution] };
   } 
   
