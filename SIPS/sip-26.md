@@ -1,11 +1,9 @@
 ---
-sip: (To be assigned)
+sip: 26
 title: Account Router Snaps
 status: Draft
-discussions-to (*optional):
 author: Daniel Rocha (@danroc)
 created: 2024-08-28
-updated (*optional):
 ---
 
 ## Abstract
