@@ -2,10 +2,10 @@
 sip: (To be assigned)
 title: Account Router Snaps
 status: Draft
-discussions-to (*optional): (Http/Https URL)
+discussions-to (*optional):
 author: Daniel Rocha (@danroc)
 created: 2024-08-28
-updated (*optional): (Date last updated on in https://en.wikipedia.org/wiki/ISO_8601 format. `yyyy-mm-dd`. This should be only used on SIPs with `Living` status)
+updated (*optional):
 ---
 
 ## Abstract
