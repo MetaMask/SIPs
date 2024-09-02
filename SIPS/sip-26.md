@@ -35,7 +35,7 @@ in uppercase in this document are to be interpreted as described in [RFC
 The diagram below represents a high-level architecture of how the Account
 Router integrates with the RPC Router discussed in SIP-25, and account Snaps.
 
-![High-level architecture](../assets/sip-26/account-router-components.png)
+![High-level architecture](../assets/sip-26/components-diagram.png)
 
 ### Account Router
 
