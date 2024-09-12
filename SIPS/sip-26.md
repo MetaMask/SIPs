@@ -33,9 +33,25 @@ in uppercase in this document are to be interpreted as described in [RFC
 ### High-level architecture
 
 The diagram below represents a high-level architecture of how the Account
-Router integrates with the RPC Router discussed in SIP-25, and account Snaps.
+Router integrates with the RPC Router discussed in SIP-25, Account Snaps, and
+Protocol Snaps.
 
 ![High-level architecture](../assets/sip-26/components-diagram.png)
+
+- **Account Snaps**: Snaps that implement the Keyring API, and are responsible
+  for signing requests and managing accounts.
+
+- **Protocol Snaps**: Snaps that implement protocol methods that don't require
+  an account to be executed.
+
+- **RPC Router**: Native component that forwards non-signing requests to the
+  appropriate Protocol Snap or native implementation.
+
+- **Account Router**: Native component that forwards signing requests to the
+  appropriate Account Snap or native implementation.
+
+- **Address Resolution Snaps**: Snaps that implement the `resolveAddress`
+  method to extract the account address from the request object.
 
 ### Account Router
 
@@ -73,9 +89,9 @@ Additionally, the Account Router expects the Account Snap to implement the
 Keyring API so it can forward signing requests to it through the
 [`keyring_submitRequest`][submit-request] method.
 
-### Account Resolution Snaps
+### Address Resolution Snaps
 
-The Account Resolution Snaps are responsible for extracting the account address
+The Address Resolution Snaps are responsible for extracting the account address
 that should receive the signing request from the request object. This is
 accomplished by exposing the `resolveAddress` method to the Account Router.
 
@@ -87,7 +103,7 @@ There must be only one Account Resolution Snap registered per chain to prevent
 ambiguity in the account resolution process.
 
 To identify which Account Resolution Snap should be used for a given request,
-Account Resolution Snaps should have the following endowment:
+Address Resolution Snaps should have the following endowment:
 
 ```json5
 "initialPermissions": {
@@ -107,7 +123,9 @@ any chain ID of a given namespace (e.g. `eip155:*`.)
 <!--
 ## Backwards compatibility
 
-Any SIPs that break backwards compatibility MUST include a section describing those incompatibilities and their severity. The SIP SHOULD describe how the author plans on proposes to deal with such these incompatibilities.
+Any SIPs that break backwards compatibility MUST include a section describing
+those incompatibilities and their severity. The SIP SHOULD describe how the
+author plans on proposes to deal with such these incompatibilities.
 -->
 
 ### Context object
