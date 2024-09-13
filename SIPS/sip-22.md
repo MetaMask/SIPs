@@ -1,14 +1,14 @@
 ---
 sip: 22
-title: Deep Links
+title: MetaMask URL scheme (Deep Links)
 status: Draft
-author: Christian Montoya (@Montoya)
-created: 2024-03-20
+author: Christian Montoya (@Montoya), Hassan Malik(@hmalik88)
+created: 2024-09-13
 ---
 
 ## Abstract
 
-This SIP describes a URL scheme for Snaps entry points. This scheme can be used by Snap methods to navigate the user to that location in-client and trigger the entry point. 
+This SIP describes a URL scheme for extension navigation. The described URL will allow for navigation to Snaps entry points and elsewhere within the MetaMask extension. This scheme can potentially be used by Snap methods in the future to navigate the user to a location in-client and trigger the entry point. 
 
 ## Motivation
 
@@ -24,72 +24,34 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 ### URL Scheme 
 
-A URL for a deep link uses the format: 
+[URL syntax](https://en.wikipedia.org/wiki/URL#Syntax) is defined with a scheme, authority, path, and with optional (query and fragment) portions. This SIP defines a new scheme: `metamask:`, the syntax is defined below:
 
-`[Snap ID]/page/[page name]`
+`metamask://[authority]/[path]`
 
 Where: 
 
-- `[Snap ID]` refers to the canonical ID of the installed Snap
-- `page` refers to a [Snap page](/SIPS/sip-15.md)
-- `[page name]` refers to the canonical name of an individual page 
-  - Currently, the only value that is supported is `home`
+- `[authority]` refers to either `extension` or `snap`
+- `[path]` refers to the entire path which depending on the authority can be different [Snap page]
+  - For the `extension` authority, the following paths are available:
+    - `/` - links to the extension's home page
+  - For the `snap` authority, the path starts with the snap ID and has the following paths available to it:
+    - `/home` - leads to the snap's [home page](/SIPS/sip-15.md) (which is its settings page if it doesn't have a home page)
 
-### Method for Navigating to a Deep Link
-
-In order for a Snap to navigate a user to a deep link, a method is provided: 
-`snap_open`. 
-This method takes one parameter, which is the URL of the deep link: 
-
-```typescript
-await snap.request({
-  method: 'snap_open',
-  params: {
-    url: 'npm:@consensys/starknet-snap/page/home'
-  },
-});
-```
+**Note:** In the future, fragments can potentially be used for navigation to specific portions of a page and params can be provided from a calling method for exports such as `onHome`.
 
 ### Examples
 
 The proposed URL for the Starknet Snap home page: 
 
-`npm:@consensys/starknet-snap/page/home`
+`metamask://snap/npm:@consensys/starknet-snap/home`
+
+The URL for navigating to the extension's home page:
+
+`metamask://extension/`
 
 ### Using Deep Links
 
-A Snap can programmatically navigate a user to a deep link that leads to its own entry point. 
-It can also embed deep links within its own custom UI using the deep link URL. 
-
-For a dapp to programmatically navigate a user to a deep link for a Snap, the Snap must expose a JSON-RPC method to the dapp that triggers the `snap_open` method and the dapp must have permission to communicate with the Snap. 
-
-A Snap cannot use deep links to a different Snap. _This may change in the future._
-
-### Example Usage 
-
-A Snap with the ID 
-`npm:@consensys/starknet-snap` 
-can embed a deep link in a dialog like so: 
-
-```typescript
-import type { OnInstallHandler } from '@metamask/snaps-sdk';
-import { heading, panel, text } from '@metamask/snaps-sdk';
-
-export const onInstall: OnInstallHandler = async () => {
-  await snap.request({
-    method: 'snap_dialog',
-    params: {
-      type: 'alert',
-      content: panel([
-        heading('Starknet Snap installed'),
-        text(
-          'To view your Starknet account and balances, go to the [Starknet Snap home page](npm:@consensys/starknet-snap/page/home).',
-        ),
-      ]);
-    },
-  });
-};
-```
+A Snap can currently use navigation from within the snaps ui `Link` component. In the future, a SIP will be drafted to allow for programmatic navigation with another RPC method.
 
 ## Copyright
 
