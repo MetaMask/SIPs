@@ -30,7 +30,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 Where: 
 
-- `[authority]` refers to either `extension` or `snap`
+- `[authority]` refers to a client which currently can be `mobile`,  `extension` or `snap`
 - `[path]` refers to the entire path which depending on the authority can be different
   - For the `extension` authority, the following paths are available:
     - `/` - links to the extension's home page
