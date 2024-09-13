@@ -97,7 +97,14 @@ address that should receive the signing request from the request object. This
 is accomplished by exposing the `resolveAddress` method to the Account Router.
 
 ```typescript
-function resolveAddress(request: any): string | undefined;
+/**
+ * Returns the account address that should receive the signing request.
+ *
+ * @param request - The request object.
+ * @returns The account address or `undefined` if the address could not be
+ * resolved.
+ */
+function resolveAccountAddress(request: MultichainRequest): string | undefined;
 ```
 
 There must be only one Account Resolution Snap registered per chain to prevent
