@@ -30,10 +30,10 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 Where: 
 
-- `[authority]` refers to a client which currently can be `mobile`,  `extension` or `snap`
+- `[authority]` refers to either `client` or `snap` (in the current case, `client` can mean either the extension or mobile version of MetaMask)
 - `[path]` refers to the entire path which depending on the authority can be different
-  - For the `extension` authority, the following paths are available:
-    - `/` - links to the extension's home page
+  - For the `client` authority, the following paths are available:
+    - `/` - links to the client's home page
   - For the `snap` authority, the path starts with the snap ID and has the following paths available to it:
     - `/home` - leads to the snap's [home page](/SIPS/sip-15.md) (which is its settings page if it doesn't have a home page)
 
@@ -47,7 +47,7 @@ The proposed URL for the Starknet Snap home page:
 
 The URL for navigating to the extension's home page:
 
-`metamask://extension/`
+`metamask://client/`
 
 ### Using Deep Links
 
