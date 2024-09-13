@@ -31,7 +31,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 Where: 
 
 - `[authority]` refers to either `extension` or `snap`
-- `[path]` refers to the entire path which depending on the authority can be different [Snap page]
+- `[path]` refers to the entire path which depending on the authority can be different
   - For the `extension` authority, the following paths are available:
     - `/` - links to the extension's home page
   - For the `snap` authority, the path starts with the snap ID and has the following paths available to it:
