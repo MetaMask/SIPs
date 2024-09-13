@@ -128,6 +128,25 @@ Account Address Resolution Snaps should have the following endowment:
 Note that the `reference` part of the [CAIP-2][caip-2] chain ID can be a `*`
 wildcard to match any chain ID of a given namespace (e.g. `eip155:*`).
 
+### Protocol Snaps
+
+Protocol Snaps implement and expose methods that don't require an account to be
+executed.
+
+Protocol Snaps should list their supported methods in their manifest file:
+
+```json5
+"initialPermissions": {
+  "endowment:protocol-methods": {
+    "chains": {
+      "<chain_id_1>": [
+        // List of supported methods
+      ]
+    }
+  }
+}
+```
+
 ### Context object
 
 Alongside the request object, a context object is passed along to keep internal
