@@ -125,16 +125,8 @@ Account Address Resolution Snaps should have the following endowment:
 }
 ```
 
-Note that the `reference` part of the chain ID can be a `*` wildcard to match
-any chain ID of a given namespace (e.g. `eip155:*`.)
-
-<!--
-## Backwards compatibility
-
-Any SIPs that break backwards compatibility MUST include a section describing
-those incompatibilities and their severity. The SIP SHOULD describe how the
-author plans on proposes to deal with such these incompatibilities.
--->
+Note that the `reference` part of the [CAIP-2][caip-2] chain ID can be a `*`
+wildcard to match any chain ID of a given namespace (e.g. `eip155:*`).
 
 ### Context object
 
@@ -149,3 +141,4 @@ Copyright and related rights waived via [CC0](../LICENSE).
 [keyring-api]: https://github.com/MetaMask/keyring-api
 [snap-manage-accs]: https://docs.metamask.io/snaps/reference/snaps-api/#snap_manageaccounts
 [submit-request]: https://docs.metamask.io/snaps/reference/keyring-api/account-management/#keyring_submitrequest
+[caip-2]: https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-2.md
