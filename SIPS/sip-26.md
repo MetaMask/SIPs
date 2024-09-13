@@ -111,7 +111,8 @@ There must be only one Account Resolution Snap registered per chain to prevent
 ambiguity in the account resolution process.
 
 To identify which Account Resolution Snap should be used for a given request,
-Account Address Resolution Snaps should have the following endowment:
+Account Address Resolution Snaps MUST list the supported chains in their
+manifest file:
 
 ```json5
 "initialPermissions": {
@@ -133,7 +134,7 @@ wildcard to match any chain ID of a given namespace (e.g. `eip155:*`).
 Protocol Snaps implement and expose methods that don't require an account to be
 executed.
 
-Protocol Snaps should list their supported methods in their manifest file:
+Protocol Snaps MUST list their supported methods in their manifest file:
 
 ```json5
 "initialPermissions": {
