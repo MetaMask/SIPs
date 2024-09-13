@@ -98,7 +98,7 @@ is accomplished by exposing the `resolveAddress` method to the Account Router.
 
 ```typescript
 /**
- * Returns the account address that should receive the signing request.
+ * Returns the address of the account that should handle the signing request.
  *
  * @param request - The request object.
  * @returns The account address or `undefined` if the address could not be
