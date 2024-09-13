@@ -50,8 +50,9 @@ Protocol Snaps.
 - **Account Router**: Native component that forwards signing requests to the
   appropriate Account Snap or native implementation.
 
-- **Address Resolution Snaps**: Snaps that implement the `resolveAddress`
-  method to extract the account address from the request object.
+- **Account Address Resolution Snaps**: Snaps that implement the
+  `resolveAddress` method to extract the account address from the request
+  object.
 
 ### Account Router
 
@@ -89,11 +90,11 @@ Additionally, the Account Router expects the Account Snap to implement the
 Keyring API so it can forward signing requests to it through the
 [`keyring_submitRequest`][submit-request] method.
 
-### Address Resolution Snaps
+### Account Address Resolution Snaps
 
-The Address Resolution Snaps are responsible for extracting the account address
-that should receive the signing request from the request object. This is
-accomplished by exposing the `resolveAddress` method to the Account Router.
+The Account Address Resolution Snaps are responsible for extracting the account
+address that should receive the signing request from the request object. This
+is accomplished by exposing the `resolveAddress` method to the Account Router.
 
 ```typescript
 function resolveAddress(request: any): string | undefined;
@@ -103,11 +104,11 @@ There must be only one Account Resolution Snap registered per chain to prevent
 ambiguity in the account resolution process.
 
 To identify which Account Resolution Snap should be used for a given request,
-Address Resolution Snaps should have the following endowment:
+Account Address Resolution Snaps should have the following endowment:
 
 ```json5
 "initialPermissions": {
-  "endowment:request-address-resolver": {
+  "endowment:account-address-resolver": {
     "chains": [
       "<chain_id_1>",
       "<chain_id_2>",
