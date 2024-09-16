@@ -93,7 +93,8 @@ Keyring API so it can forward signing requests to it through the
 
 The Account Address Resolution Snaps are responsible for extracting the account
 address that should receive the signing request from the request object. This
-is accomplished by exposing the `resolveAddress` method to the Account Router.
+is accomplished by exposing the `resolveAccountAddress` method to the Account
+Router.
 
 ```typescript
 /**
@@ -128,12 +129,13 @@ manifest file:
 Note that the `reference` part of the [CAIP-2][caip-2] chain ID can be a `*`
 wildcard to match any chain ID of a given namespace (e.g. `eip155:*`).
 
+The RPC Router subscribes to Snap installation events to detect new Account
+Address Resolution Snaps, and updates its internal routing table accordingly.
+
 ### Protocol Snaps
 
-Protocol Snaps implement and expose methods that don't require an account to be
-executed.
-
-Protocol Snaps MUST list their supported methods in their manifest file:
+Protocol Snaps implement and expose methods that do not require an account to
+execute, and MUST list their supported methods in their manifest file:
 
 ```json5
 "initialPermissions": {
@@ -146,6 +148,9 @@ Protocol Snaps MUST list their supported methods in their manifest file:
   }
 }
 ```
+
+The RPC Router subscribes to Snap installation events to detect new Protocol
+Snaps, and updates its internal routing table accordingly.
 
 ### Context object
 
