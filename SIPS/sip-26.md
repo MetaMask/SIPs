@@ -51,8 +51,8 @@ Protocol Snaps.
   appropriate Account Snap or native implementation.
 
 - **Account Address Resolution Snaps**: Snaps that implement the
-  `resolveAddress` method to extract the account address from the request
-  object.
+  `resolveAccountAddress` method to extract the account address from the
+  request object.
 
 ### Account Router
 
