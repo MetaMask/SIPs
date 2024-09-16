@@ -17,7 +17,7 @@ that implement the [Keyring API][keyring-api]).
 The Keyring API is being modified to support non-EVM chains. However, a
 challenge arises in identifying the correct account Snap that should receive
 the signing request, as this information is often only obtainable from the
-request itself, which varies based on method and chain.
+request itself, which varies based on the method and chain.
 
 ## Specification
 
@@ -28,19 +28,19 @@ request itself, which varies based on method and chain.
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" written
 in uppercase in this document are to be interpreted as described in [RFC
-2119](https://www.ietf.org/rfc/rfc2119.txt)
+2119](https://www.ietf.org/rfc/rfc2119.txt).
 
-### High-level architecture
+### High-Level architecture
 
 The diagram below represents a high-level architecture of how the Account
 Router integrates with the RPC Router, Account Snaps, and Protocol Snaps.
 
 ![High-level architecture](../assets/sip-26/components-diagram.png)
 
-- **Account Snaps**: Snaps that implement the Keyring API, and are responsible
+- **Account Snaps**: Snaps that implement the Keyring API and are responsible
   for signing requests and managing accounts.
 
-- **Protocol Snaps**: Snaps that implement protocol methods that don't require
+- **Protocol Snaps**: Snaps that implement protocol methods that do not require
   an account to be executed.
 
 - **RPC Router**: Native component that forwards non-signing requests to the
@@ -127,15 +127,15 @@ manifest file:
 ```
 
 Note that the `reference` part of the [CAIP-2][caip-2] chain ID can be a `*`
-wildcard to match any chain ID of a given namespace (e.g. `eip155:*`).
+wildcard to match any chain ID of a given namespace (e.g., `eip155:*`).
 
 The RPC Router subscribes to Snap installation events to detect new Account
-Address Resolution Snaps, and updates its internal routing table accordingly.
+Address Resolution Snaps and updates its internal routing table accordingly.
 
 ### Protocol Snaps
 
 Protocol Snaps implement and expose methods that do not require an account to
-execute, and MUST list their supported methods in their manifest file:
+execute and MUST list their supported methods in their manifest file:
 
 ```json5
 "initialPermissions": {
@@ -150,7 +150,7 @@ execute, and MUST list their supported methods in their manifest file:
 ```
 
 The RPC Router subscribes to Snap installation events to detect new Protocol
-Snaps, and updates its internal routing table accordingly.
+Snaps and updates its internal routing table accordingly.
 
 ### Context object
 
