@@ -20,8 +20,6 @@ The intention of this SIP is to allow snaps providing new accounts for new chain
 
 > Usage of `CAIP-N` specifications, where `N` is a number, are references to [Chain Agnostic Improvement Proposals](https://github.com/ChainAgnostic/CAIPs).
 
-Formal specification of the proposed changes in the SIP. The specification must be complete enough that an implementation can be created from it.
-
 ### Language
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
@@ -44,21 +42,19 @@ The permission is specified in `snap.manifest.json` as follows:
 
 ### RPC Method
 
-> Notice
-
 This SIP exposes a new RPC method called `keyring_listAccountsAll` with no additional parameters.
 
 The RPC call returns with the following data:
 
 ```typescript
-type Account = {
+type KeyringAccount = {
   id: string; // An extension-specific unique ID
   address: string; // A blockchain specific public address for the account.
   name: string; // User-given nickname for the account in the extension
-  chains: string[]; //
+  type: string; // Blockchain specific type of the account. For example "eip155:erc4337"
 };
 
-type Keyring_ListAccountsAllResult = Account[];
+type Keyring_ListAccountsAllResult = KeyringAccount[];
 ```
 
 > Notice that multiple `Account`s can have the same `address`, for example when there are two hardware wallets using the same seed.
