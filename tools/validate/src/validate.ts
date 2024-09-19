@@ -29,7 +29,7 @@ const parser = unified()
       remarkLintNoShortcutReferenceImage,
       remarkLintNoShortcutReferenceLink,
       remarkLintNoUndefinedReferences,
-      [remarkLintNoUnusedDefinitions, { allow: [/^!/] }],
+      [remarkLintNoUnusedDefinitions, { allow: [{ source: '^!' }] }],
     ],
   }) // like remark-preset-lint-recommended but only for critical mistakes
   .use(Object.values(sipRules))
