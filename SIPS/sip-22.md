@@ -1,6 +1,6 @@
 ---
 sip: 22
-title: MetaMask URL scheme (Deep Links)
+title: MetaMask URL scheme
 status: Draft
 author: Christian Montoya (@Montoya), Hassan Malik(@hmalik88)
 created: 2024-09-13
@@ -37,9 +37,9 @@ Where:
   - For the `snap` authority, the path starts with the snap ID and has the following paths available to it:
     - `/home` - leads to the snap's [home page](/SIPS/sip-15.md) (which is its settings page if it doesn't have a home page)
 
-**Note:** 
-1. In the future, fragments can potentially be used for navigation to specific portions of a page and params can be provided from a calling method for exports such as `onHome`.
-2. This URL scheme assumes parity between `client` locations.
+? [!NOTE]
+> 1. In the future, fragments can potentially be used for navigation to specific portions of a page and params can be provided from a calling method for exports such as `onHome`.
+> 2. This URL scheme assumes parity between `client` locations.
 
 ### Examples
 
@@ -53,7 +53,7 @@ The URL for navigating to the extension's home page:
 
 ### Using Deep Links
 
-A Snap can currently use navigation from within the snaps ui `Link` component. In the future, a SIP will be drafted to allow for programmatic navigation with another RPC method.
+A Snap will be able to navigate to these links using the [SIP-7](https://github.com/MetaMask/SIPs/blob/main/SIPS/sip-7.md) `Link` component.
 
 ## Copyright
 
