@@ -37,7 +37,7 @@ Where:
   - For the `snap` authority, the path starts with the snap ID and has the following paths available to it:
     - `/home` - leads to the snap's [home page](/SIPS/sip-15.md) (which is its settings page if it doesn't have a home page)
 
-? [!NOTE]
+> [!NOTE]
 > 1. In the future, fragments can potentially be used for navigation to specific portions of a page and params can be provided from a calling method for exports such as `onHome`.
 > 2. This URL scheme assumes parity between `client` locations.
 
