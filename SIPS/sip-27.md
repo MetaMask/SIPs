@@ -8,11 +8,15 @@ created: 2024-09-17
 
 ## Abstract
 
-This SIP allows snaps to retrieve metadata related to accounts that exist in the extension.
+This SIP allows Snaps to retrieve metadata related to accounts that exist in the extension.
 
 ## Motivation
 
-The intention of this SIP is to allow snaps providing new accounts for new chains to be able to list all accounts when selecting one during transfers.
+The intention of this SIP is to allow Snaps providing new accounts for new chains to be able to list all accounts when selecting one during transfers. Currently the Snap can only access their own accounts, and can't do more complex UI flows.
+
+The specific need for this SIP is to allow a Snap to create a send flow with an account picker, with an example design as follows.
+
+<img src="../assets/sip-27/snap-account-list.png" alt="Account picker flow" width="600"/>
 
 ## Specification
 
@@ -28,7 +32,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 ### Snap Manifest
 
-This SIP specifies a permission named `keyring_listAccountsAll`. This permission grants a snap the ability to retrieve account metadata through an RPC call.
+This SIP specifies a permission named `keyring_listAccountsAll`. This permission grants a Snap the ability to retrieve account metadata through an RPC call.
 
 The permission is specified in `snap.manifest.json` as follows:
 
@@ -58,6 +62,8 @@ type Keyring_ListAccountsAllResult = KeyringAccount[];
 ```
 
 > Notice that multiple `Account`s can have the same `address`, for example when there are two hardware wallets using the same seed.
+
+The call returns data concerning all accounts available in the extension, both built-in Ethereum accounts as well as accounts managed by this, and other Snaps.
 
 ## Copyright
 
