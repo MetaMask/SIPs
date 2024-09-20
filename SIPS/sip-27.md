@@ -63,7 +63,7 @@ type Keyring_ListAccountsAllResult = KeyringAccount[];
 
 > Notice that multiple `Account`s can have the same `address`, for example when there are two hardware wallets using the same seed.
 
-The call returns data concerning all accounts available in the extension, both built-in Ethereum accounts as well as accounts managed by this, and other Snaps.
+The call returns data concerning all accounts available in the client, both built-in Ethereum accounts as well as accounts managed by this, and other Snaps.
 
 ## Copyright
 
