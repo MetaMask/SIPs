@@ -47,7 +47,7 @@ The proposed URL for the Starknet Snap home page:
 
 `metamask://snap/npm:@consensys/starknet-snap/home`
 
-The URL for navigating to the extension's home page:
+The URL for navigating to the client's home page:
 
 `metamask://client/`
 
