@@ -112,7 +112,7 @@ ambiguity in the account resolution process.
 
 To identify which Account Resolution Snap should be used for a given request,
 Account Address Resolution Snaps MUST list the supported chains in their
-manifest file:
+manifest file using the [CAIP-2][caip-2] format for chain IDs:
 
 ```json5
 "initialPermissions": {
