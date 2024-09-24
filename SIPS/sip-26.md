@@ -162,7 +162,7 @@ primary use would be to keep the resolved account ID.
 
 Copyright and related rights waived via [CC0](../LICENSE).
 
-[keyring-api]: https://github.com/MetaMask/keyring-api
+[keyring-api]: https://github.com/MetaMask/accounts/tree/main/packages/keyring-api
 [snap-manage-accs]: https://docs.metamask.io/snaps/reference/snaps-api/#snap_manageaccounts
 [submit-request]: https://docs.metamask.io/snaps/reference/keyring-api/account-management/#keyring_submitrequest
 [caip-2]: https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-2.md
