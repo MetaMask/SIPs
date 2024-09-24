@@ -28,7 +28,7 @@ const parser = unified()
       remarkLintNoInlinePadding,
       remarkLintNoShortcutReferenceImage,
       remarkLintNoShortcutReferenceLink,
-      remarkLintNoUndefinedReferences,
+      [remarkLintNoUndefinedReferences, { allow: [{ source: '^!' }] }],
       remarkLintNoUnusedDefinitions,
     ],
   }) // like remark-preset-lint-recommended but only for critical mistakes
