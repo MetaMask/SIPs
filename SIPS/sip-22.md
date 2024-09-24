@@ -2,7 +2,7 @@
 sip: 22
 title: MetaMask URL scheme
 status: Draft
-author: Christian Montoya (@Montoya), Hassan Malik(@hmalik88)
+author: Christian Montoya (@Montoya), Hassan Malik (@hmalik88)
 created: 2024-09-13
 ---
 
