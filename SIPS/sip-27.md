@@ -50,16 +50,41 @@ This SIP exposes a new RPC method called `keyring_listAccountsAll` with no addit
 
 The RPC call returns with the following data:
 
-```typescript
+````typescript
 type KeyringAccount = {
-  id: string; // An extension-specific unique ID
-  address: string; // A blockchain specific public address for the account.
-  name: string; // User-given nickname for the account in the extension
-  type: string; // Blockchain specific type of the account. For example "eip155:erc4337"
+  /**
+   * An extension-specific unique ID providing stable identity.
+   */
+  id: string;
+  /**
+   * Account addresses mapped by CAIP-2 namespace or chain ID.
+   *
+   * If the address is the same for all CAIP-2 chains, it's mapped only by namespace.
+   * @example
+   * ```typescript
+   * address: {
+   *   'eip155': ['0x1234...']
+   * }
+   * ```
+   *
+   * Otherwise, if the address differs between chains, it's mapped by chain IDs.
+   * @example
+   * ```typescript
+   * address: {
+   *   'eip155:1': ['0x1234...'],
+   *   'eip155:137': ['0x6789...']
+   * }
+   * ```
+   */
+  address: Record<string, string[]>;
+  /**
+   * User-given nickname for the account in the extension.
+   */
+  name: string;
 };
 
 type Keyring_ListAccountsAllResult = KeyringAccount[];
-```
+````
 
 > Notice that multiple `Account`s can have the same `address`, for example when there are two hardware wallets using the same seed.
 
