@@ -152,6 +152,11 @@ execute and MUST list their supported methods in their manifest file:
 The RPC Router subscribes to Snap installation events to detect new Protocol
 Snaps and updates its internal routing table accordingly.
 
+> [!IMPORTANT]
+> If a method, for a given chain, is registered by both a Protocol Snap and the
+> Accounts Router, only the Accounts Router will be used to handle requests for
+> that method and chain.
+
 ### Context object
 
 Alongside the request object, a context object is passed along to keep internal
