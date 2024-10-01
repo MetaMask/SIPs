@@ -1,6 +1,6 @@
 ---
 sip: 20
-title: External data entry point
+title: Advanced external communication and events
 status: Draft
 author: David Drazic (@david0xd)
 created: 2023-12-15
@@ -8,15 +8,16 @@ created: 2023-12-15
 
 ## Abstract
 
-This SIP proposes a new permission that enables Snaps to receive data from external sources.
+This SIP proposes a new permission that enables Snaps to receive data from external sources and send data back to them.
 
 In the initial version, this SIP proposes support for WebSockets, but it can be extended to support other data sources like blockchain events in the future.
 The Snap can specify the external data source in the Snap manifest. The client then connects to the external data source and sends the data to the Snap.
-The Snap can then do whatever it wants with the data. This initial version only supports one-way communication from the external source to the Snap. The Snap can't send any data back to the external source.
+The Snap can then do whatever it wants with the data.
+The Snap can use RPC method to send data back to the external connection (e.g. websocket connection).
 
 ## Motivation
 
-Snaps are currently limited in their ability to receive data from external sources; they have to rely on user actions or cron jobs to fetch data, so they can't react to events in real time. Snaps also cannot use WebSocket connections to receive data from external sources, and are limited to HTTP requests.
+Snaps are currently limited in their ability to both receive and send data from and to external sources; they have to rely on user actions or cron jobs to fetch data, so they can't react to events in real time. Snaps also cannot use WebSocket connections for bidirectional communication, and are limited to HTTP requests.
 
 ## Specification
 
@@ -111,6 +112,35 @@ The caveats MUST NOT have duplicate objects with the same `url` properties.
 
 The `url` MUST start with `wss://` which is a protocol indicator for secure WebSocket connection.
 
+### RPC Methods
+
+This SIP introduces new RPC method for sending data to the external connections.
+
+#### snap_sendData
+
+Snap can use `snap_sendData` RPC method to send data specified within request params.
+The proposed RPC method `snap_sendData` SHOULD be a restricted RPC method requiring user consent before usage via the permission system. The RPC method SHOULD only be available to Snaps.
+Snap MUST specify destination which is URL identifier of an external connection (e.g. websocket). Destination MUST be exact match of some of the URLs defined in manifest's permission caveats within `endowment:external-data`.
+
+The `snap_sendData` JSON-RPC method takes an object as parameters, which has the following properties:
+- `data` (required, `string` or `binary`): A data, which MUST NOT be empty.
+- `destination` (required, `string`): A data destination which is one of the WebSocket URLs specified in the manifest, which MUST NOT be empty.
+
+Example:
+```json
+{
+  "method": "snap_sendData",
+  "params": {
+    "data": {
+      "foo": "bar"
+    },
+    "destination": "wss://example.com/text/endpoint"
+  }
+}
+```
+
+The method returns a `boolean`, `true` in case of successful delivery of a message to the WebSocket, `false` if delivery was unsuccessful.
+
 ### Snap implementation
 
 This SIP introduces a new `onExternalData` function export that MAY be implemented by the Snap. The function is called every time the WebSocket client receives some data. The function SHOULD accept an object parameter that MUST have `data`, `type` and `source` properties.
@@ -128,7 +158,7 @@ The specification of types of `onExternalData` and its parameters:
  * @property type - The type of the message.
  * @property message - The message as a string.
  */
-type WebSocketTextMessage = {
+type WebSocketIncomingTextMessage = {
   type: 'text';
   message: string;
 };
@@ -139,9 +169,35 @@ type WebSocketTextMessage = {
  * @property type - The type of the message.
  * @property message - The message as an ArrayBuffer.
  */
-type WebSocketBinaryMessage = {
+type WebSocketIncomingBinaryMessage = {
   type: 'binary';
   message: ArrayBuffer;
+};
+
+/**
+ * A text message sent to a WebSocket.
+ *
+ * @property type - The type of the message.
+ * @property message - The message as a string.
+ * @property destination - The destination web socket URL as a string.
+ */
+type WebSocketOutgoingTextMessage = {
+    type: 'text';
+    message: string;
+    destination: string;
+};
+
+/**
+ * A binary message sent to a WebSocket.
+ *
+ * @property type - The type of the message.
+ * @property message - The message as an ArrayBuffer.
+ * @property destination - The destination web socket URL as a string.
+ */
+type WebSocketOutgoingBinaryMessage = {
+    type: 'binary';
+    message: ArrayBuffer;
+    destination: string;
 };
 
 /**
@@ -153,7 +209,7 @@ type WebSocketBinaryMessage = {
  */
 type WebSocketData = {
   type: 'websocket';
-  data: WebSocketTextMessage | WebSocketBinaryMessage;
+  message: WebSocketIncomingTextMessage | WebSocketIncomingBinaryMessage;
 };
 
 /**
@@ -177,12 +233,21 @@ type OnExternalDataHandler = (args: OnExternalDataHandlerArgs) => Promise<void>;
 import { OnExternalDataHandler } from '@metamask/snaps-types';
 import { assert } from '@metamask/utils';
 
-export const onExternalData: OnExternalDataHandler = ({ type, data, source }) => {
+export const onExternalData: OnExternalDataHandler = async ({ type, data, source }) => {
   assert(type === 'websocket'); // `data` is inferred as `WebSocketData`.
   assert(data.type === 'text'); // `message` is inferred as `string`.
-
   // Now the Snap can do whatever is needed with the message.
   const json = JSON.parse(data.message);
+
+  // Send message back
+  await snap.request({
+    method: 'snap_sendData',
+    params: {
+        type: 'text',
+        message: 'Message received successfully',
+        destination: 'wss://example.com/text/endpoint',
+    },
+  });
 };
 ```
 
