@@ -8,11 +8,11 @@ created: 2024-10-09
 
 ## Abstract
 
-This SIP introduces a way the schedule non-recurring events in the future.
+This SIP introduces a way to schedule non-recurring events in the future.
 
 ## Motivation
 
-Scheduled recurring events are already support in Snaps through Cronjobs feature. Introducing non-recurring events we allow novel use-cases for Snap developers, such as allowing a snap that sets a reminder for ENS domain expiration date.
+Scheduled recurring events are already supported in the Snaps platform via the Cronjobs feature. By introducing non-recurring events we will allow novel use-cases for Snap developers, such as allowing a snap that sets a reminder for ENS domain expiration date.
 
 ## Specification
 
@@ -26,7 +26,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 ### Snap Manifest
 
-This SIP introduces a new permission `endowment:background-events`. This permissions grants a Snap the ability to schedule future events.
+This SIP introduces a new permission `endowment:background-events`. This permission grants a Snap the ability to schedule future events.
 
 This permission takes no parameters and is specified in the `snap.manifest.json` as follows:
 
@@ -44,6 +44,13 @@ This permission takes no parameters and is specified in the `snap.manifest.json`
 
 This method allows a Snap to schedule a callback to `onBackgroundEvent` handler in the future with a JSON-RPC request object as a parameter.
 
+```typescript
+type ScheduleBackgroundEventParams = {
+  date: string;
+  request: Json;
+};
+```
+
 The RPC method takes two parameters:
 
 - `date` - An [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date and time and optional timezone offset.
@@ -52,9 +59,11 @@ The RPC method takes two parameters:
     > Use ISO's `Z` identifier if you want to use UTC time.
 - `request` - A JSON object that will provided as-is to `onBackgroundEvent` handler as parameter.
 
+An example of usage is given below.
+
 ```typescript
 snap.request({
-  method: "snap_backgroundEventSchedule",
+  method: "snap_scheduleBackgroundEvent",
   params: {
     date: "2024-10-09T09:59",
     request: {
@@ -73,13 +82,19 @@ The RPC method call returns a `string` that is a unique ID representing that spe
 
 This method allows to cancel an already scheduled background event using the unique ID returned from `snap_backgroundEventSchedule`
 
+```typescript
+type CancelBackgroundEventParams = { id: string };
+```
+
 This RPC method takes one argument:
 
 - `id` - The id that was returned during schedule.
 
+An example of usage is given below.
+
 ```typescript
 snap.request({
-  method: "snap_backgroundEventCancel",
+  method: "snap_cancelBackgroundEvent",
   params: {
     id: myReturnedId,
   },
@@ -88,7 +103,11 @@ snap.request({
 
 ### `onBackgroundEvent` handler
 
-This SIP introduced a new handler called `onBackgroundEvent` which is called when a scheduled background event occurs.
+This SIP introduces a new handler called `onBackgroundEvent` which is called when a scheduled background event occurs.
+
+```typescript
+type OnBackgroundEventHandler = (args: { request: Json }) => Promise<void>;
+```
 
 It has one parameter - `request`, which SHALL be provided without change from the one given as a parameter to `snap_scheduleBackgroundEvent`.
 
