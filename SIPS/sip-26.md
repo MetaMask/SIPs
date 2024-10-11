@@ -2,7 +2,7 @@
 sip: 26
 title: Account Router Snaps
 status: Draft
-author: Daniel Rocha (@danroc)
+author: Daniel Rocha (@danroc), Alex Donesky (@adonesky1)
 created: 2024-08-28
 ---
 
@@ -53,6 +53,163 @@ Router integrates with the RPC Router, Account Snaps, and Protocol Snaps.
   `resolveAccountAddress` method to extract the account address from the
   request object.
 
+### RPC Router
+
+The RPC Router is a native wallet component responsible for routing RPC requests made via the Multichain API to either a Protocol Snap or the Account Router depending on whether the requested method is registered as a signing method or not.
+
+#### Role and Functioning
+
+- **Initial Request Handling**: Receives all incoming RPC requests made via the Multichain API that do not have an `eip155` namespace - for now `eip155` scoped requests will continue to be handled by the native wallet, though we will need to consider how to allow users to decide whether to route these requests to snaps as well in the future.
+
+- **Method Registration**: Provides entry points for the Account Router and Protocol Snaps to register their methods and scopes and maintains a registry of these RPC methods and their respective handlers.
+
+- **Request Routing**: Uses the internal registry to determine the correct handler for each incoming RPC request based on the method name and scope strings, forwarding the request to either the Account Router or the appropriate Protocol Snap.
+
+#### Interface
+
+The RPC Router provides a method for registering RPC methods with their scopes and handler. Both the Account Router and Protocol Snaps use this method to inform the RPC Router about the methods they can handle. The origin of the `rpcRouter_registerMethods` call, either a specific protocol snap (e.g. `npm:@solana/example-protocol-snap`) or the Account Router (which will use its owner internal registry to forward to the appropriate Account Snaps) - is used to determine which handler the method will be registered with.
+
+##### Specification
+
+```typescript
+function rpcRouter_registerMethods(
+  methodNames: string[],
+  scopeStrings: ScopeString[]
+): void;
+```
+
+##### Example Usage
+
+```typescript
+// Account Router registering methods for Solana
+rpcRouter_registerMethods(["signTransaction", "signMessage"], ["solana"]);
+
+// A Protocol Snap registering non-signing methods for Solana
+rpcRouter_registerMethods(
+  ["getAccountInfo", "getBalance", "getRecentBlockhash"],
+  ["solana"]
+);
+```
+
+##### Example Registry
+
+The following is an example of a registry that includes methods registered by both the Account Router and Protocol Snaps for different chains and namespaces.
+
+```typescript
+const rpcMethodRegistry: RpcMethodRegistry = {
+  solana: {
+    signTransaction: {
+      handlerIds: ["AccountRouter"],
+    },
+    signMessage: {
+      handlerIds: ["AccountRouter"],
+    },
+    getAccountInfo: {
+      handlerIds: [
+        "npm:@example/solana-protocol-snap",
+        "npm:@yet-another/solana-protocol-snap",
+      ],
+    },
+    getBalance: {
+      handlerIds: ["npm:@example/solana-protocol-snap"],
+    },
+    getTransaction: {
+      handlerIds: ["npm:@another/solana-protocol-snap"],
+    },
+    // ... more methods
+  },
+  "bip122:000000000019d6689c085ae165831e93": {
+    // Bitcoin Mainnet
+    sendtoaddress: {
+      handlerIds: ["AccountRouter"],
+    },
+    signrawtransactionwithwallet: {
+      handlerIds: ["AccountRouter"],
+    },
+    getnewaddress: {
+      handlerIds: ["AccountRouter"],
+    },
+    getblockchaininfo: {
+      handlerIds: [
+        "npm:@example/bitcoin-protocol-snap",
+        "npm:@another/bitcoin-protocol-snap",
+      ],
+    },
+    getblock: {
+      handlerIds: [
+        "npm:@example/bitcoin-protocol-snap",
+        "npm:@another/bitcoin-protocol-snap",
+      ],
+    },
+    // ... more methods
+  },
+  cosmos: {
+    cosmos_signTransaction: {
+      handlerIds: ["AccountRouter"],
+    },
+    cosmos_signMessage: {
+      handlerIds: ["AccountRouter"],
+    },
+    abci_query: {
+      handlerIds: ["npm:@cosmos/general-protocol-snap"],
+    },
+    block: {
+      handlerIds: ["npm:@cosmos/general-protocol-snap"],
+    },
+    tx: {
+      handlerIds: ["npm:@cosmos/general-protocol-snap"],
+    },
+    // ... methods general to the Cosmos namespace
+  },
+  "cosmos:cosmoshub-4": {
+    // Cosmos Hub
+    block: {
+      handlerIds: ["npm:@cosmoshub/protocol-snap"],
+    },
+    getValidators: {
+      handlerIds: ["npm:@cosmoshub/protocol-snap"],
+    },
+    // ... more methods specific to Cosmos Hub
+  },
+  "cosmos:osmosis-1": {
+    // Osmosis
+    block: {
+      handlerIds: ["npm:@osmosis/protocol-snap"],
+    },
+    getPools: {
+      handlerIds: ["npm:@osmosis/protocol-snap"],
+    },
+    // ... more methods specific to Osmosis
+  },
+};
+```
+
+##### Registration Process
+
+Protocol Snaps register their methods and scopes during initialization (obtained from their manifest file) or when their capabilities change. Account Snaps register their signing methods with the Account Router, which then registers them with the RPC Router. The RPC Router maintains an internal registry mapping methods and scopes to their respective handlers.
+
+#### Request Handling Flow
+
+When the MetaMask wallet receives a [CAIP-27][caip-27] request via the Multichain API, the RPC Router processes it through the following steps:
+
+1. **Extract Request Details**: Parses the request to identify the method name and scope (chain or namespace). The scope is determined using [CAIP-2][caip-2] identifiers.
+
+2. **Check Namespace**: Determines if the request has an `eip155` namespace (Ethereum-based chains). If it does, the request is handled natively by the wallet, otherwise it is forwarded to the RPC Router.
+
+3. **Lookup Handler**: If the request does not have an `eip155` namespace, the RPC Router checks its registry to find a handler for the method and scope.
+
+4. **Determine Handler Type**:
+
+   - **Protocol Snap**: If the method is registered with a Protocol Snap, the request is forwarded to it.
+   - **Account Router**: If the method is registered with the Account Router, the request is forwarded to it.
+   - **Unregistered Method**: If the method is not registered, an error is returned to the requester.
+
+5. **Forward Request**: The RPC Router forwards the request to the identified handler.
+
+6. **Return Response**: The handler processes the request and returns a response, which the RPC Router then returns back to the Multichain API RPC pipeline to be returned to the requester.
+
+---
+
 ### Account Router
 
 The Account Router exposes the [`snap_manageAccounts`][snap-manage-accs] method
@@ -66,16 +223,16 @@ with the Account Router:
 // Account Router will register this account as available for signing requests
 // using the `eth_signTypedData_v4` method.
 await snap.request({
-  method: 'snap_manageAccounts',
+  method: "snap_manageAccounts",
   params: {
-    method: 'notify:accountCreated',
+    method: "notify:accountCreated",
     params: {
       account: {
-          id: '74bb3393-f267-48ee-855a-2ba575291ab0',
-          type: 'eip155:eoa',
-          address: '0x1234567890123456789012345678901234567890',
-          methods: ['eth_signTypedData_v4'],
-          options: {},
+        id: "74bb3393-f267-48ee-855a-2ba575291ab0",
+        type: "eip155:eoa",
+        address: "0x1234567890123456789012345678901234567890",
+        methods: ["eth_signTypedData_v4"],
+        options: {},
       },
     },
   },
@@ -171,3 +328,5 @@ Copyright and related rights waived via [CC0](../LICENSE).
 [snap-manage-accs]: https://docs.metamask.io/snaps/reference/snaps-api/#snap_manageaccounts
 [submit-request]: https://docs.metamask.io/snaps/reference/keyring-api/account-management/#keyring_submitrequest
 [caip-2]: https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-2.md
+[caip-27]: https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-27.md
+[caip-217]: https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-217.md
