@@ -114,6 +114,39 @@ The RPC Router maintains an internal registry of Protocol Snaps, keyed by their 
 
 ##### Registry Structure
 
+**Option 1:**
+```typescript
+interface MethodRegistryEntry {
+  scopeStrings: ScopeString[];
+  isSigning: boolean;
+  handlers: string[]; // Array of handler IDs
+}
+
+type RpcMethodRegistry = {
+  [methodName: string]: MethodRegistryEntry;
+};
+
+const rpcMethodRegistry: RpcMethodRegistry = {
+  "solana_signTransaction": {
+    scopeStrings: ["solana"],
+    isSigning: true,
+    handlers: ["npm:@example/solana-signing-snap"],
+  },
+  "solana_signMessage": {
+    scopeStrings: ["solana"],
+    isSigning: true,
+    handlers: ["npm:@example/solana-signing-snap"],
+  },
+  "cosmos_getBlockHeight": {
+    scopeStrings: ["cosmos"],
+    isSigning: false,
+    handlers: ["npm:@example/cosmos-protocol-snap"],
+  },
+  // Additional methods can be added here
+};
+```
+
+**Option 2:**
 The registry is a mapping where each key is the handler's identifier (either the Account Router or a Protocol Snap), and the value is an object containing:
 
 - **Methods**: An array of method entries. Each method entry includes:
