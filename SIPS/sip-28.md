@@ -26,29 +26,21 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 ### Snap Manifest
 
-This SIP introduces a new permission `endowment:background-events`. This permission grants a Snap the ability to schedule future events.
-
-This permission takes no parameters and is specified in the `snap.manifest.json` as follows:
-
-```json
-{
-  "initialPermissions": {
-    "endowment:background-events": {}
-  }
-}
-```
+This SIP doesn't introduce any new permissions, but rather extends `endowment:cronjob` with new capabilities through two new RPC methods.
 
 ### RPC Methods
 
 #### `snap_scheduleBackgroundEvent`
 
-This method allows a Snap to schedule a callback to `onBackgroundEvent` handler in the future with a JSON-RPC request object as a parameter.
+This method allows a Snap to schedule a one-off callback to `onCronjob` handler in the future with a JSON-RPC request object as a parameter.
 
 ```typescript
 type ScheduleBackgroundEventParams = {
   date: string;
-  request: Json;
+  request: JsonRpcRequest;
 };
+
+type ScheduleBackgroundEventResult = string;
 ```
 
 The RPC method takes two parameters:
@@ -57,7 +49,7 @@ The RPC method takes two parameters:
   - The time's precision SHALL be truncated on the extension side to minutes.
   - If no timezone is provided, the time SHALL be understood to be local-time.
     > Use ISO's `Z` identifier if you want to use UTC time.
-- `request` - A JSON object that will provided as-is to `onBackgroundEvent` handler as parameter.
+- `request` - A JSON object that will provided as-is to `onCronjob` handler as parameter.
 
 An example of usage is given below.
 
@@ -101,15 +93,9 @@ snap.request({
 });
 ```
 
-### `onBackgroundEvent` handler
+### `onCronjob` handler
 
-This SIP introduces a new handler called `onBackgroundEvent` which is called when a scheduled background event occurs.
-
-```typescript
-type OnBackgroundEventHandler = (args: { request: Json }) => Promise<void>;
-```
-
-It has one parameter - `request`, which SHALL be provided without change from the one given as a parameter to `snap_scheduleBackgroundEvent`.
+This SIP doesn't modify `onCronjob` handler in any way.
 
 ## Copyright
 
