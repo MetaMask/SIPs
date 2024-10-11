@@ -61,15 +61,13 @@ The RPC Router is a native wallet component responsible for routing RPC requests
 
 - **Initial Request Handling**: Receives all incoming RPC requests made via the Multichain API that do not have an `eip155` namespace - for now `eip155` scoped requests will continue to be handled by the native wallet, though we will need to consider how to allow users to decide whether to route these requests to snaps as well in the future.
 
-- **Method Registration**: Maintains a registry of RPC methods and their associated scopes (chains or namespaces), along with the components (Account Router or Protocol Snaps) responsible for handling them.
+- **Method Registration**: Provides entry points for the Account Router and Protocol Snaps to register their methods and scopes and maintains a registry of these RPC methods and their respective handlers.
 
-- **Request Routing**: Determines the correct handler for each RPC request based on the method name and scope strings, forwarding the request to either the Account Router or the appropriate Protocol Snap.
-
-- **Extensibility Support**: Provides entry points for the Account Router and Protocol Snaps to register their methods and scopes, promoting extensibility within the MetaMask ecosystem.
+- **Request Routing**: Uses the internal registry to determine the correct handler for each incoming RPC request based on the method name and scope strings, forwarding the request to either the Account Router or the appropriate Protocol Snap.
 
 #### Interface
 
-The RPC Router provides a method for registering RPC methods with their scopes and handler. Both the Account Router and Protocol Snaps use this method to inform the RPC Router about the methods they can handle. The origin of the request, either a specific protocol snap (e.g. `npm:@solana/example-protocol-snap`) or the Account Router (which will use its owner internal registry to forward to the appropriate Account Snaps) - is used to determine which handler the method will be registered with.
+The RPC Router provides a method for registering RPC methods with their scopes and handler. Both the Account Router and Protocol Snaps use this method to inform the RPC Router about the methods they can handle. The origin of the `rpcRouter_registerMethods` call, either a specific protocol snap (e.g. `npm:@solana/example-protocol-snap`) or the Account Router (which will use its owner internal registry to forward to the appropriate Account Snaps) - is used to determine which handler the method will be registered with.
 
 ##### Specification
 
@@ -95,7 +93,7 @@ rpcRouter_registerMethods(
 
 ##### Example Registry
 
-The following is an example of a registry that includes methods registered by both the Account Router and Protocol Snaps for different chains.
+The following is an example of a registry that includes methods registered by both the Account Router and Protocol Snaps for different chains and namespaces.
 
 ```typescript
 const rpcMethodRegistry: RpcMethodRegistry = {
@@ -115,16 +113,10 @@ const rpcMethodRegistry: RpcMethodRegistry = {
     getBalance: {
       handlerIds: ["npm:@example/solana-protocol-snap"],
     },
-    getRecentBlockhash: {
-      handlerIds: ["npm:@example/solana-protocol-snap"],
-    },
-    getBlockHeight: {
-      handlerIds: ["npm:@another/solana-protocol-snap"],
-    },
     getTransaction: {
       handlerIds: ["npm:@another/solana-protocol-snap"],
     },
-    //... more methods
+    // ... more methods
   },
   "bip122:000000000019d6689c085ae165831e93": {
     // Bitcoin Mainnet
@@ -149,7 +141,45 @@ const rpcMethodRegistry: RpcMethodRegistry = {
         "npm:@another/bitcoin-protocol-snap",
       ],
     },
-    //... more methods
+    // ... more methods
+  },
+  cosmos: {
+    cosmos_signTransaction: {
+      handlerIds: ["AccountRouter"],
+    },
+    cosmos_signMessage: {
+      handlerIds: ["AccountRouter"],
+    },
+    abci_query: {
+      handlerIds: ["npm:@cosmos/general-protocol-snap"],
+    },
+    block: {
+      handlerIds: ["npm:@cosmos/general-protocol-snap"],
+    },
+    tx: {
+      handlerIds: ["npm:@cosmos/general-protocol-snap"],
+    },
+    // ... methods general to the Cosmos namespace
+  },
+  "cosmos:cosmoshub-4": {
+    // Cosmos Hub
+    block: {
+      handlerIds: ["npm:@cosmoshub/protocol-snap"],
+    },
+    getValidators: {
+      handlerIds: ["npm:@cosmoshub/protocol-snap"],
+    },
+    // ... more methods specific to Cosmos Hub
+  },
+  "cosmos:osmosis-1": {
+    // Osmosis
+    block: {
+      handlerIds: ["npm:@osmosis/protocol-snap"],
+    },
+    getPools: {
+      handlerIds: ["npm:@osmosis/protocol-snap"],
+    },
+    // ... more methods specific to Osmosis
   },
 };
 ```
