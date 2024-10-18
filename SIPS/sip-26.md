@@ -70,11 +70,14 @@ The RPC Router is a native wallet component responsible for routing RPC requests
 
 The RPC Router provides a method for registering RPC methods with their scopes and handler. Both the Account Router and Protocol Snaps use this method to inform the RPC Router about the methods they can handle. The origin of the `rpcRouter_registerMethods` call, either a specific protocol snap (e.g., `npm:@solana/example-protocol-snap`) or the Account Router (which will use its own internal registry to forward to the appropriate Account Snaps), is used to determine which handler the method will be registered with.
 
-##### Method Signature Matching
-
-To ensure that incoming requests are handled correctly, methods are registered along with their method signatures using the OpenRPC schema notation. When a request is received, the RPC Router compares the request's parameters against the registered method signatures to find a matching handler. This ensures that the request parameters are valid and that the correct handler processes the request.
+To ensure that incoming requests are handled correctly, methods are registered along with their method signatures using OpenRPC schema notation. When a request is received, the RPC Router compares the request's parameters against the registered method signatures to find a matching handler. This ensures that the request parameters are valid and that the correct handler processes the request.
 
 Multiple handlers can register for the same method with the same or different method signatures. In such cases, the RPC Router will select the appropriate handler based on the method signature that matches the request's parameters. This allows for flexibility in handling methods that may have overloaded signatures or that can be processed by different handlers depending on the parameter types.
+
+##### Registration Process
+
+Protocol Snaps register their methods, method signatures, and scopes during initialization (obtained from their manifest file) or when their capabilities change. Account Snaps register their signing methods with the Account Router, which then registers them with the RPC Router. The RPC Router maintains an internal registry mapping methods, method signatures, and scopes to their respective handlers.
+
 
 ##### Specification
 
@@ -369,10 +372,6 @@ const rpcMethodRegistry: RpcMethodRegistry = {
   // ... more chains and methods
 };
 ```
-
-##### Registration Process
-
-Protocol Snaps register their methods, method signatures, and scopes during initialization (obtained from their manifest file) or when their capabilities change. Account Snaps register their signing methods with the Account Router, which then registers them with the RPC Router. The RPC Router maintains an internal registry mapping methods, method signatures, and scopes to their respective handlers.
 
 #### Request Handling Flow
 
