@@ -2,22 +2,21 @@
 sip: 26
 title: Account Router Snaps
 status: Draft
-author: Daniel Rocha (@danroc)
+author: Daniel Rocha (@danroc), Frederik Bolding (@FrederikBolding), Alex Donesky (@adonesky1)
 created: 2024-08-28
 ---
 
 ## Abstract
 
-This SIP proposes a new API to be implemented by a new Account Router, allowing
-the forwarding of signing requests to the appropriate account Snap (i.e., Snaps
-that implement the [Keyring API][keyring-api]).
+This SIP presents an architecture to enable Snaps to expose blockchain-specific
+methods to dapps, extending MetaMask's functionality to support a multichain
+ecosystem.
 
 ## Motivation
 
-The Keyring API is being modified to support non-EVM chains. However, a
-challenge arises in identifying the correct account Snap that should receive
-the signing request, as this information is often only obtainable from the
-request itself, which varies based on the method and chain.
+Currently, MetaMask is limited to EVM-compatible networks. This proposal aims
+to empower developers, both first- and third-party, to use Snaps to add native
+support for non-EVM-compatible chains within MetaMask.
 
 ## Specification
 
@@ -32,8 +31,9 @@ in uppercase in this document are to be interpreted as described in [RFC
 
 ### High-Level architecture
 
-The diagram below represents a high-level architecture of how the Account
-Router integrates with the RPC Router, Account Snaps, and Protocol Snaps.
+The diagram below represents a high-level architecture of how the RPC Router
+integrates inside MetaMask to allow Snaps to expose protocol methods to dapps
+and the MetaMask clients.
 
 ![High-level architecture](../assets/sip-26/components-diagram.png)
 
@@ -43,20 +43,42 @@ Router integrates with the RPC Router, Account Snaps, and Protocol Snaps.
 - **Protocol Snaps**: Snaps that implement protocol methods that do not require
   an account to be executed.
 
-- **RPC Router**: Native component that forwards non-signing requests to the
-  appropriate Protocol Snap or native implementation.
+- **RPC Router**: Native component that forwards RPC requests to the
+  appropriate Protocol Snap, Account Snap or native implementation.
 
-- **Account Router**: Native component that forwards signing requests to the
-  appropriate Account Snap or native implementation.
+- **Keyring Controller**: Native component responsible for forwarding signing
+  requests to the appropriate keyring implementation.
 
-- **Account Address Resolution Snaps**: Snaps that implement the
-  `resolveAccountAddress` method to extract the account address from the
-  request object.
+- **Accounts Controller**: Native component responsible for managing accounts
+  inside MetaMask. It stores all non-sensitive account information.
 
-### Account Router
+- **Snaps Keyring**: Native component that acts as a bridge between the
+  Keyring Controller and the Account Snaps.
 
-The Account Router exposes the [`snap_manageAccounts`][snap-manage-accs] method
-to allow account Snaps to register, remove, and update accounts.
+### Components
+
+Here is a brief description of the components involved in this architecture
+which will require to be implemented or modified.
+
+#### RPC Router
+
+The RPC Router will be a new native component responsible for routing JSON-RPC
+requests to the appropriate Snap or keyring.
+
+To route a request, the RPC Router must extract the method name and chain ID
+from the request object. It then determines whether the method is supported by
+a Protocol Snap or an Account Snap, with Account Snaps taking precedence over
+Protocol Snaps.
+
+If the method is supported by an Account Snap, the RPC Router forwards the
+request to the Keyring Controller; otherwise, it forwards the request to the
+appropriate Protocol Snap.
+
+#### Snaps Keyring
+
+The Snaps Keyring is an existing native component that exposes the
+[snap_manageAccounts][snap-manage-accs] method, allowing Account Snaps to
+register, remove, and update accounts.
 
 For example, this code can be used by an Account Snap to register a new account
 with the Account Router:
@@ -85,16 +107,16 @@ await snap.request({
 Similar events are available to notify about the removal and update of
 accounts: `notify:accountRemoved` and `notify:accountUpdated`.
 
-Additionally, the Account Router expects the Account Snap to implement the
+Additionally, the Snaps Keyring expects the Account Snap to implement the
 Keyring API so it can forward signing requests to it through the
 [`keyring_submitRequest`][submit-request] method.
 
-### Account Address Resolution Snaps
+#### Account Snaps
 
-The Account Address Resolution Snaps are responsible for extracting the account
-address that should receive the signing request from the request object. This
-is accomplished by exposing the `resolveAccountAddress` method to the Account
-Router.
+In addition to the Keyring API, non-EVM Account Snaps must also implement the
+`resolveAccountAddress` method defined below. It is used by the RPC Router to
+extract the addres of the account that should handle the signing request from
+the request object.
 
 ```typescript
 /**
@@ -107,32 +129,7 @@ Router.
 function resolveAccountAddress(request: MultichainRequest): string | undefined;
 ```
 
-There must be only one Account Resolution Snap registered per chain to prevent
-ambiguity in the account resolution process.
-
-To identify which Account Resolution Snap should be used for a given request,
-Account Address Resolution Snaps MUST list the supported chains in their
-manifest file using the [CAIP-2][caip-2] format for chain IDs:
-
-```json5
-"initialPermissions": {
-  "endowment:account-address-resolver": {
-    "chains": [
-      "<chain_id_1>",
-      "<chain_id_2>",
-      // ...
-    ]
-  }
-}
-```
-
-Note that the `reference` part of the [CAIP-2][caip-2] chain ID can be a `*`
-wildcard to match any chain ID of a given namespace (e.g., `eip155:*`).
-
-The RPC Router subscribes to Snap installation events to detect new Account
-Address Resolution Snaps and updates its internal routing table accordingly.
-
-### Protocol Snaps
+#### Protocol Snaps
 
 Protocol Snaps implement and expose methods that do not require an account to
 execute and MUST list their supported methods in their manifest file:
@@ -149,19 +146,12 @@ execute and MUST list their supported methods in their manifest file:
 }
 ```
 
-The RPC Router subscribes to Snap installation events to detect new Protocol
-Snaps and updates its internal routing table accordingly.
-
-> [!IMPORTANT]
-> If a method, for a given chain, is registered by both a Protocol Snap and the
-> Accounts Router, only the Accounts Router will be used to handle requests for
-> that method and chain.
-
-### Context object
+#### Context object
 
 Alongside the request object, a context object is passed along to keep internal
 state related to the request. Its structure is not defined by this SIP, but a
-primary use would be to keep the resolved account ID.
+primary use would be to keep the resolved account ID or the list of connected
+accounts that could potentially handle the request.
 
 ## Copyright
 
