@@ -37,7 +37,7 @@ and the MetaMask clients.
 
 ![High-level architecture](../assets/sip-26/components-diagram.png)
 
-- **Account Snaps**: Snaps that implement the Keyring API and are responsible
+- **Account Snaps**: Snaps that implement the [Keyring API][keyring-api] and are responsible
   for signing requests and managing accounts.
 
 - **Protocol Snaps**: Snaps that implement protocol methods that do not require
@@ -122,7 +122,7 @@ the signing request from the request object.
 type ResolveAccountAddressRequest = {
   method: "keyring_resolveAccountAddress";
   params: {
-    chainId: CaipChainId;
+    scope: CaipChainId;
     request: JsonRpcRequest;
   };
 };
@@ -141,7 +141,10 @@ execute and MUST list their supported methods in their manifest file:
     "chains": {
       "<chain_id_1>": {
         "methods": [
-        // List of supported methods
+          // List of supported methods
+        ],
+        "notifications": [
+          // List of supported notifications
         ]
       }
     }
@@ -156,7 +159,7 @@ import { OnProtocolRequestHandler } from "@metamask/snap-sdk";
 
 export const onProtocolRequest: OnProtocolRequestHandler = async ({
   origin,
-  chainId,
+  scope,
   request,
 }) => {
   // Return protocol responses
@@ -168,14 +171,14 @@ The interface for an `onProtocolRequest` handler function’s arguments is:
 ```typescript
 interface OnProtocolRequestArguments {
   origin: string;
-  chainId: CaipChainId;
+  scope: CaipChainId;
   request: JsonRpcRequest;
 }
 ```
 
 `origin` - The origin making the protocol request (i.e. a dapp).
 
-`chainId` - A chain ID as defined by the [CAIP-2 specification][caip-2].
+`scope` - The scope of the request, currently a chain ID as defined by the [CAIP-2 specification][caip-2].
 
 `request` - A `JsonRpcRequest` containing strictly JSON-serializable values.
 
@@ -185,6 +188,7 @@ Any JSON-serializable value is allowed as the return value for `onProtocolReques
 
 Copyright and related rights waived via [CC0](../LICENSE).
 
+[keyring-api]: https://github.com/MetaMask/accounts/tree/main/packages/keyring-api
 [snap-manage-accs]: https://docs.metamask.io/snaps/reference/snaps-api/#snap_manageaccounts
 [submit-request]: https://docs.metamask.io/snaps/reference/keyring-api/account-management/#keyring_submitrequest
 [caip-2]: https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-2.md
