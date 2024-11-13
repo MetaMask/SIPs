@@ -44,7 +44,7 @@ and the MetaMask clients.
   an account to be executed.
 
 - **RPC Router**: Native component that forwards RPC requests to the
-  appropriate Protocol Snap, Account Snap or native implementation.
+  appropriate Protocol Snap or Account Snap.
 
 - **Keyring Controller**: Native component responsible for forwarding signing
   requests to the appropriate keyring implementation.
