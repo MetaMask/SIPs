@@ -138,7 +138,7 @@ execute and MUST list their supported methods in their manifest file:
 ```json5
 "initialPermissions": {
   "endowment:protocol": {
-    "chains": {
+    "scopes": {
       "<chain_id_1>": {
         "methods": [
           // List of supported methods
