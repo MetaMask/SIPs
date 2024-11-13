@@ -65,7 +65,7 @@ which will require to be implemented or modified.
 The RPC Router will be a new native component responsible for routing JSON-RPC
 requests to the appropriate Snap or keyring.
 
-To route a request, the RPC Router must extract the method name and chain ID
+To route a request, the RPC Router MUST extract the method name and chain ID
 from the request object. It then determines whether the method is supported by
 a Protocol Snap or an Account Snap, with Account Snaps taking precedence over
 Protocol Snaps.
@@ -88,16 +88,16 @@ with the Account Router:
 // Account Router will register this account as available for signing requests
 // using the `eth_signTypedData_v4` method.
 await snap.request({
-  method: 'snap_manageAccounts',
+  method: "snap_manageAccounts",
   params: {
-    method: 'notify:accountCreated',
+    method: "notify:accountCreated",
     params: {
       account: {
-          id: '74bb3393-f267-48ee-855a-2ba575291ab0',
-          type: 'eip155:eoa',
-          address: '0x1234567890123456789012345678901234567890',
-          methods: ['eth_signTypedData_v4'],
-          options: {},
+        id: "74bb3393-f267-48ee-855a-2ba575291ab0",
+        type: "eip155:eoa",
+        address: "0x1234567890123456789012345678901234567890",
+        methods: ["eth_signTypedData_v4"],
+        options: {},
       },
     },
   },
@@ -113,21 +113,22 @@ Keyring API so it can forward signing requests to it through the
 
 #### Account Snaps
 
-In addition to the Keyring API, non-EVM Account Snaps must also implement the
-`resolveAccountAddress` method defined below. It is used by the RPC Router to
-extract the addres of the account that should handle the signing request from
-the request object.
+As part of the Keyring API, non-EVM Account Snaps MUST also implement support
+for the `keyring_resolveAccountAddress` RPC method defined below. It is used
+by the RPC Router to extract the address of the account that should handle
+the signing request from the request object.
 
 ```typescript
-/**
- * Returns the address of the account that should handle the signing request.
- *
- * @param request - The request object.
- * @returns The account address or `undefined` if the address could not be
- * resolved.
- */
-function resolveAccountAddress(request: MultichainRequest): string | undefined;
+type ResolveAccountAddressRequest = {
+  method: "keyring_resolveAccountAddress";
+  params: {
+    chainId: CaipChainId;
+    request: JsonRpcRequest;
+  };
+};
 ```
+
+The implementation MUST return a value of the type `{ address: string }` or `null`.
 
 #### Protocol Snaps
 
@@ -136,28 +137,54 @@ execute and MUST list their supported methods in their manifest file:
 
 ```json5
 "initialPermissions": {
-  "endowment:protocol-methods": {
+  "endowment:protocol": {
     "chains": {
-      "<chain_id_1>": [
+      "<chain_id_1>": {
+        "methods": [
         // List of supported methods
-      ]
+        ]
+      }
     }
   }
 }
 ```
 
-#### Context object
+Additionally protocol Snaps MUST implement the `onProtocolRequest` handler:
 
-Alongside the request object, a context object is passed along to keep internal
-state related to the request. Its structure is not defined by this SIP, but a
-primary use would be to keep the resolved account ID or the list of connected
-accounts that could potentially handle the request.
+```typescript
+import { OnProtocolRequestHandler } from "@metamask/snap-sdk";
+
+export const onProtocolRequest: OnProtocolRequestHandler = async ({
+  origin,
+  chainId,
+  request,
+}) => {
+  // Return protocol responses
+};
+```
+
+The interface for an `onProtocolRequest` handler function’s arguments is:
+
+```typescript
+interface OnProtocolRequestArguments {
+  origin: string;
+  chainId: CaipChainId;
+  request: JsonRpcRequest;
+}
+```
+
+`origin` - The origin making the protocol request (i.e. a dapp).
+
+`chainId` - A chain ID as defined by the [CAIP-2 specification][caip-2].
+
+`request` - A `JsonRpcRequest` containing strictly JSON-serializable values.
+
+Any JSON-serializable value is allowed as the return value for `onProtocolRequest`.
 
 ## Copyright
 
 Copyright and related rights waived via [CC0](../LICENSE).
 
-[keyring-api]: https://github.com/MetaMask/accounts/tree/main/packages/keyring-api
 [snap-manage-accs]: https://docs.metamask.io/snaps/reference/snaps-api/#snap_manageaccounts
 [submit-request]: https://docs.metamask.io/snaps/reference/keyring-api/account-management/#keyring_submitrequest
 [caip-2]: https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-2.md
