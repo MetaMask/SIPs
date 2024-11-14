@@ -65,7 +65,7 @@ which will require to be implemented or modified.
 The RPC Router will be a new native component responsible for routing JSON-RPC
 requests to the appropriate Snap or keyring.
 
-To route a request, the RPC Router MUST extract the method name and chain ID
+To route a request, the RPC Router MUST extract the method name and [CAIP-2 chainId][caip-2]
 from the request object. It then determines whether the method is supported by
 a Protocol Snap or an Account Snap, with Account Snaps taking precedence over
 Protocol Snaps.
@@ -127,19 +127,21 @@ type ResolveAccountAddressRequest = {
   };
 };
 ```
+`scope` - The [CAIP-2][caip-2] chainId the request is targeting
 
+`request` - A `JsonRpcRequest` containing strictly JSON-serializable values.
 The implementation MUST return a value of the type `{ address: string }` or `null`.
 
 #### Protocol Snaps
 
 Protocol Snaps implement and expose methods that do not require an account to
-execute and MUST list their supported methods in their manifest file:
+execute and MUST list their supported methods and notifications in their manifest file:
 
 ```json5
 "initialPermissions": {
   "endowment:protocol": {
     "scopes": {
-      "<chain_id_1>": {
+      "<caip2_chainId>": {
         "methods": [
           // List of supported methods
         ],
@@ -178,7 +180,7 @@ interface OnProtocolRequestArguments {
 
 `origin` - The origin making the protocol request (i.e. a dapp).
 
-`scope` - The scope of the request, currently a chain ID as defined by the [CAIP-2 specification][caip-2].
+`scope` - The [CAIP-2][caip-2] chainId the request is targeting.
 
 `request` - A `JsonRpcRequest` containing strictly JSON-serializable values.
 
