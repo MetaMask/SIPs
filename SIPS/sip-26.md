@@ -1,6 +1,6 @@
 ---
 sip: 26
-title: Account Router Snaps
+title: Non-EVM protocol support
 status: Draft
 author: Daniel Rocha (@danroc), Frederik Bolding (@FrederikBolding), Alex Donesky (@adonesky1)
 created: 2024-08-28
