@@ -130,6 +130,7 @@ type ResolveAccountAddressRequest = {
 `scope` - The [CAIP-2][caip-2] chainId the request is targeting
 
 `request` - A `JsonRpcRequest` containing strictly JSON-serializable values.
+
 The implementation MUST return a value of the type `{ address: string }` or `null`.
 
 #### Protocol Snaps
