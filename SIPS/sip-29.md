@@ -35,15 +35,52 @@ in uppercase in this document are to be interpreted as described in [RFC
 2. Any time an asset needs to be identified, it MUST use the [CAIP-19][caip-19]
 representation.
 
-### Snap Assets API
+### Snap Manifest
+
+This SIP introduces a new permission named `endowment:assets`.
+This permission grants a snap the ability to provide asset information to the client.
+
+This permission is specified as follows in `snap.manifest.json` files:
+
+```json
+{
+  "initialPermissions": {
+    "endowment:assets": {}
+  }
+}
+```
+
+### Snap Implementation
 
 Two methods are defined in the Snap Assets API:
+
+Any snap that wishes to provide asset information **MUST** implement the following API:
 
 #### Get Token Description
 
 ```typescript
+import { OnAssetDescriptionHandler } from "@metamask/snap-types";
+
+export const onAssetDescription: OnAssetDescriptionHandler = async ({
+  asset
+}) => {
+  const description = /* Get description */;
+  return { description };
+};
+```
+
+The type for an `onAssetDescription` handler function’s arguments is:
+
+```typescript
+interface OnAssetDescriptionArgs {
+    asset: Caip19AssetType;
+}
+```
+The type for an `onAssetDescription` handler function’s return value is:
+
+```typescript
 // Represents a token unit.
-type TokenUnit = {
+type AssetUnit = {
     // Human-friendly name of the token unit.
     name: string;
 
@@ -72,45 +109,60 @@ type TokenDescription = {
     units: TokenUnit[];
 };
 
-// Returns the description of a non-fungible token. This description can then
-// be used by the client to display relevant information about the token.
-//
-// @example
-// ```typescript
-// const tokenDescription = await getTokenDescription('eip155:1/slip44:60');
-//
-// // Returns:
-// // {
-// //     name: 'Ether',
-// //     ticker: 'ETH',
-// //     isNative: true,
-// //     iconBase64: 'data:image/png;base64,...',
-// //     units: [
-// //         {
-// //             name: 'Ether',
-// //             ticker: 'ETH',
-// //             decimals: 18
-// //         },
-// //         {
-// //             name: 'Gwei',
-// //             ticker: 'Gwei',
-// //             decimals: 9
-// //         },
-// //         {
-// //             name: 'wei',
-// //             ticker: 'wei',
-// //             decimals: 0
-// //         }
-// //     ]
-// // }
-// ```
-function getTokenDescription(token: Caip19AssetType): TokenDescription;
+// {
+//     name: 'Ether',
+//     ticker: 'ETH',
+//     isNative: true,
+//     iconBase64: 'data:image/png;base64,...',
+//     units: [
+//         {
+//             name: 'Ether',
+//             ticker: 'ETH',
+//             decimals: 18
+//         },
+//         {
+//             name: 'Gwei',
+//             ticker: 'Gwei',
+//             decimals: 9
+//         },
+//         {
+//             name: 'wei',
+//             ticker: 'wei',
+//             decimals: 0
+//         }
+//    ]
+// }
+
+type OnAssetDescriptionReturn = {
+    description: TokenDescription;
+};
 ```
 
 #### Get Token Conversion Rate
 
 ```typescript
-type TokenConversionRate = {
+import { OnAssetConversionHandler } from "@metamask/snap-types";
+
+export const onAssetConversion: OnAssetConversionHandler = async ({
+  from,
+  to
+}) => {
+  const conversionRate = /* Get conversion rate */;
+  return { conversionRate };
+};
+```
+The type for an `onAssetDescription` handler function’s arguments is:
+
+```typescript
+interface OnAssetConversionArgs {
+    from: Caip19AssetType;
+    to: Caip19AssetType;
+}
+```
+The type for an `onAssetDescription` handler function’s return value is:
+
+```typescript
+type AssetConversionRate = {
     // The rate of conversion from the source token to the target token. It
     // means that 1 unit of the `from` token should be converted to this amount
     // of the `to` token.
@@ -123,26 +175,16 @@ type TokenConversionRate = {
     expirationTime: number;
 };
 
-// Returns the conversion rate between two assets (tokens or fiat).
-//
-// @example
-// ```typescript
-// const conversionRate = await getTokenConversionRate(
-//   'eip155:1/slip44:60',
-//   'eip155:1/erc20:0x6b175474e89094c44da98b954eedeac495271d0f'
-// );
-//
-// // Returns:
-// // {
-// //     rate: '3906.38',
-// //     conversionTime: 1733389786,
-// //     expirationTime: 1733389816,
-// // }
-// ```
-function getTokenConversionRate(
-    from: Caip19AssetType,
-    to: Caip19AssetType
-): TokenConversionRate;
+
+// {
+//     rate: '3906.38',
+//     conversionTime: 1733389786,
+//     expirationTime: 1733389816,
+// }
+
+type OnAssetConversionReturn = {
+    conversionRate: TokenConversionRate;
+};
 ```
 
 ### Fiat currency representation
