@@ -59,7 +59,7 @@ Any snap that wishes to provide asset information **MUST** implement the followi
 #### Get Token Description
 
 ```typescript
-import { OnAssetDescriptionHandler } from "@metamask/snap-types";
+import { OnAssetDescriptionHandler } from "@metamask/snaps-sdk";
 
 export const onAssetDescription: OnAssetDescriptionHandler = async ({
   asset
@@ -141,7 +141,7 @@ type OnAssetDescriptionReturn = {
 #### Get Token Conversion Rate
 
 ```typescript
-import { OnAssetConversionHandler } from "@metamask/snap-types";
+import { OnAssetConversionHandler } from "@metamask/snaps-sdk";
 
 export const onAssetConversion: OnAssetConversionHandler = async ({
   from,
