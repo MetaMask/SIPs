@@ -1,11 +1,9 @@
 ---
-sip: (To be assigned)
+sip: 29
 title: Snap Assets API
 status: Draft
-discussions-to (*optional): (Http/Https URL)
 author: Daniel Rocha (@danroc), Guillaume Roux (@GuillaumeRx)
-created: (Date created on in ISO 8601 format. `yyyy-mm-dd`)
-updated (*optional): (Date last updated on in https://en.wikipedia.org/wiki/ISO_8601 format. `yyyy-mm-dd`. This should be only used on SIPs with `Living` status)
+created: 2024-12-05
 ---
 
 ## Abstract
