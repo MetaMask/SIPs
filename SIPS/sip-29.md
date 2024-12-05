@@ -56,7 +56,7 @@ Two methods are defined in the Snap Assets API:
 
 Any Snap that wishes to provide asset information **MUST** implement the following API:
 
-#### Get Token Description
+#### Get Asset Description
 
 ```typescript
 import { OnAssetDescriptionHandler } from "@metamask/snaps-sdk";
@@ -79,34 +79,37 @@ interface OnAssetDescriptionArgs {
 The type for an `onAssetDescription` handler function’s return value is:
 
 ```typescript
-// Represents a token unit.
+// Represents a asset unit.
 type AssetUnit = {
-    // Human-friendly name of the token unit.
+    // Human-friendly name of the asset unit.
     name: string;
 
-    // Ticker of the token unit.
+    // Ticker of the asset unit.
     ticker: string;
 
-    // Number of decimals of the token unit.
+    // Number of decimals of the asset unit.
     decimals: number;
 };
 
-// Token description.
-type TokenDescription = {
-    // Human-friendly name of the token.
+// Asset description.
+type AssetDescription = {
+    // The CAIP-19 ID of the asset.
+    id: Caip19AssetType;
+
+    // Human-friendly name of the asset.
     name: string;
 
-    // Ticker of the token.
+    // Ticker of the asset.
     ticker: string;
 
-    // Whether the token is native to the chain.
+    // Whether the asset is native to the chain.
     isNative: boolean;
 
-    // Base64 representation of the token icon.
+    // Base64 representation of the asset icon.
     iconBase64: string;
 
-    // List of token units.
-    units: TokenUnit[];
+    // List of asset units.
+    units: AssetUnit[];
 };
 
 // {
@@ -134,11 +137,11 @@ type TokenDescription = {
 // }
 
 type OnAssetDescriptionReturn = {
-    description: TokenDescription;
+    description: AssetDescription;
 };
 ```
 
-#### Get Token Conversion Rate
+#### Get Asset Conversion Rate
 
 ```typescript
 import { OnAssetConversionHandler } from "@metamask/snaps-sdk";
@@ -163,9 +166,9 @@ The type for an `onAssetDescription` handler function’s return value is:
 
 ```typescript
 type AssetConversionRate = {
-    // The rate of conversion from the source token to the target token. It
-    // means that 1 unit of the `from` token should be converted to this amount
-    // of the `to` token.
+    // The rate of conversion from the source asset to the target asset. It
+    // means that 1 unit of the `from` asset should be converted to this amount
+    // of the `to` asset.
     rate: string;
 
     // The UNIX timestamp of when the conversion rate was last updated.
@@ -183,7 +186,7 @@ type AssetConversionRate = {
 // }
 
 type OnAssetConversionReturn = {
-    conversionRate: TokenConversionRate;
+    conversionRate: AssetConversionRate;
 };
 ```
 
