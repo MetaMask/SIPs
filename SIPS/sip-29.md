@@ -11,13 +11,13 @@ updated (*optional): (Date last updated on in https://en.wikipedia.org/wiki/ISO_
 ## Abstract
 
 This SIP aims to define a new API that can be exposed by Snaps to allow clients
-get asset information in a chain-agnostic way.
+to retrieve asset information in a chain-agnostic way.
 
 ## Motivation
 
-To allow clients to be chain-agnostic, the logic of how to get asset
-information should be abstracted away from the client. We also need to define
-the types that represent the asset information required by the clients.
+To enable clients to be chain-agnostic, the logic for obtaining asset
+information should be abstracted away from the client. Additionally, this SIP
+defines the types that represent the asset information required by clients.
 
 ## Specification
 
@@ -32,8 +32,10 @@ in uppercase in this document are to be interpreted as described in [RFC
 
 ### Definitions
 
-In this document, all definitions are written in TypeScript. Also, any time an
-asset need to be identified, it MUST use the [CAIP-19][caip-19] representation.
+1. In this document, all definitions are written in TypeScript.
+
+2. Any time an asset needs to be identified, it MUST use the [CAIP-19][caip-19]
+representation.
 
 ### Snap Assets API
 
@@ -43,7 +45,7 @@ Two methods are defined in the Snap Assets API:
 
 ```typescript
 // Represents a token unit.
-type TokenUnit {
+type TokenUnit = {
     // Human-friendly name of the token unit.
     name: string;
 
@@ -52,10 +54,10 @@ type TokenUnit {
 
     // Number of decimals of the token unit.
     decimals: number;
-}
+};
 
 // Token description.
-type TokenDescription {
+type TokenDescription = {
     // Human-friendly name of the token.
     name: string;
 
@@ -70,7 +72,7 @@ type TokenDescription {
 
     // List of token units.
     units: TokenUnit[];
-}
+};
 
 // Returns the description of a non-fungible token. This description can then
 // be used by the client to display relevant information about the token.
@@ -102,6 +104,7 @@ type TokenDescription {
 // //             decimals: 0
 // //         }
 // //     ]
+// // }
 // ```
 function getTokenDescription(token: Caip19AssetType): TokenDescription;
 ```
@@ -109,7 +112,7 @@ function getTokenDescription(token: Caip19AssetType): TokenDescription;
 #### Get Token Conversion Rate
 
 ```typescript
-type TokenConversionRate {
+type TokenConversionRate = {
     // The rate of conversion from the source token to the target token. It
     // means that 1 unit of the `from` token should be converted to this amount
     // of the `to` token.
@@ -120,7 +123,7 @@ type TokenConversionRate {
 
     // The UNIX timestamp of when the conversion rate will expire.
     expirationTime: number;
-}
+};
 
 // Returns the conversion rate between two assets (tokens or fiat).
 //
@@ -146,11 +149,9 @@ function getTokenConversionRate(
 
 ### Fiat currency representation
 
-We SHOULD use CAIP-19 to represent fiat currencies as well, it will allow us to
-have a consistent way to represent all assets and make the API more
-predictable.
-
-The propose format is:
+We SHOULD use CAIP-19 to represent fiat currencies as well. This approach
+provides a consistent way to represent all assets, making the API more
+predictable. The proposed format is:
 
 ```
 asset_type:        chain_id + "/" + asset_namespace + ":" + asset_reference
@@ -161,11 +162,10 @@ asset_namespace:   "currency"
 asset_reference:   currency_code
 ```
 
-The country code is a two-letter lowercase code as defined by the ISO 3166-1
-alpha-2, with the exception for the European Union, which is represented by
-"eu".
+The country code is a two-letter lowercase code as defined by ISO 3166-1
+alpha-2, with the exception of the European Union, represented by "eu".
 
-The currency code is a three-letter uppercase code as defined by the ISO 4217.
+The currency code is a three-letter uppercase code as defined by ISO 4217.
 
 Examples:
 
