@@ -38,7 +38,7 @@ representation.
 ### Snap Manifest
 
 This SIP introduces a new permission named `endowment:assets`.
-This permission grants a snap the ability to provide asset information to the client.
+This permission grants a Snap the ability to provide asset information to the client.
 
 This permission is specified as follows in `snap.manifest.json` files:
 
@@ -54,7 +54,7 @@ This permission is specified as follows in `snap.manifest.json` files:
 
 Two methods are defined in the Snap Assets API:
 
-Any snap that wishes to provide asset information **MUST** implement the following API:
+Any Snap that wishes to provide asset information **MUST** implement the following API:
 
 #### Get Token Description
 
