@@ -68,7 +68,7 @@ Any Snap that wishes to provide asset information **MUST** implement the followi
 import { OnAssetDescriptionHandler } from "@metamask/snaps-sdk";
 
 export const onAssetDescription: OnAssetDescriptionHandler = async ({
-  asset
+  assets
 }) => {
   const description = /* Get description */;
   return { description };
@@ -79,12 +79,36 @@ The type for an `onAssetDescription` handler function’s arguments is:
 
 ```typescript
 interface OnAssetDescriptionArgs {
-    asset: Caip19AssetType;
+    assets: Caip19AssetType[];
 }
 ```
 The type for an `onAssetDescription` handler function’s return value is:
 
 ```typescript
+// {
+//     name: 'Ether',
+//     ticker: 'ETH',
+//     isNative: true,
+//     iconBase64: 'data:image/png;base64,...',
+//     units: [
+//         {
+//             name: 'Ether',
+//             ticker: 'ETH',
+//             decimals: 18
+//         },
+//         {
+//             name: 'Gwei',
+//             ticker: 'Gwei',
+//             decimals: 9
+//         },
+//         {
+//             name: 'wei',
+//             ticker: 'wei',
+//             decimals: 0
+//         }
+//    ]
+// }
+
 // Represents a asset unit.
 type AssetUnit = {
     // Human-friendly name of the asset unit.
@@ -118,32 +142,9 @@ type AssetDescription = {
     units: AssetUnit[];
 };
 
-// {
-//     name: 'Ether',
-//     ticker: 'ETH',
-//     isNative: true,
-//     iconBase64: 'data:image/png;base64,...',
-//     units: [
-//         {
-//             name: 'Ether',
-//             ticker: 'ETH',
-//             decimals: 18
-//         },
-//         {
-//             name: 'Gwei',
-//             ticker: 'Gwei',
-//             decimals: 9
-//         },
-//         {
-//             name: 'wei',
-//             ticker: 'wei',
-//             decimals: 0
-//         }
-//    ]
-// }
 
 type OnAssetDescriptionReturn = {
-    description: AssetDescription;
+    description: Record<Caip19AssetType, AssetDescription>;
 };
 ```
 
@@ -164,7 +165,7 @@ The type for an `onAssetDescription` handler function’s arguments is:
 
 ```typescript
 interface OnAssetConversionArgs {
-    from: Caip19AssetType;
+    from: Caip19AssetType[];
     to: Caip19AssetType;
 }
 ```
@@ -192,7 +193,7 @@ type AssetConversionRate = {
 // }
 
 type OnAssetConversionReturn = {
-    conversionRate: AssetConversionRate;
+    conversionRate: Record<Caip19AssetType, AssetConversionRate>;
 };
 ```
 
