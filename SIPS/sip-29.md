@@ -46,7 +46,7 @@ This permission is specified as follows in `snap.manifest.json` files:
 {
   "initialPermissions": {
     "endowment:assets": {
-        chains: [
+        "chains": [
             "bip122:000000000019d6689c085ae165831e93"
         ]
     }
