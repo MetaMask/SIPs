@@ -45,10 +45,16 @@ This permission is specified as follows in `snap.manifest.json` files:
 ```json
 {
   "initialPermissions": {
-    "endowment:assets": {}
+    "endowment:assets": {
+        chains: [
+            "bip122:000000000019d6689c085ae165831e93"
+        ]
+    }
   }
 }
 ```
+
+`chains` - A non-empty array of CAIP-2 chain IDs that the snap supports. This field is useful for a client in order to avoid unnecessary overhead.
 
 ### Snap Implementation
 
