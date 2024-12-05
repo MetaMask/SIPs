@@ -160,8 +160,9 @@ asset_namespace:   "currency"
 asset_reference:   currency_code
 ```
 
-The country code is a two-letter lowercase code as defined by ISO 3166-1
-alpha-2, with the exception of the European Union, represented by "eu".
+The country code is a two-letter lowercase code, as defined by ISO 3166-1
+alpha-2, representing the emitter country, with the exception of the European
+Union, which is represented by "eu".
 
 The currency code is a three-letter uppercase code as defined by ISO 4217.
 
