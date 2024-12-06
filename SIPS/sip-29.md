@@ -135,6 +135,9 @@ type AssetDescription = {
     // Whether the asset is native to the chain.
     isNative: boolean;
 
+    // Whether the asset if fungible.
+    isFungible: boolean;
+
     // Base64 representation of the asset icon.
     iconBase64: string;
 
