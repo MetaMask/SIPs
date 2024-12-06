@@ -35,85 +35,93 @@ in uppercase in this document are to be interpreted as described in [RFC
 2. Any time an asset needs to be identified, it MUST use the [CAIP-19][caip-19]
 representation.
 
-### Snap Assets API
+### Snap Manifest
+
+This SIP introduces a new permission named `endowment:assets`.
+This permission grants a Snap the ability to provide asset information to the client.
+
+This permission is specified as follows in `snap.manifest.json` files:
+
+```json
+{
+  "initialPermissions": {
+    "endowment:assets": {
+        "scopes": [
+            "bip122:000000000019d6689c085ae165831e93"
+        ]
+    }
+  }
+}
+```
+
+`scopes` - A non-empty array of CAIP-2 chain IDs that the snap supports. This field is useful for a client in order to avoid unnecessary overhead.
+
+### Snap Implementation
 
 Two methods are defined in the Snap Assets API:
 
-#### Get Token Description
+Any Snap that wishes to provide asset information **MUST** implement the following API:
+
+#### Get Asset Metadata
 
 ```typescript
-// Represents a token unit.
-type TokenUnit = {
-    // Human-friendly name of the token unit.
-    name: string;
+import { OnAssetLookupHandler } from "@metamask/snaps-sdk";
 
-    // Ticker of the token unit.
-    ticker: string;
-
-    // Number of decimals of the token unit.
-    decimals: number;
+export const onAssetLookup: OnAssetLookupHandler = async ({
+  assets
+}) => {
+  const assetsMetadata = /* Get metadata */;
+  return { assets: assetsMetadata };
 };
-
-// Token description.
-type TokenDescription = {
-    // Human-friendly name of the token.
-    name: string;
-
-    // Ticker of the token.
-    ticker: string;
-
-    // Whether the token is native to the chain.
-    isNative: boolean;
-
-    // Base64 representation of the token icon.
-    iconBase64: string;
-
-    // List of token units.
-    units: TokenUnit[];
-};
-
-// Returns the description of a non-fungible token. This description can then
-// be used by the client to display relevant information about the token.
-//
-// @example
-// ```typescript
-// const tokenDescription = await getTokenDescription('eip155:1/slip44:60');
-//
-// // Returns:
-// // {
-// //     name: 'Ether',
-// //     ticker: 'ETH',
-// //     isNative: true,
-// //     iconBase64: 'data:image/png;base64,...',
-// //     units: [
-// //         {
-// //             name: 'Ether',
-// //             ticker: 'ETH',
-// //             decimals: 18
-// //         },
-// //         {
-// //             name: 'Gwei',
-// //             ticker: 'Gwei',
-// //             decimals: 9
-// //         },
-// //         {
-// //             name: 'wei',
-// //             ticker: 'wei',
-// //             decimals: 0
-// //         }
-// //     ]
-// // }
-// ```
-function getTokenDescription(token: Caip19AssetType): TokenDescription;
 ```
 
-#### Get Token Conversion Rate
+The type for an `onAssetLookup` handler function’s arguments is:
+
 
 ```typescript
-type TokenConversionRate = {
-    // The rate of conversion from the source token to the target token. It
-    // means that 1 unit of the `from` token should be converted to this amount
-    // of the `to` token.
+interface OnAssetLookupArgs {
+    assets: Caip19AssetType[];
+}
+```
+The type for an `onAssetLookup` handler function’s return value is:
+
+```typescript
+type OnAssetLookupReturn = {
+    assets: Record<Caip19AssetType, AssetMetadata>;
+};
+```
+
+#### Get Asset Conversion Rate
+
+```typescript
+import { OnAssetConversionHandler } from "@metamask/snaps-sdk";
+
+export const onAssetConversion: OnAssetConversionHandler = async ({
+  conversions
+}) => {
+  const conversionRates = /* Get conversion rate */;
+  return { conversionRates };
+};
+```
+The type for an `onAssetConversion` handler function’s arguments is:
+
+```typescript
+type Conversion = {
+    from: Caip19AssetType;
+    to: Caip19AssetType;
+};
+
+type OnAssetConversionArgs = {
+    conversions: Conversion[];
+}
+```
+The type for an `onAssetConversion` handler function’s return value is:
+
+```typescript
+type AssetConversionRate = {
+    // The rate of conversion from the source asset to the target asset. It
+    // means that 1 unit of the `from` asset should be converted to this amount
+    // of the `to` asset.
     rate: string;
 
     // The UNIX timestamp of when the conversion rate was last updated.
@@ -123,26 +131,13 @@ type TokenConversionRate = {
     expirationTime: number;
 };
 
-// Returns the conversion rate between two assets (tokens or fiat).
-//
-// @example
-// ```typescript
-// const conversionRate = await getTokenConversionRate(
-//   'eip155:1/slip44:60',
-//   'eip155:1/erc20:0x6b175474e89094c44da98b954eedeac495271d0f'
-// );
-//
-// // Returns:
-// // {
-// //     rate: '3906.38',
-// //     conversionTime: 1733389786,
-// //     expirationTime: 1733389816,
-// // }
-// ```
-function getTokenConversionRate(
-    from: Caip19AssetType,
-    to: Caip19AssetType
-): TokenConversionRate;
+type FromAsset = Conversion["from"];
+
+type ToAsset = Conversion["to"];
+
+type OnAssetConversionReturn = {
+    conversionRates: Record<From, Record<To, AssetConversionRate>>;
+};
 ```
 
 ### Fiat currency representation
@@ -181,6 +176,47 @@ fiat:br/currency:brl
 # Japanese Yen
 fiat:jp/currency:jpy
 ```
+
+## Appendix I: Fungible Asset Metadata
+
+The following asset metadata fields for a fungible asset are defined.
+As of the time of creation of this SIP, they are the only possible assets requested by clients.
+
+```typescript
+// Represents an asset unit.
+type FungibleAssetUnit = {
+    // Human-friendly name of the asset unit.
+    name: string;
+
+    // Ticker of the asset unit.
+    ticker: string;
+
+    // Number of decimals of the asset unit.
+    decimals: number;
+};
+
+// Fungible asset metadata.
+type FungibleAssetMetadata = {
+    // Human-friendly name of the asset.
+    name: string;
+
+    // Ticker of the asset.
+    ticker: string;
+
+    // Whether the asset is native to the chain.
+    native: boolean;
+
+    // Represents a fungible asset
+    fungible: true;
+
+    // Base64 representation of the asset icon.
+    iconBase64: string;
+
+    // List of asset units.
+    units: FungibleAssetUnit[];
+};
+```
+
 
 ## Backwards compatibility
 
