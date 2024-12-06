@@ -136,7 +136,7 @@ type FromAsset = Conversion["from"];
 type ToAsset = Conversion["to"];
 
 type OnAssetConversionReturn = {
-    conversionRate: Record<From, Record<To, AssetConversionRate>>;
+    conversionRates: Record<From, Record<To, AssetConversionRate>>;
 };
 ```
 
