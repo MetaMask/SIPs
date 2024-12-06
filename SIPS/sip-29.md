@@ -103,7 +103,7 @@ export const onAssetConversion: OnAssetConversionHandler = async ({
   return { conversionRate };
 };
 ```
-The type for an `onAssetDescription` handler function’s arguments is:
+The type for an `onAssetConversion` handler function’s arguments is:
 
 ```typescript
 interface OnAssetConversionArgs {
@@ -111,7 +111,7 @@ interface OnAssetConversionArgs {
     to: Caip19AssetType;
 }
 ```
-The type for an `onAssetDescription` handler function’s return value is:
+The type for an `onAssetConversion` handler function’s return value is:
 
 ```typescript
 type AssetConversionRate = {
