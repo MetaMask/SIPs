@@ -77,6 +77,7 @@ export const onAssetLookup: OnAssetLookupHandler = async ({
 
 The type for an `onAssetLookup` handler function’s arguments is:
 
+
 ```typescript
 interface OnAssetLookupArgs {
     assets: Caip19AssetType[];
@@ -96,19 +97,22 @@ type OnAssetLookupReturn = {
 import { OnAssetConversionHandler } from "@metamask/snaps-sdk";
 
 export const onAssetConversion: OnAssetConversionHandler = async ({
-  from,
-  to
+  conversions
 }) => {
-  const conversionRate = /* Get conversion rate */;
-  return { conversionRate };
+  const conversionRates = /* Get conversion rate */;
+  return { conversionRates };
 };
 ```
 The type for an `onAssetConversion` handler function’s arguments is:
 
 ```typescript
-interface OnAssetConversionArgs {
-    from: Caip19AssetType[];
+type Conversion = {
+    from: Caip19AssetType;
     to: Caip19AssetType;
+};
+
+type OnAssetConversionArgs = {
+    conversions: Conversion[];
 }
 ```
 The type for an `onAssetConversion` handler function’s return value is:
@@ -127,15 +131,12 @@ type AssetConversionRate = {
     expirationTime: number;
 };
 
+type FromAsset = Conversion["from"];
 
-// {
-//     rate: '3906.38',
-//     conversionTime: 1733389786,
-//     expirationTime: 1733389816,
-// }
+type ToAsset = Conversion["to"];
 
 type OnAssetConversionReturn = {
-    conversionRate: Record<Caip19AssetType, AssetConversionRate>;
+    conversionRate: Record<From, Record<To, AssetConversionRate>>;
 };
 ```
 
