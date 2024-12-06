@@ -33,7 +33,7 @@ in uppercase in this document are to be interpreted as described in [RFC
 1. In this document, all definitions are written in TypeScript.
 
 2. Any time an asset needs to be identified, it MUST use the [CAIP-19][caip-19]
-representation.
+   representation.
 
 ### Snap Manifest
 
@@ -46,9 +46,9 @@ This permission is specified as follows in `snap.manifest.json` files:
 {
   "initialPermissions": {
     "endowment:assets": {
-        "scopes": [
-            "bip122:000000000019d6689c085ae165831e93"
-        ]
+      "scopes": [
+        "bip122:000000000019d6689c085ae165831e93"
+      ]
     }
   }
 }
@@ -77,17 +77,17 @@ export const onAssetLookup: OnAssetLookupHandler = async ({
 
 The type for an `onAssetLookup` handler function’s arguments is:
 
-
 ```typescript
 interface OnAssetLookupArgs {
-    assets: Caip19AssetType[];
+  assets: Caip19AssetType[];
 }
 ```
+
 The type for an `onAssetLookup` handler function’s return value is:
 
 ```typescript
 type OnAssetLookupReturn = {
-    assets: Record<Caip19AssetType, AssetMetadata>;
+  assets: Record<Caip19AssetType, AssetMetadata>;
 };
 ```
 
@@ -103,32 +103,34 @@ export const onAssetConversion: OnAssetConversionHandler = async ({
   return { conversionRates };
 };
 ```
+
 The type for an `onAssetConversion` handler function’s arguments is:
 
 ```typescript
 type Conversion = {
-    from: Caip19AssetType;
-    to: Caip19AssetType;
+  from: Caip19AssetType;
+  to: Caip19AssetType;
 };
 
 type OnAssetConversionArgs = {
-    conversions: Conversion[];
-}
+  conversions: Conversion[];
+};
 ```
+
 The type for an `onAssetConversion` handler function’s return value is:
 
 ```typescript
 type AssetConversionRate = {
-    // The rate of conversion from the source asset to the target asset. It
-    // means that 1 unit of the `from` asset should be converted to this amount
-    // of the `to` asset.
-    rate: string;
+  // The rate of conversion from the source asset to the target asset. It
+  // means that 1 unit of the `from` asset should be converted to this amount
+  // of the `to` asset.
+  rate: string;
 
-    // The UNIX timestamp of when the conversion rate was last updated.
-    conversionTime: number;
+  // The UNIX timestamp of when the conversion rate was last updated.
+  conversionTime: number;
 
-    // The UNIX timestamp of when the conversion rate will expire.
-    expirationTime: number;
+  // The UNIX timestamp of when the conversion rate will expire.
+  expirationTime: number;
 };
 
 type FromAsset = Conversion["from"];
@@ -136,7 +138,7 @@ type FromAsset = Conversion["from"];
 type ToAsset = Conversion["to"];
 
 type OnAssetConversionReturn = {
-    conversionRates: Record<From, Record<To, AssetConversionRate>>;
+  conversionRates: Record<From, Record<To, AssetConversionRate>>;
 };
 ```
 
@@ -185,38 +187,37 @@ As of the time of creation of this SIP, they are the only possible assets reques
 ```typescript
 // Represents an asset unit.
 type FungibleAssetUnit = {
-    // Human-friendly name of the asset unit.
-    name: string;
+  // Human-friendly name of the asset unit.
+  name: string;
 
-    // Ticker of the asset unit.
-    ticker: string;
+  // Ticker of the asset unit.
+  ticker: string;
 
-    // Number of decimals of the asset unit.
-    decimals: number;
+  // Number of decimals of the asset unit.
+  decimals: number;
 };
 
 // Fungible asset metadata.
 type FungibleAssetMetadata = {
-    // Human-friendly name of the asset.
-    name: string;
+  // Human-friendly name of the asset.
+  name: string;
 
-    // Ticker of the asset.
-    ticker: string;
+  // Ticker of the asset.
+  ticker: string;
 
-    // Whether the asset is native to the chain.
-    native: boolean;
+  // Whether the asset is native to the chain.
+  native: boolean;
 
-    // Represents a fungible asset
-    fungible: true;
+  // Represents a fungible asset
+  fungible: true;
 
-    // Base64 representation of the asset icon.
-    iconBase64: string;
+  // Base64 representation of the asset icon.
+  iconBase64: string;
 
-    // List of asset units.
-    units: FungibleAssetUnit[];
+  // List of asset units.
+  units: FungibleAssetUnit[];
 };
 ```
-
 
 ## Backwards compatibility
 
