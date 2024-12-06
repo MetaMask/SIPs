@@ -46,7 +46,7 @@ This permission is specified as follows in `snap.manifest.json` files:
 {
   "initialPermissions": {
     "endowment:assets": {
-        "chains": [
+        "scopes": [
             "bip122:000000000019d6689c085ae165831e93"
         ]
     }
@@ -54,7 +54,7 @@ This permission is specified as follows in `snap.manifest.json` files:
 }
 ```
 
-`chains` - A non-empty array of CAIP-2 chain IDs that the snap supports. This field is useful for a client in order to avoid unnecessary overhead.
+`scopes` - A non-empty array of CAIP-2 chain IDs that the snap supports. This field is useful for a client in order to avoid unnecessary overhead.
 
 ### Snap Implementation
 
@@ -62,92 +62,31 @@ Two methods are defined in the Snap Assets API:
 
 Any Snap that wishes to provide asset information **MUST** implement the following API:
 
-#### Get Asset Description
+#### Get Asset Metadata
 
 ```typescript
-import { OnAssetDescriptionHandler } from "@metamask/snaps-sdk";
+import { OnAssetLookupHandler } from "@metamask/snaps-sdk";
 
-export const onAssetDescription: OnAssetDescriptionHandler = async ({
+export const onAssetLookup: OnAssetLookupHandler = async ({
   assets
 }) => {
-  const description = /* Get description */;
-  return { description };
+  const assetsMetadata = /* Get metadata */;
+  return { assets: assetsMetadata };
 };
 ```
 
-The type for an `onAssetDescription` handler function’s arguments is:
+The type for an `onAssetLookup` handler function’s arguments is:
 
 ```typescript
-interface OnAssetDescriptionArgs {
+interface OnAssetLookupArgs {
     assets: Caip19AssetType[];
 }
 ```
-The type for an `onAssetDescription` handler function’s return value is:
+The type for an `onAssetLookup` handler function’s return value is:
 
 ```typescript
-// {
-//     name: 'Ether',
-//     ticker: 'ETH',
-//     isNative: true,
-//     iconBase64: 'data:image/png;base64,...',
-//     units: [
-//         {
-//             name: 'Ether',
-//             ticker: 'ETH',
-//             decimals: 18
-//         },
-//         {
-//             name: 'Gwei',
-//             ticker: 'Gwei',
-//             decimals: 9
-//         },
-//         {
-//             name: 'wei',
-//             ticker: 'wei',
-//             decimals: 0
-//         }
-//    ]
-// }
-
-// Represents a asset unit.
-type AssetUnit = {
-    // Human-friendly name of the asset unit.
-    name: string;
-
-    // Ticker of the asset unit.
-    ticker: string;
-
-    // Number of decimals of the asset unit.
-    decimals: number;
-};
-
-// Asset description.
-type AssetDescription = {
-    // The CAIP-19 ID of the asset.
-    id: Caip19AssetType;
-
-    // Human-friendly name of the asset.
-    name: string;
-
-    // Ticker of the asset.
-    ticker: string;
-
-    // Whether the asset is native to the chain.
-    isNative: boolean;
-
-    // Whether the asset if fungible.
-    isFungible: boolean;
-
-    // Base64 representation of the asset icon.
-    iconBase64: string;
-
-    // List of asset units.
-    units: AssetUnit[];
-};
-
-
-type OnAssetDescriptionReturn = {
-    description: Record<Caip19AssetType, AssetDescription>;
+type OnAssetLookupReturn = {
+    assets: Record<Caip19AssetType, AssetMetadata>;
 };
 ```
 
@@ -236,6 +175,47 @@ fiat:br/currency:brl
 # Japanese Yen
 fiat:jp/currency:jpy
 ```
+
+## Appendix I: Fungible Asset Metadata
+
+The following asset metadata fields for a fungible asset are defined.
+As of the time of creation of this SIP, they are the only possible assets requested by clients.
+
+```typescript
+// Represents an asset unit.
+type AssetUnit = {
+    // Human-friendly name of the asset unit.
+    name: string;
+
+    // Ticker of the asset unit.
+    ticker: string;
+
+    // Number of decimals of the asset unit.
+    decimals: number;
+};
+
+// Fungible asset metadata.
+type FungibleAssetMetadata = {
+    // Human-friendly name of the asset.
+    name: string;
+
+    // Ticker of the asset.
+    ticker: string;
+
+    // Whether the asset is native to the chain.
+    native: boolean;
+
+    // Represents a fungible asset
+    fungible: true;
+
+    // Base64 representation of the asset icon.
+    iconBase64: string;
+
+    // List of asset units.
+    units: AssetUnit[];
+};
+```
+
 
 ## Backwards compatibility
 
