@@ -184,7 +184,7 @@ As of the time of creation of this SIP, they are the only possible assets reques
 
 ```typescript
 // Represents an asset unit.
-type AssetUnit = {
+type FungibleAssetUnit = {
     // Human-friendly name of the asset unit.
     name: string;
 
@@ -213,7 +213,7 @@ type FungibleAssetMetadata = {
     iconBase64: string;
 
     // List of asset units.
-    units: AssetUnit[];
+    units: FungibleAssetUnit[];
 };
 ```
 
