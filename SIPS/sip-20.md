@@ -8,16 +8,15 @@ created: 2023-12-15
 
 ## Abstract
 
-This SIP proposes a new permission that enables Snaps to receive data from external sources and send data back to them.
+This SIP proposes a new permission that enables Snaps to receive data from external sources.
 
 In the initial version, this SIP proposes support for WebSockets, but it can be extended to support other data sources like blockchain events in the future.
 The Snap can specify the external data source in the Snap manifest. The client then connects to the external data source and sends the data to the Snap.
-The Snap can then do whatever it wants with the data.
-The Snap can use RPC method to send data back to the external connection (e.g. websocket connection).
+The Snap can then do whatever it wants with the data, and can send data back to the external source if supported (e.g., a WebSocket connection).
 
 ## Motivation
 
-Snaps are currently limited in their ability to both receive and send data from and to external sources; they have to rely on user actions or cron jobs to fetch data, so they can't react to events in real time. Snaps also cannot use WebSocket connections for bidirectional communication, and are limited to HTTP requests.
+Snaps are currently limited in their ability to communicate with external sources; they have to rely on user actions or cron jobs to fetch data, so they can't react to events in real time. Snaps also cannot use WebSocket connections for bidirectional communication, and are limited to HTTP requests.
 
 ## Specification
 
@@ -114,17 +113,15 @@ The `url` MUST start with `wss://` which is a protocol indicator for secure WebS
 
 ### RPC Methods
 
-This SIP introduces new RPC method for sending data to the external connections.
+This SIP introduces a new RPC method for sending data to the external connections (if supported).
 
 #### snap_sendData
 
 Snap can use `snap_sendData` RPC method to send data specified within request params.
-The proposed RPC method `snap_sendData` SHOULD be a restricted RPC method requiring user consent before usage via the permission system. The RPC method SHOULD only be available to Snaps.
+The proposed RPC method `snap_sendData` SHOULD be a restricted RPC method. The RPC method SHOULD only be available to Snaps.
 Snap MUST specify destination which is URL identifier of an external connection (e.g. websocket). Destination MUST be exact match of some of the URLs defined in manifest's permission caveats within `endowment:external-data`.
 
-The `snap_sendData` JSON-RPC method takes an object as parameters, which has the following properties:
-- `data` (required, `string` or `binary`): A data, which MUST NOT be empty.
-- `destination` (required, `string`): A data destination which is one of the WebSocket URLs specified in the manifest, which MUST NOT be empty.
+The `snap_sendData` JSON-RPC method takes an object as parameters, which has `data` and `destination` properties.
 
 Example:
 ```json
@@ -139,7 +136,7 @@ Example:
 }
 ```
 
-The method returns a `boolean`, `true` in case of successful delivery of a message to the WebSocket, `false` if delivery was unsuccessful.
+The method returns a `boolean`, `true` in case of successful delivery of a message to the WebSocket. If delivery was unsuccessful, error is thrown.
 
 ### Snap implementation
 
@@ -153,50 +150,39 @@ The specification of types of `onExternalData` and its parameters:
 
 ```typescript
 /**
- * A text message received from a WebSocket.
+ * WebSocket text message.
  *
  * @property type - The type of the message.
  * @property message - The message as a string.
  */
-type WebSocketIncomingTextMessage = {
+type WebSocketTextMessage = {
   type: 'text';
   message: string;
 };
 
 /**
- * A binary message received from a WebSocket.
+ * WebSocket binary message.
  *
  * @property type - The type of the message.
  * @property message - The message as an ArrayBuffer.
  */
-type WebSocketIncomingBinaryMessage = {
+type WebSocketBinaryMessage = {
   type: 'binary';
   message: ArrayBuffer;
 };
 
 /**
- * A text message sent to a WebSocket.
+ * Incoming Websocket message.
  *
- * @property type - The type of the message.
- * @property message - The message as a string.
- * @property destination - The destination web socket URL as a string.
  */
-type WebSocketOutgoingTextMessage = {
-    type: 'text';
-    message: string;
-    destination: string;
-};
+type WebSocketIncomingMessage = WebSocketTextMessage | WebSocketBinaryMessage;
 
 /**
- * A binary message sent to a WebSocket.
+ * Outgoing Websocket message.
  *
- * @property type - The type of the message.
- * @property message - The message as an ArrayBuffer.
  * @property destination - The destination web socket URL as a string.
  */
-type WebSocketOutgoingBinaryMessage = {
-    type: 'binary';
-    message: ArrayBuffer;
+type WebSocketOutgoingMessage = WebSocketIncomingMessage & {
     destination: string;
 };
 
@@ -209,7 +195,7 @@ type WebSocketOutgoingBinaryMessage = {
  */
 type WebSocketData = {
   type: 'websocket';
-  message: WebSocketIncomingTextMessage | WebSocketIncomingBinaryMessage;
+  message: WebSocketIncomingMessage;
 };
 
 /**
