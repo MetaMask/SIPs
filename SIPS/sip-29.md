@@ -190,8 +190,8 @@ type FungibleAssetUnit = {
   // Human-friendly name of the asset unit.
   name: string;
 
-  // Ticker of the asset unit.
-  ticker: string;
+  // Ticker symbol of the asset unit.
+  symbol: string;
 
   // Number of decimals of the asset unit.
   decimals: number;
@@ -202,8 +202,8 @@ type FungibleAssetMetadata = {
   // Human-friendly name of the asset.
   name: string;
 
-  // Ticker of the asset.
-  ticker: string;
+  // Ticker symbol of the asset's main unit.
+  symbol: string;
 
   // Whether the asset is native to the chain.
   native: boolean;
