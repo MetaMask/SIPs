@@ -61,6 +61,10 @@ No changes are required to the snap manifest.
 
 ### Client wallet implementation
 
+If a snap requests entropy and includes the `source` parameter, the wallet MUST return entropy corresponding to that source, if it exists.
+If it does not exist, the wallet MUST respond with an error.
+If the request does not include the `source` parameter, the wallet MUST return entropy from the default source.
+
 A client wallet MAY invoke the `keyring.createAccount` method with an `entropySource` parameter in the `options` object.
 
 The `entropySource` parameter MUST be a string which uniquely identifies the entropy source to use. It is not guaranteed to be the same string visible to any other snap, but should always refer to the same source in the context of interactions between the snap and the client wallet.
