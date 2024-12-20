@@ -14,7 +14,7 @@ This SIP proposes additions to entropy retrieval APIs that allows snaps to reque
 
 Interoperability snaps and account management snaps use the methods `snap_getEntropy`, `snap_getBip44Entropy`, `snap_getBip32Entropy`, and `snap_getBip32PublicKey` to generate addresses and other key material.
 
-These methods assume the client contains a single entropy source (the user's primary keyring mnemonic). The proposed API will allow snaps to request entropy from a specific source such as a secondary mnemonic.
+These methods assume the client contains a single entropy source (the user's primary keyring mnemonic). The proposed API changes will allow snaps to request entropy from a specific source such as a secondary mnemonic. A new method `snap_listAvailableEntropySources` will be added to allow snaps to request a list of available entropy sources.
 
 ## Specification
 
@@ -25,6 +25,18 @@ These methods assume the client contains a single entropy source (the user's pri
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",
 "NOT RECOMMENDED", "MAY", and "OPTIONAL" written in uppercase in this document are to be interpreted as described in
 [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt)
+
+### Snap Manifest
+
+A new set permission is added to the snap manifest:
+
+```json
+{
+  "initialPermissions": {
+    "snap_listAvailableEntropySources": {}
+  }
+}
+```
 
 
 ### Common Types
@@ -38,9 +50,7 @@ type Slip10Node = {
   chainCode: string;
   curve: "ed25519" | "secp256k1";
 };
-```
 
-```typescript
 export type BIP44Node = {
   coin_type: number;
   depth: number;
@@ -49,6 +59,12 @@ export type BIP44Node = {
   chainCode: string;
   path: string[];
 };
+
+interface EntropySource {
+  name: string;
+  id: string;
+  type: "mnemonic";
+}
 ```
 
 ### Scope
@@ -61,8 +77,12 @@ No changes are required to the snap manifest.
 
 ### Client wallet implementation
 
-If a snap requests entropy and includes the `source` parameter, the wallet MUST return entropy corresponding to that source, if it exists.
-If it does not exist, the wallet MUST respond with an error.
+If a snap requests a list of available entropy sources, and it has the permission to do so, the wallet MUST return a list of `EntropySource` objects.
+
+If a snap requests entropy and includes the `source` parameter for an entropy source of type `mnemonic`, the wallet MUST return entropy corresponding to that source, if it exists.
+
+If the source does not exist, the wallet MUST respond with an error.
+
 If the request does not include the `source` parameter, the wallet MUST return entropy from the default source.
 
 A client wallet MAY invoke the `keyring.createAccount` method with an `entropySource` parameter in the `options` object.
@@ -73,7 +93,23 @@ The `entropySource` parameter MUST be a string which uniquely identifies the ent
 
 If a snap is asked to create an account via `keyring.createAccount`, and the `entropySource` parameter is provided, and the snap requires entropy to create an account,the snap SHOULD request the entropy from the specified source.
 
-### RPC Methods
+### New RPC Methods
+
+#### `snap_listAvailableEntropySources`
+
+The method returns an array of `EntropySource` objects, each representing an available entropy source. It is intended that the snap will display this list to the user.
+
+```typescript
+const entropySources = await snap.request({
+  method: "snap_listAvailableEntropySources",
+});
+// [
+//   { name: "Phrase 1", id: "phrase-1" },
+//   { name: "Phrase 2", id: "phrase-2" },
+// ]
+```
+
+### Existing RPC Methods
 
 #### `snap_getEntropy`
 
