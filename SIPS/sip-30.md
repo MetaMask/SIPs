@@ -14,7 +14,7 @@ This SIP proposes additions to entropy retrieval APIs that allows snaps to reque
 
 Interoperability snaps and account management snaps use the methods `snap_getEntropy`, `snap_getBip44Entropy`, `snap_getBip32Entropy`, and `snap_getBip32PublicKey` to generate addresses and other key material.
 
-These methods assume the client contains a single entropy source (the user's primary keyring mnemonic). The proposed API changes will allow snaps to request entropy from a specific source such as a secondary mnemonic. A new method `snap_listAvailableEntropySources` will be added to allow snaps to request a list of available entropy sources.
+These methods assume the client contains a single entropy source (the user's primary keyring mnemonic). The proposed API changes will allow snaps to request entropy from a specific source such as a secondary mnemonic. A new method `snap_listEntropySources` will be added to allow snaps to request a list of available entropy sources.
 
 ## Specification
 
@@ -33,7 +33,7 @@ A new set permission is added to the snap manifest:
 ```json
 {
   "initialPermissions": {
-    "snap_listAvailableEntropySources": {}
+    "snap_listEntropySources": {}
   }
 }
 ```
@@ -105,13 +105,13 @@ If a snap is asked to create an account via `keyring.createAccount`, and the `en
 
 ### New RPC Methods
 
-#### `snap_listAvailableEntropySources`
+#### `snap_listEntropySources`
 
 The method returns an array of `EntropySource` objects, each representing an available entropy source. The Snap MAY choose to display this list to the user.
 
 ```typescript
 const entropySources = await snap.request({
-  method: "snap_listAvailableEntropySources",
+  method: "snap_listEntropySources",
 });
 // [
 //   { name: "Phrase 1", id: "phrase-1" },
