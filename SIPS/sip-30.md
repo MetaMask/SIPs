@@ -40,6 +40,7 @@ A new set permission is added to the snap manifest:
 
 
 ### Common Types
+
 ```typescript
 type Slip10Node = {
   depth: number;
@@ -64,6 +65,7 @@ interface EntropySource {
   name: string;
   id: string;
   type: "mnemonic";
+  primary: boolean;
 }
 ```
 
@@ -75,29 +77,37 @@ This SIP applies to snaps that implement the [Keyring API][keyring-api] and any 
 
 No changes are required to the snap manifest.
 
-### Client wallet implementation
+### Client Implementation
+
+#### Entropy Sources
 
 If a snap requests a list of available entropy sources, and it has the permission to do so, the wallet MUST return a list of `EntropySource` objects.
+
+The client MUST have a primary entropy source, which is used when no source is specified. In the list of available entropy sources, the primary source MUST be marked as `primary: true`.
+
+#### Handling Entropy Requests
 
 If a snap requests entropy and includes the `source` parameter for an entropy source of type `mnemonic`, the wallet MUST return entropy corresponding to that source, if it exists.
 
 If the source does not exist, the wallet MUST respond with an error.
 
-If the request does not include the `source` parameter, the wallet MUST return entropy from the default source.
+If the request does not include the `source` parameter, the wallet MUST return entropy from the primary source.
 
-A client wallet MAY invoke the `keyring.createAccount` method with an `entropySource` parameter in the `options` object.
+#### Creating Accounts
 
-The `entropySource` parameter MUST be a string which uniquely identifies the entropy source to use. It is not guaranteed to be the same string visible to any other snap, but should always refer to the same source in the context of interactions between the snap and the client wallet.
+A client  MAY invoke the `keyring.createAccount` method with an `entropySource` parameter in the `options` object.
 
-#### Snap implementation
+The `entropySource` parameter MUST be a string which uniquely identifies the entropy source to use. It is not guaranteed to be the same string visible to any other snap, but should always refer to the same source in the context of interactions between the snap and the client.
 
-If a snap is asked to create an account via `keyring.createAccount`, and the `entropySource` parameter is provided, and the snap requires entropy to create an account,the snap SHOULD request the entropy from the specified source.
+### Snap Implementation
+
+If a snap is asked to create an account via `keyring.createAccount`, and the `entropySource` parameter is provided, and the snap requires entropy to create an account, the snap SHOULD request the entropy from the specified source.
 
 ### New RPC Methods
 
 #### `snap_listAvailableEntropySources`
 
-The method returns an array of `EntropySource` objects, each representing an available entropy source. It is intended that the snap will display this list to the user.
+The method returns an array of `EntropySource` objects, each representing an available entropy source. The Snap MAY choose to display this list to the user.
 
 ```typescript
 const entropySources = await snap.request({
@@ -116,7 +126,7 @@ const entropySources = await snap.request({
 ##### Parameters
 An object containing:
 
-- `version` - The number 2. Version `2` is the first version that allows specifying a source ID.
+- `version` - The number 1
 - `salt` (optional) - An arbitrary string to be used as a salt for the entropy. This can be used to generate different entropy for different purposes.
 - `source` (optional) - The ID of the entropy source to use. If not specified, the default entropy source will be used.
 
@@ -171,7 +181,7 @@ const node = await snap.request({
 // }
 ```
 
-#### `snap_getBip32PublicKeyFromSource`
+#### `snap_getBip32PublicKey`
 
 ##### Parameters
 
@@ -188,7 +198,7 @@ The public key as a hexadecimal string.
 
 ```typescript
 const publicKey = await snap.request({
-  method: "snap_getBip32PublicKeyFromSource",
+  method: "snap_getBip32PublicKey",
   params: {
     path: ["m", "44", "0", "0", "0"],
     source: "1234-5678-9012-3456-7890",
