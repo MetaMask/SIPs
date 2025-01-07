@@ -36,7 +36,7 @@ type Slip10Node = {
   privateKey: string;
   publicKey: string;
   chainCode: string;
-  curve: "ed25519" | "secp256k1";
+  curve: "ed25519" |  "ed25519Bip32" | "secp256k1"
 };
 
 export type BIP44Node = {
@@ -117,7 +117,7 @@ An object containing:
 
 - `version` - The number 1
 - `salt` (optional) - An arbitrary string to be used as a salt for the entropy. This can be used to generate different entropy for different purposes.
-- `source` (optional) - The ID of the entropy source to use. If not specified, the default entropy source will be used.
+- `source` (optional) - The ID of the entropy source to use. If not specified, the primary entropy source will be used.
 
 #### Returns
 The entropy as a hexadecimal string.
@@ -140,9 +140,9 @@ const entropy = await snap.request({
 
 ##### Parameters
 
-- `path`: An array starting with `m` containing the BIP-32 derivation path of the key to retrieve.
-- `source`: The ID of the entropy source to use.
-- `curve`: The curve to use - `secp256k1` or `ed25519`.
+- `path` - An array starting with `m` containing the BIP-32 derivation path of the key to retrieve.
+- `curve` - The curve to use - `secp256k1`, `ed25519` or `ed25519Bip32`.
+- `source` (optional) - The ID of the entropy source to use.
 
 ##### Returns
 
@@ -174,10 +174,10 @@ const node = await snap.request({
 
 ##### Parameters
 
-- `path`: An array starting with `m` containing the BIP-32 derivation path of the key to retrieve.
-- `source`: The ID of the entropy source to use.
-- `curve`: The curve to use - `secp256k1` or `ed25519`.
-- `compressed`: Whether to return the public key in compressed format. (defaults to `false`)
+- `path` An array starting with `m` containing the BIP-32 derivation path of the key to retrieve.
+- `curve` - The curve to use - `secp256k1`, `ed25519` or `ed25519Bip32`.
+- `compressed` (optional) - Whether to return the public key in compressed format. (defaults to `false`)
+- `source` (optional) - The ID of the entropy source to use.
 
 ##### Returns
 
@@ -203,8 +203,8 @@ const publicKey = await snap.request({
 ##### Parameters
 An object containing:
 
-- `coin_type`: The BIP-44 coin type value of the node.
-- `source` (optional) - The ID of the entropy source to use. If not specified, the default entropy source will be used.
+- `coin_type` - The BIP-44 coin type value of the node.
+- `source` (optional) - The ID of the entropy source to use. If not specified, the primary entropy source will be used.
 
 ##### Returns
 A `BIP44Node` object representing the BIP-44 `coin_type` HD tree node and containing its corresponding key material.
