@@ -29,14 +29,14 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 ### Common Types
 
 ```typescript
-type Slip10Node = {
+type SLIP10Node = {
   depth: number;
   parentFingerprint: number;
   index: number;
   privateKey: string;
   publicKey: string;
   chainCode: string;
-  curve: "ed25519" |  "ed25519Bip32" | "secp256k1"
+  curve: "ed25519" |  "ed25519Bip32" | "secp256k1";
 };
 
 export type BIP44Node = {
@@ -48,7 +48,7 @@ export type BIP44Node = {
   path: string[];
 };
 
-interface EntropySource {
+export type EntropySource {
   name: string;
   id: string;
   type: "mnemonic";
@@ -84,7 +84,7 @@ If the request does not include the `source` parameter, the wallet MUST return e
 
 #### Creating Accounts
 
-A client  MAY invoke the `keyring.createAccount` method with an `entropySource` parameter in the `options` object.
+A client MAY invoke the `keyring.createAccount` method with an `entropySource` parameter in the `options` object.
 
 The `entropySource` parameter MUST be a string which uniquely identifies the entropy source to use. It is not guaranteed to be the same string visible to any other snap, but should always refer to the same source in the context of interactions between the snap and the client.
 
@@ -96,7 +96,7 @@ If a snap is asked to create an account via `keyring.createAccount`, and the `en
 
 #### `snap_listEntropySources`
 
-The method returns an array of `EntropySource` objects, each representing an available entropy source. The Snap MAY choose to display this list to the user.
+The method returns an array of `EntropySource` objects, each representing an available entropy source (including the primary source). The Snap MAY choose to display this list to the user.
 
 ```typescript
 const entropySources = await snap.request({
@@ -115,7 +115,7 @@ const entropySources = await snap.request({
 ##### Parameters
 An object containing:
 
-- `version` - The number 1
+- `version` - The number 1.
 - `salt` (optional) - An arbitrary string to be used as a salt for the entropy. This can be used to generate different entropy for different purposes.
 - `source` (optional) - The ID of the entropy source to use. If not specified, the primary entropy source will be used.
 
@@ -128,7 +128,7 @@ The entropy as a hexadecimal string.
 const entropy = await snap.request({
   method: "snap_getEntropy",
   params: {
-    version: 2,
+    version: 1,
     salt: "my-salt",
     source: "1234-5678-9012-3456-7890",
   },
@@ -141,7 +141,7 @@ const entropy = await snap.request({
 ##### Parameters
 
 - `path` - An array starting with `m` containing the BIP-32 derivation path of the key to retrieve.
-- `curve` - The curve to use - `secp256k1`, `ed25519` or `ed25519Bip32`.
+- `curve` - The curve to use - `ed25519`, `ed25519Bip32` or `secp256k1`.
 - `source` (optional) - The ID of the entropy source to use.
 
 ##### Returns
@@ -175,7 +175,7 @@ const node = await snap.request({
 ##### Parameters
 
 - `path` An array starting with `m` containing the BIP-32 derivation path of the key to retrieve.
-- `curve` - The curve to use - `secp256k1`, `ed25519` or `ed25519Bip32`.
+- `curve` - The curve to use - `ed25519` or `ed25519Bip32`, `secp256k1`.
 - `compressed` (optional) - Whether to return the public key in compressed format. (defaults to `false`)
 - `source` (optional) - The ID of the entropy source to use.
 
@@ -201,12 +201,14 @@ const publicKey = await snap.request({
 #### `snap_getBip44Entropy`
 
 ##### Parameters
+
 An object containing:
 
 - `coin_type` - The BIP-44 coin type value of the node.
 - `source` (optional) - The ID of the entropy source to use. If not specified, the primary entropy source will be used.
 
 ##### Returns
+
 A `BIP44Node` object representing the BIP-44 `coin_type` HD tree node and containing its corresponding key material.
 
 ##### Example
@@ -228,7 +230,6 @@ const node = await snap.request({
 //   path: ['m', '44', '0', '0', '0'],
 // }
 ```
-
 
 ## Copyright
 
