@@ -26,19 +26,6 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 "NOT RECOMMENDED", "MAY", and "OPTIONAL" written in uppercase in this document are to be interpreted as described in
 [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt)
 
-### Snap Manifest
-
-A new set permission is added to the snap manifest:
-
-```json
-{
-  "initialPermissions": {
-    "snap_listEntropySources": {}
-  }
-}
-```
-
-
 ### Common Types
 
 ```typescript
@@ -81,7 +68,9 @@ No changes are required to the snap manifest.
 
 #### Entropy Sources
 
-If a snap requests a list of available entropy sources, and it has the permission to do so, the wallet MUST return a list of `EntropySource` objects.
+Permission to request `snap_listEntropySources` is endowed on any snap that has the permissions `snap_getEntropy`, `snap_getBip44Entropy` and/or `snap_getBip32Entropy`.
+
+If a snap requests a list of available entropy sources, the wallet MUST return a list of `EntropySource` objects.
 
 The client MUST have a primary entropy source, which is used when no source is specified. In the list of available entropy sources, the primary source MUST be marked as `primary: true`.
 
