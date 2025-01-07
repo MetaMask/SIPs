@@ -48,7 +48,7 @@ export type BIP44Node = {
   path: string[];
 };
 
-export type EntropySource {
+export type EntropySource = {
   name: string;
   id: string;
   type: "mnemonic";
