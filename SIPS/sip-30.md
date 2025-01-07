@@ -68,7 +68,7 @@ No changes are required to the snap manifest.
 
 #### Entropy Sources
 
-Permission to request `snap_listEntropySources` is endowed on any snap that has the permissions `snap_getEntropy`, `snap_getBip44Entropy` and/or `snap_getBip32Entropy`.
+Permission to request `snap_listEntropySources` is endowed on any snap that has the permissions `snap_getEntropy`, `snap_getBip44Entropy`, `snap_getBip32Entropy` and/or `snap_getBip32PublicKey`.
 
 If a snap requests a list of available entropy sources, the wallet MUST return a list of `EntropySource` objects.
 
@@ -142,11 +142,11 @@ const entropy = await snap.request({
 
 - `path` - An array starting with `m` containing the BIP-32 derivation path of the key to retrieve.
 - `curve` - The curve to use - `ed25519`, `ed25519Bip32` or `secp256k1`.
-- `source` (optional) - The ID of the entropy source to use.
+- `source` (optional) - The ID of the entropy source to use. If not specified, the primary entropy source will be used.
 
 ##### Returns
 
-A `Slip10Node` object representing the BIP-32 HD tree node and containing its corresponding key material.
+A `SLIP10Node` object representing the BIP-32 HD tree node and containing its corresponding key material.
 
 ##### Example
 
@@ -177,7 +177,7 @@ const node = await snap.request({
 - `path` An array starting with `m` containing the BIP-32 derivation path of the key to retrieve.
 - `curve` - The curve to use - `ed25519` or `ed25519Bip32`, `secp256k1`.
 - `compressed` (optional) - Whether to return the public key in compressed format. (defaults to `false`)
-- `source` (optional) - The ID of the entropy source to use.
+- `source` (optional) - The ID of the entropy source to use. If not specified, the primary entropy source will be used.
 
 ##### Returns
 
