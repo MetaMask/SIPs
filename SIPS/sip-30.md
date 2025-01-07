@@ -70,17 +70,17 @@ No changes are required to the snap manifest.
 
 Permission to request `snap_listEntropySources` is endowed on any snap that has the permissions `snap_getEntropy`, `snap_getBip44Entropy`, `snap_getBip32Entropy` and/or `snap_getBip32PublicKey`.
 
-If a snap requests a list of available entropy sources, the wallet MUST return a list of `EntropySource` objects.
+If a snap requests a list of available entropy sources, the client MUST return a list of `EntropySource` objects.
 
 The client MUST have a primary entropy source, which is used when no source is specified. In the list of available entropy sources, the primary source MUST be marked as `primary: true`.
 
 #### Handling Entropy Requests
 
-If a snap requests entropy and includes the `source` parameter for an entropy source of type `mnemonic`, the wallet MUST return entropy corresponding to that source, if it exists.
+If a snap requests entropy and includes the `source` parameter for an entropy source of type `mnemonic`, the client MUST return entropy corresponding to that source, if it exists.
 
-If the source does not exist, the wallet MUST respond with an error.
+If the source does not exist, the client MUST respond with an error.
 
-If the request does not include the `source` parameter, the wallet MUST return entropy from the primary source.
+If the request does not include the `source` parameter, the client MUST return entropy from the primary source.
 
 #### Creating Accounts
 
