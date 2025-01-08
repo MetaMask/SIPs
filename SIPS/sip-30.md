@@ -113,6 +113,7 @@ const entropySources = await snap.request({
 #### `snap_getEntropy`
 
 ##### Parameters
+
 An object containing:
 
 - `version` - The number 1.
@@ -120,6 +121,8 @@ An object containing:
 - `source` (optional) - The ID of the entropy source to use. If not specified, the primary entropy source will be used.
 
 #### Returns
+
+
 The entropy as a hexadecimal string.
 
 #### Example
