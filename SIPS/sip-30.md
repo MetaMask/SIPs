@@ -122,7 +122,6 @@ An object containing:
 
 #### Returns
 
-
 The entropy as a hexadecimal string.
 
 #### Example
