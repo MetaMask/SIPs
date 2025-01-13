@@ -70,7 +70,7 @@ import { OnAssetLookupHandler } from "@metamask/snaps-sdk";
 export const onAssetLookup: OnAssetLookupHandler = async ({
   assets
 }) => {
-  const assetsMetadata = /* Get metadata */;
+  const assetsMetadata = /* Get metadata for given `assets` */;
   return { assets: assetsMetadata };
 };
 ```
