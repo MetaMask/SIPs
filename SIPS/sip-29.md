@@ -54,7 +54,7 @@ This permission is specified as follows in `snap.manifest.json` files:
 }
 ```
 
-`scopes` - A non-empty array of CAIP-2 chain IDs that the snap supports. This field is useful for a client in order to avoid unnecessary overhead.
+`scopes` - A non-empty array of CAIP-2 chain IDs that the Snap supports. This field is useful for a client in order to avoid unnecessary overhead.
 
 ### Snap Implementation
 
