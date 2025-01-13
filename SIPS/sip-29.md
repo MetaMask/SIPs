@@ -60,7 +60,7 @@ This permission is specified as follows in `snap.manifest.json` files:
 
 Two methods are defined in the Snap Assets API:
 
-Any Snap that wishes to provide asset information **MUST** implement the following API:
+Any Snap that wishes to provide asset information MUST implement the following API:
 
 #### Get Asset Metadata
 
