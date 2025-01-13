@@ -99,7 +99,7 @@ import { OnAssetConversionHandler } from "@metamask/snaps-sdk";
 export const onAssetConversion: OnAssetConversionHandler = async ({
   conversions
 }) => {
-  const conversionRates = /* Get conversion rate */;
+  const conversionRates = /* Get conversion rate for given `conversions` */;
   return { conversionRates };
 };
 ```
