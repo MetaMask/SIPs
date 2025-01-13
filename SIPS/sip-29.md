@@ -144,7 +144,7 @@ type OnAssetConversionReturn = {
 
 ### Fiat currency representation
 
-We SHOULD use CAIP-19 to represent fiat currencies as well. This approach
+We SHOULD use [CAIP-19][caip-19] to represent fiat currencies as well. This approach
 provides a consistent way to represent all assets, making the API more
 predictable. The proposed format is:
 
