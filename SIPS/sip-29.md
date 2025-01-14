@@ -86,7 +86,7 @@ interface OnAssetLookupArgs {
 The type for an `onAssetLookup` handler function’s return value is:
 
 ```typescript
-type OnAssetLookupReturn = {
+type OnAssetLookupResponse = {
   assets: Record<Caip19AssetType, AssetMetadata>;
 };
 ```
