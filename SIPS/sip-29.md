@@ -217,6 +217,9 @@ type FungibleAssetMetadata = {
   // List of asset units.
   units: FungibleAssetUnit[];
 };
+
+// Represents the metadata of an asset.
+type AssetMetadata = FungibleAssetMetadata
 ```
 
 ## Backwards compatibility
