@@ -222,12 +222,6 @@ type FungibleAssetMetadata = {
 type AssetMetadata = FungibleAssetMetadata
 ```
 
-## Backwards compatibility
-
-Any SIPs that break backwards compatibility MUST include a section describing
-those incompatibilities and their severity. The SIP SHOULD describe how the
-author plans on proposes to deal with such these incompatibilities.
-
 ## Copyright
 
 Copyright and related rights waived via [CC0](../LICENSE).
