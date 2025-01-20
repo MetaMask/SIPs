@@ -78,7 +78,7 @@ export const onAssetLookup: OnAssetLookupHandler = async ({
 The type for an `onAssetLookup` handler function’s arguments is:
 
 ```typescript
-interface OnAssetLookupArgs {
+interface OnAssetLookupArguments {
   assets: Caip19AssetType[];
 }
 ```
