@@ -112,7 +112,7 @@ type Conversion = {
   to: Caip19AssetType;
 };
 
-type OnAssetConversionArgs = {
+type OnAssetConversionArguments = {
   conversions: Conversion[];
 };
 ```
