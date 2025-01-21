@@ -64,10 +64,12 @@ Any Snap that wishes to provide asset information MUST implement the following A
 
 #### Get Asset Metadata
 
-```typescript
-import { OnAssetLookupHandler } from "@metamask/snaps-sdk";
+`Caip19AssetType` -  A string that represents an asset using the [CAIP-19][caip-19] standard.
 
-export const onAssetLookup: OnAssetLookupHandler = async ({
+```typescript
+import { OnAssetsLookupHandler } from "@metamask/snaps-sdk";
+
+export const onAssetsLookup: OnAssetsLookupHandler = async ({
   assets
 }) => {
   const assetsMetadata = /* Get metadata for given `assets` */;
@@ -75,18 +77,18 @@ export const onAssetLookup: OnAssetLookupHandler = async ({
 };
 ```
 
-The type for an `onAssetLookup` handler function’s arguments is:
+The type for an `onAssetsLookup` handler function’s arguments is:
 
 ```typescript
-interface OnAssetLookupArguments {
+interface OnAssetsLookupArguments {
   assets: Caip19AssetType[];
 }
 ```
 
-The type for an `onAssetLookup` handler function’s return value is:
+The type for an `onAssetsLookup` handler function’s return value is:
 
 ```typescript
-type OnAssetLookupResponse = {
+type OnAssetsLookupResponse = {
   assets: Record<Caip19AssetType, AssetMetadata>;
 };
 ```
@@ -94,9 +96,9 @@ type OnAssetLookupResponse = {
 #### Get Asset Conversion Rate
 
 ```typescript
-import { OnAssetConversionHandler } from "@metamask/snaps-sdk";
+import { OnAssetsConversionHandler } from "@metamask/snaps-sdk";
 
-export const onAssetConversion: OnAssetConversionHandler = async ({
+export const onAssetsConversion: OnAssetsConversionHandler = async ({
   conversions
 }) => {
   const conversionRates = /* Get conversion rate for given `conversions` */;
@@ -104,7 +106,7 @@ export const onAssetConversion: OnAssetConversionHandler = async ({
 };
 ```
 
-The type for an `onAssetConversion` handler function’s arguments is:
+The type for an `onAssetsConversion` handler function’s arguments is:
 
 ```typescript
 type Conversion = {
@@ -112,17 +114,17 @@ type Conversion = {
   to: Caip19AssetType;
 };
 
-type OnAssetConversionArguments = {
+type OnAssetsConversionArguments = {
   conversions: Conversion[];
 };
 ```
 
-The type for an `onAssetConversion` handler function’s return value is:
+The type for an `onAssetsConversion` handler function’s return value is:
 
 ```typescript
 type AssetConversionRate = {
-  // The rate of conversion from the source asset to the target asset. It
-  // means that 1 unit of the `from` asset should be converted to this amount
+  // The rate of conversion from the source asset to the target asset represented as a decimal number in a string.
+  // It means that 1 unit of the `from` asset should be converted to this amount
   // of the `to` asset.
   rate: string;
 
@@ -137,46 +139,9 @@ type FromAsset = Conversion["from"];
 
 type ToAsset = Conversion["to"];
 
-type OnAssetConversionResponse = {
+type OnAssetsConversionResponse = {
   conversionRates: Record<From, Record<To, AssetConversionRate>>;
 };
-```
-
-### Fiat currency representation
-
-We SHOULD use [CAIP-19][caip-19] to represent fiat currencies as well. This approach
-provides a consistent way to represent all assets, making the API more
-predictable. The proposed format is:
-
-```
-asset_type:        chain_id + "/" + asset_namespace + ":" + asset_reference
-chain_id:          namespace + ":" + reference
-namespace:         "fiat"
-reference:         country_code
-asset_namespace:   "currency"
-asset_reference:   currency_code
-```
-
-The country code is a two-letter lowercase code, as defined by ISO 3166-1
-alpha-2, representing the emitter country, with the exception of the European
-Union, which is represented by "eu".
-
-The currency code is a three-letter uppercase code as defined by ISO 4217.
-
-Examples:
-
-```
-# Euro
-fiat:eu/currency:eur
-
-# United States Dollar
-fiat:us/currency:usd
-
-# Brazilian Real
-fiat:br/currency:brl
-
-# Japanese Yen
-fiat:jp/currency:jpy
 ```
 
 ## Appendix I: Fungible Asset Metadata
