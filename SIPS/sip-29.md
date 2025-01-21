@@ -54,7 +54,7 @@ This permission is specified as follows in `snap.manifest.json` files:
 }
 ```
 
-`scopes` - A non-empty array of CAIP-2 chain IDs that the Snap supports. This field is useful for a client in order to avoid unnecessary overhead.
+`scopes` - A non-empty array of CAIP-2 chain IDs that the Snap supports. This field is useful for a client in order to avoid unnecessary overhead. Any asset returned by the Snap must be from one of the supported chains otherwise it will get filtered out.
 
 ### Snap Implementation
 
@@ -62,7 +62,7 @@ Two methods are defined in the Snap Assets API:
 
 Any Snap that wishes to provide asset information MUST implement the following API:
 
-#### Get Asset Metadata
+#### Get Assets Metadata
 
 `Caip19AssetType` -  A string that represents an asset using the [CAIP-19][caip-19] standard.
 
@@ -93,7 +93,7 @@ type OnAssetsLookupResponse = {
 };
 ```
 
-#### Get Asset Conversion Rate
+#### Get Assets Conversion Rate
 
 ```typescript
 import { OnAssetsConversionHandler } from "@metamask/snaps-sdk";
@@ -132,7 +132,7 @@ type AssetConversionRate = {
   conversionTime: number;
 
   // The UNIX timestamp of when the conversion rate will expire.
-  expirationTime: number;
+  expirationTime?: number;
 };
 
 type FromAsset = Conversion["from"];
@@ -170,14 +170,11 @@ type FungibleAssetMetadata = {
   // Ticker symbol of the asset's main unit.
   symbol: string;
 
-  // Whether the asset is native to the chain.
-  native: boolean;
-
   // Represents a fungible asset
   fungible: true;
 
-  // Base64 representation of the asset icon.
-  iconBase64: string;
+  // data URI or URL representation of the asset icon.
+  iconUrl: string;
 
   // List of asset units.
   units: FungibleAssetUnit[];
