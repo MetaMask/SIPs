@@ -54,7 +54,7 @@ This permission is specified as follows in `snap.manifest.json` files:
 }
 ```
 
-`scopes` - A non-empty array of CAIP-2 chain IDs that the Snap supports. This field is useful for a client in order to avoid unnecessary overhead. Any asset returned by the Snap must be from one of the supported chains otherwise it will get filtered out.
+`scopes` - A non-empty array of CAIP-2 chain IDs that the Snap supports. This field is useful for a client in order to avoid unnecessary overhead. Any asset returned by the Snap MUST be filtered out if it isn't part of the supported scopes.
 
 ### Snap Implementation
 
@@ -64,7 +64,7 @@ Any Snap that wishes to provide asset information MUST implement the following A
 
 #### Get Assets Metadata
 
-`Caip19AssetType` -  A string that represents an asset using the [CAIP-19][caip-19] standard.
+`Caip19AssetType` - A string that represents an asset using the [CAIP-19][caip-19] standard.
 
 ```typescript
 import { OnAssetsLookupHandler } from "@metamask/snaps-sdk";
@@ -173,7 +173,7 @@ type FungibleAssetMetadata = {
   // Represents a fungible asset
   fungible: true;
 
-  // data URI or URL representation of the asset icon.
+  // Base64 data URI or URL representation of the asset icon.
   iconUrl: string;
 
   // List of asset units.
