@@ -4,6 +4,7 @@ title: Snap Assets API
 status: Draft
 author: Daniel Rocha (@danroc), Guillaume Roux (@GuillaumeRx)
 created: 2024-12-05
+updated: 2025-01-25
 ---
 
 ## Abstract
@@ -89,7 +90,7 @@ The type for an `onAssetsLookup` handler function’s return value is:
 
 ```typescript
 type OnAssetsLookupResponse = {
-  assets: Record<Caip19AssetType, AssetMetadata>;
+  assets: Record<Caip19AssetType, AssetMetadata | null>;
 };
 ```
 
@@ -140,7 +141,7 @@ type FromAsset = Conversion["from"];
 type ToAsset = Conversion["to"];
 
 type OnAssetsConversionResponse = {
-  conversionRates: Record<From, Record<To, AssetConversionRate>>;
+  conversionRates: Record<From, Record<To, AssetConversionRate | null>>;
 };
 ```
 
