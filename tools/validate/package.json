@@ -1,7 +1,5 @@
 {
   "name": "validate",
-  "packageManager": "yarn@3.2.1",
-  "version": "1.0",
   "type": "module",
   "bin": "dist/main.js",
   "private": true,
@@ -47,15 +45,12 @@
     "superstruct": "^0.16.5",
     "to-vfile": "^7.2.3",
     "unified": "^10.1.2",
-    "unified-lint-rule": "patch:unified-lint-rule@npm:2.1.1#.yarn/patches/unified-lint-rule-npm-2.1.1-237c9e9f5f.patch",
+    "unified-lint-rule": "^2.1.1",
     "unist-util-select": "^4.0.1",
     "unist-util-visit": "^4.1.1",
     "vfile": "^5.3.5",
     "vfile-location": "^4.0.1",
     "yaml": "^2.2.2",
     "yargs": "^17.5.1"
-  },
-  "resolutions": {
-    "unified-lint-rule@2.1.1": "patch:unified-lint-rule@npm:2.1.1#.yarn/patches/unified-lint-rule-npm-2.1.1-237c9e9f5f.patch"
   }
 }
