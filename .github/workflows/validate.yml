@@ -25,9 +25,9 @@ jobs:
       - name: Install dependencies
         run: yarn --immutable --immutable-cache
       - name: Build
-        run: yarn build
+        run: yarn workspace validate build
       - name: Validate all SIPs
-        run: yarn lint
+        run: yarn workspace validate lint
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_PULL_REQUEST: ${{ github.event.pull_request.number }}
