@@ -2,8 +2,8 @@ name: Validate SIP
 
 on:
   pull_request:
-    paths:
-      - "SIPS/**"
+#    paths:
+#      - "SIPS/**"
 
 jobs:
   validate:
