@@ -17,7 +17,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Setup Node
+      - name: Install Corepack via Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+      - name: Install Yarn
+        run: corepack enable
+      - name: Install Node.js and restore Yarn cache
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
