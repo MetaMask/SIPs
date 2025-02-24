@@ -63,16 +63,10 @@ const rule = lintRule<Root>("sip:bad-link", async (tree, file) => {
     const fetch = fetchWithLog(node);
     let response = await fetch(url, { method: "HEAD" });
     debug("Fetch responded", "url:", url, "is ok:", response.ok);
-    const headStatus = response.status;
     if (!response.ok) {
       debug("Fetch (HEAD) not ok, trying GET", url, response.status);
       response = await fetch(url);
-      if (response.ok) {
-        file.info(
-          `The server responded with ${headStatus} using HEAD for url "${url}" but succeeded using GET. That server is not following http specification.`,
-          node
-        );
-      } else {
+      if (!response.ok) {
         file.message(
           `Url "${url}" is invalid, the server responded with ${response.status}`,
           node

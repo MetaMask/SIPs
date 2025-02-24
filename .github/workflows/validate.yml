@@ -9,25 +9,28 @@ jobs:
   validate:
     name: Validate SIPs
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./tools/validate
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Setup Node
+      - name: Install Corepack via Node
         uses: actions/setup-node@v4
         with:
-          node-version-file: './tools/validate/.nvmrc'
+          node-version-file: '.nvmrc'
+      - name: Install Yarn
+        run: corepack enable
+      - name: Install Node.js and restore Yarn cache
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
           cache: yarn
       - name: Install dependencies
-        run: yarn --immutable --immutable-cache
+        run: yarn --immutable
       - name: Build
-        run: yarn build
+        run: yarn workspace validate build
       - name: Validate all SIPs
-        run: yarn lint
+        run: yarn workspace validate lint
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_PULL_REQUEST: ${{ github.event.pull_request.number }}
