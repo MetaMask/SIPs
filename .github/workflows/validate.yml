@@ -10,23 +10,10 @@ jobs:
     name: Validate SIPs
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout and setup environment
+        uses: MetaMask/action-checkout-and-setup@v1
         with:
-          fetch-depth: 0
-      - name: Install Corepack via Node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-      - name: Install Yarn
-        run: corepack enable
-      - name: Install Node.js and restore Yarn cache
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: yarn
-      - name: Install dependencies
-        run: yarn --immutable
+          is-high-risk-environment: true
       - name: Build
         run: yarn workspace validate build
       - name: Validate all SIPs
