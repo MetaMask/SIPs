@@ -134,6 +134,50 @@ type AssetConversionRate = {
 
   // The UNIX timestamp of when the conversion rate will expire.
   expirationTime?: number;
+
+  // Market data for the asset pair.
+  //
+  // Example
+  //
+  // {
+  //   "marketCap": "226618670785",
+  //   "totalVolume": "226618670785",
+  //   "circulatingSupply": "226618670785",
+  //   "allTimeHigh": "226618670785",
+  //   "allTimeLow": "226618670785",
+  //   "historical": {
+  //     "P1D": {
+  //       "pricePercentChange": 0.1,
+  //       "prices": [
+  //         [163, "226618670785"],
+  //         [162, "226618670785"],
+  //         ...
+  //       ]
+  //     },
+  //     "P1W": {
+  //       "pricePercentChange": 0.1,
+  //       "prices": [
+  //         [163, "226618670785"],
+  //         [162, "226618670785"],
+  //         ...
+  //       ]
+  //     },
+  // }
+  marketData?: {
+    marketCap: string,
+    totalVolume: string,
+    circulatingSupply: string,
+    allTimeHigh: string,
+    allTimeLow: string,
+    historical?: {
+      // The interval key MUST follow the ISO 8601 duration format. The `all`
+      // value is a special interval that represents all available data.
+      [interval: string]: {
+        pricePercentChange?: number;
+        prices?: [number, string][]; // Timestamp (UNIX time), price
+      };
+    };
+  };
 };
 
 type FromAsset = Conversion["from"];
