@@ -45,12 +45,13 @@ The `snap_trackEvent` method is defined as follows:
   - `name: string` - The name of the event to track.
 
   - `properties: Record<string, Json>` - (**Optional**) Custom values to track.
-    Keys in this object must be `snake_case`.
+    The client MUST enforce that all keys in this object are in the
+    `snake_case` format.
 
   - `sensitiveProperties: Record<string, Json>` - (**Optional**) Sensitive
     values to track. These properties will be sent in an additional event that
-    excludes the user's `metaMetricsId`. Keys in this object must be in
-    `snake_case`.
+    excludes the user's `metaMetricsId`. The client MUST enforce that all keys
+    in this object are in the `snake_case` format.
 
 #### Returns
 
