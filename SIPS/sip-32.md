@@ -84,11 +84,6 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 in uppercase in this document are to be interpreted as described in [RFC
 2119](https://www.ietf.org/rfc/rfc2119.txt)
 
-## Backwards compatibility
-
-Any SIPs that break backwards compatibility MUST include a section describing
-those incompatibilities and their severity. The SIP SHOULD describe how the
-author plans on proposes to deal with such these incompatibilities.
 
 ## Copyright
 
