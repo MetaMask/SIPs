@@ -27,12 +27,11 @@ analytics or tracking events. This proposal aims to:
 
 ## Specification
 
-> The `snap_trackEvent` method allows pre-installed Snaps to submit structured
-> tracking events to the client. It is the client’s responsibility to process
-> these events accordingly.
->
-> It's the client's responsibility to ensure that only pre-installed Snaps can
-> call this method.
+The `snap_trackEvent` method allows pre-installed Snaps to submit structured
+tracking events to the client. It is the client’s responsibility to process
+these events accordingly.
+
+The client MUST ensure that only pre-installed Snaps can call this method.
 
 ### `snap_trackEvent`
 
