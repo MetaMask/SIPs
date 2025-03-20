@@ -27,13 +27,20 @@ analytics or tracking events. This proposal aims to:
 
 ## Specification
 
+### Language
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" written
+in uppercase in this document are to be interpreted as described in [RFC
+2119](https://www.ietf.org/rfc/rfc2119.txt)
+
+### `snap_trackEvent`
+
 The `snap_trackEvent` method allows pre-installed Snaps to submit structured
 tracking events to the client. It is the client’s responsibility to process
 these events accordingly.
 
 The client MUST ensure that only pre-installed Snaps can call this method.
-
-### `snap_trackEvent`
 
 The `snap_trackEvent` method is defined as follows:
 
@@ -76,14 +83,6 @@ await snap.request({
   },
 });
 ```
-
-### Language
-
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" written
-in uppercase in this document are to be interpreted as described in [RFC
-2119](https://www.ietf.org/rfc/rfc2119.txt)
-
 
 ## Copyright
 
