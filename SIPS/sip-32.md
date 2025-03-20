@@ -1,0 +1,95 @@
+---
+sip: 32
+title: Add `snap_trackEvent` method for pre-installed Snaps
+status: Draft
+author: Daniel Rocha (@danroc)
+created: 2025-03-20
+---
+
+## Abstract
+
+This Snap Improvement Proposal (SIP) introduces a new method,
+`snap_trackEvent`, allowing pre-installed Snaps to submit tracking events
+through the client. The client will determine how to handle these events.
+
+This feature enables Snaps to utilize the existing MetaMask client
+infrastructure for event tracking while maintaining user privacy.
+
+## Motivation
+
+Currently, there is no standardized way for pre-installed Snaps to submit
+analytics or tracking events. This proposal aims to:
+
+- Enable pre-installed Snaps to reuse MetaMask’s event tracking infrastructure.
+
+- Allow the MetaMask client to control event handling, ensuring security and
+  compliance with privacy policies.
+
+## Specification
+
+> The `snap_trackEvent` method allows pre-installed Snaps to submit structured
+> tracking events to the client. It is the client’s responsibility to process
+> these events accordingly.
+>
+> It's the client's responsibility to ensure that only pre-installed Snaps can
+> call this method.
+
+### `snap_trackEvent`
+
+The `snap_trackEvent` method is defined as follows:
+
+#### Parameters
+
+- `event` - Event object to be tracked.
+  - `category: string` - The category to associate the event.
+
+  - `name: string` - The name of the event to track.
+
+  - `properties: Record<string, Json>` - (**Optional**) Custom values to track.
+    Keys in this object must be `snake_case`.
+
+  - `sensitiveProperties: Record<string, Json>` - (**Optional**) Sensitive
+    values to track. These properties will be sent in an additional event that
+    excludes the user's `metaMetricsId`. Keys in this object must be in
+    `snake_case`.
+
+#### Returns
+
+Resolves to `null` when the event is successfully handled by the client.
+
+#### Example
+
+```typescript
+await snap.request({
+  method: 'snap_trackEvent',
+  params: {
+    event: {
+      category: 'Accounts',
+      name: 'Account Added',
+      properties: {
+        message: 'Snap account added',
+      },
+      sensitiveProperties: {
+        account_type: 'Hardware Wallet',
+      },
+    },
+  },
+});
+```
+
+### Language
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" written
+in uppercase in this document are to be interpreted as described in [RFC
+2119](https://www.ietf.org/rfc/rfc2119.txt)
+
+## Backwards compatibility
+
+Any SIPs that break backwards compatibility MUST include a section describing
+those incompatibilities and their severity. The SIP SHOULD describe how the
+author plans on proposes to deal with such these incompatibilities.
+
+## Copyright
+
+Copyright and related rights waived via [CC0](../LICENSE).
