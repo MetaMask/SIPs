@@ -117,8 +117,10 @@ type Conversion = {
 
 type OnAssetsConversionArguments = {
   conversions: Conversion[];
+  includeMarketData?: boolean;
 };
 ```
+- `includeMarketData` - A boolean that indicates whether the Snap should include market data in the response. If `true`, the Snap SHOULD include market data in the response if available.
 
 The type for an `onAssetsConversion` handler function’s return value is:
 
