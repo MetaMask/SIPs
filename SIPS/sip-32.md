@@ -20,7 +20,8 @@ event tracking while maintaining user privacy.
 Currently, there is no standardized way for pre-installed Snaps to submit
 analytics or tracking events. This proposal aims to:
 
-- Enable pre-installed Snaps to reuse MetaMask’s event tracking infrastructure.
+- Enable pre-installed Snaps to leverage the client's event tracking
+  infrastructure.
 
 - Ensure that event handling is controlled at the client level and conforms to
   security and privacy controls enforced by the client.
