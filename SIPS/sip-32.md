@@ -49,7 +49,7 @@ The `snap_trackEvent` method is defined as follows:
 - `event` - Event object to be tracked.
   - `category: string` - The category to associate the event.
 
-  - `name: string` - The name of the event to track.
+  - `event: string` - The name of the event to track.
 
   - `properties: Record<string, Json>` - (**Optional**) Custom values to track.
     The client MUST enforce that all keys in this object are in the
