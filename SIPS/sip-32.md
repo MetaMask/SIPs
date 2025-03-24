@@ -12,8 +12,8 @@ This Snap Improvement Proposal (SIP) introduces a new method,
 `snap_trackEvent`, allowing pre-installed Snaps to submit tracking events
 through the client. The client will determine how to handle these events.
 
-This feature enables Snaps to utilize the existing MetaMask client
-infrastructure for event tracking while maintaining user privacy.
+This feature enables Snaps to utilize the existing client infrastructure for
+event tracking while maintaining user privacy.
 
 ## Motivation
 
@@ -22,8 +22,8 @@ analytics or tracking events. This proposal aims to:
 
 - Enable pre-installed Snaps to reuse MetaMask’s event tracking infrastructure.
 
-- Allow the MetaMask client to control event handling, ensuring security and
-  compliance with privacy policies.
+- Ensure that event handling is controlled at the client level and conforms to
+  security and privacy controls enforced by the client.
 
 ## Specification
 
