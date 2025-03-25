@@ -131,7 +131,7 @@ type ResolveAccountAddressRequest = {
 
 `request` - A `JsonRpcRequest` containing strictly JSON-serializable values.
 
-The implementation MUST return a value of the type `{ address: string }` or `null`.
+The implementation MUST return a value of the type `{ address: CaipAccountId }` or `null` (where `CaipAccountId` refers to a [CAIP-10][caip-10] identifier).
 
 #### Protocol Snaps
 
@@ -195,3 +195,4 @@ Copyright and related rights waived via [CC0](../LICENSE).
 [snap-manage-accs]: https://docs.metamask.io/snaps/reference/snaps-api/#snap_manageaccounts
 [submit-request]: https://docs.metamask.io/snaps/reference/keyring-api/account-management/#keyring_submitrequest
 [caip-2]: https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-2.md
+[caip-10]: https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-10.md
