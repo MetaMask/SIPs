@@ -41,9 +41,8 @@ The `snap_trackEvent` method allows pre-installed Snaps to submit structured
 tracking events to the client. It is the client’s responsibility to process
 these events accordingly.
 
-The client MUST ensure that only pre-installed Snaps can call this method.
-
-The `snap_trackEvent` method is defined as follows:
+The `snap_trackEvent` method is endowed on any Snap that the client considers
+pre-installed.
 
 #### Parameters
 
