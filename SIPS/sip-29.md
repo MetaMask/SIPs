@@ -138,47 +138,17 @@ type AssetConversionRate = {
   expirationTime?: number;
 
   // Market data for the asset pair.
-  //
-  // Example
-  //
-  // {
-  //   "marketCap": "226618670785",
-  //   "totalVolume": "226618670785",
-  //   "circulatingSupply": "226618670785",
-  //   "allTimeHigh": "226618670785",
-  //   "allTimeLow": "226618670785",
-  //   "historical": {
-  //     "P1D": {
-  //       "pricePercentChange": 0.1,
-  //       "prices": [
-  //         [163, "226618670785"],
-  //         [162, "226618670785"],
-  //         ...
-  //       ]
-  //     },
-  //     "P1W": {
-  //       "pricePercentChange": 0.1,
-  //       "prices": [
-  //         [163, "226618670785"],
-  //         [162, "226618670785"],
-  //         ...
-  //       ]
-  //     },
-  // }
   marketData?: {
     marketCap: string,
     totalVolume: string,
     circulatingSupply: string,
     allTimeHigh: string,
     allTimeLow: string,
-    historical?: {
+    pricePercentChange: {
       // The interval key MUST follow the ISO 8601 duration format. The `all`
       // value is a special interval that represents all available data.
-      [interval: string]: {
-        pricePercentChange?: number;
-        prices?: [number, string][]; // Timestamp (UNIX time), price
-      };
-    };
+      [interval: string]: number;
+    }
   };
 };
 
@@ -188,6 +158,39 @@ type ToAsset = Conversion["to"];
 
 type OnAssetsConversionResponse = {
   conversionRates: Record<From, Record<To, AssetConversionRate | null>>;
+};
+```
+
+### Get Assets historical price
+
+```typescript
+import { OnAssetHistoricalPriceHandler } from "@metamask/snaps-sdk";
+
+export const onAssetsHistoricalPrice: OnAssetsHistoricalPriceHandler = async ({
+  from, to
+}) => {
+  const historicalPrice = /* Get historical price for given `from` and `to` */;
+  return { historicalPrice };
+};
+```
+The type for an `onAssetHistoricalPrice` handler function’s arguments is:
+
+```typescript
+interface OnAssetHistoricalPriceArguments {
+  from: Caip19AssetType;
+  to: Caip19AssetType;
+}
+```
+
+The type for an `onAssetHistoricalPrice` handler function’s return value is:
+
+```typescript
+type OnAssetHistoricalPriceResponse = {
+  historicalPrice: {
+    // The interval key MUST follow the ISO 8601 duration format. The `all`
+    // value is a special interval that represents all available data.
+    [interval: string]: [number, string][]; // Timestamp (UNIX time), price
+  }
 };
 ```
 
