@@ -191,7 +191,7 @@ type OnAssetHistoricalPriceResponse = {
   // The UNIX timestamp of when the historical price will expire.
   expirationTime?: number;
 
-  historicalPrice: {
+  intervals: {
     // The interval key MUST follow the ISO 8601 duration format. The `all`
     // value is a special interval that represents all available data.
     [interval: string]: [number, string][]; // Timestamp (UNIX time), price
