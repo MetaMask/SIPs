@@ -196,7 +196,7 @@ type OnAssetHistoricalPriceResponse = {
     // value is a special interval that represents all available data.
     [interval: string]: [number, string][]; // Timestamp (UNIX time), price
   }
-};
+} | null;
 ```
 
 ## Appendix I: Fungible Asset Metadata
