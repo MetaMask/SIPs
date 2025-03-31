@@ -186,6 +186,11 @@ The type for an `onAssetHistoricalPrice` handler function’s return value is:
 
 ```typescript
 type OnAssetHistoricalPriceResponse = {
+    // The UNIX timestamp of when the historical price was last updated.
+  conversionTime: number;
+  // The UNIX timestamp of when the historical price will expire.
+  expirationTime?: number;
+
   historicalPrice: {
     // The interval key MUST follow the ISO 8601 duration format. The `all`
     // value is a special interval that represents all available data.
