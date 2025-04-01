@@ -138,17 +138,20 @@ type AssetConversionRate = {
   expirationTime?: number;
 
   // Market data for the asset pair.
+  // The values of the type string are expected to represent decimal numbers in a string.
   marketData?: {
-    marketCap: string,
-    totalVolume: string,
-    circulatingSupply: string,
-    allTimeHigh: string,
-    allTimeLow: string,
+    marketCap: string;
+    totalVolume: string;
+    circulatingSupply: string;
+    allTimeHigh: string;
+    allTimeLow: string;
     pricePercentChange: {
-      // The interval key MUST follow the ISO 8601 duration format. The `all`
-      // value is a special interval that represents all available data.
+      // The `all` value is a special interval that represents all available data.  
+      all?: number;  
+
+      // The interval key MUST follow the ISO 8601 duration format.  
       [interval: string]: number;
-    }
+    };
   };
 };
 
@@ -192,9 +195,11 @@ type OnAssetHistoricalPriceResponse = {
   expirationTime?: number;
 
   intervals: {
-    // The interval key MUST follow the ISO 8601 duration format. The `all`
-    // value is a special interval that represents all available data.
-    [interval: string]: [number, string][]; // Timestamp (UNIX time), price
+    // The `all` value is a special interval that represents all available data.  
+    all?: number;
+
+    // The interval key MUST follow the ISO 8601 duration format.
+    [interval: string]: [number, string][]; // Timestamp (UNIX time), price represented as a decimal number in a string
   }
 } | null;
 ```
