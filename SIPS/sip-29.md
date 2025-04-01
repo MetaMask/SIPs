@@ -196,7 +196,7 @@ type OnAssetHistoricalPriceResponse = {
 
   intervals: {
     // The `all` value is a special interval that represents all available data.  
-    all?: number;
+    all?: [number, string][];
 
     // The interval key MUST follow the ISO 8601 duration format.
     [interval: string]: [number, string][]; // Timestamp (UNIX time), price represented as a decimal number in a string
