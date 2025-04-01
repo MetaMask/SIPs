@@ -200,7 +200,7 @@ type OnAssetHistoricalPriceResponse = {
 
     // The interval key MUST follow the ISO 8601 duration format.
     [interval: string]: [number, string][]; // Timestamp (UNIX time), price represented as a decimal number in a string
-  }
+  };
 } | null;
 ```
 
