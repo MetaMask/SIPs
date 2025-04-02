@@ -117,8 +117,10 @@ type Conversion = {
 
 type OnAssetsConversionArguments = {
   conversions: Conversion[];
+  includeMarketData?: boolean;
 };
 ```
+- `includeMarketData` - A boolean that indicates whether the Snap should include market data in the response. If `true`, the Snap SHOULD include market data in the response if available.
 
 The type for an `onAssetsConversion` handler function’s return value is:
 
@@ -134,6 +136,23 @@ type AssetConversionRate = {
 
   // The UNIX timestamp of when the conversion rate will expire.
   expirationTime?: number;
+
+  // Market data for the asset pair.
+  // The values of the type string are expected to represent decimal numbers in a string.
+  marketData?: {
+    marketCap: string;
+    totalVolume: string;
+    circulatingSupply: string;
+    allTimeHigh: string;
+    allTimeLow: string;
+    pricePercentChange: {
+      // The `all` value is a special interval that represents all available data.  
+      all?: number;  
+
+      // The interval key MUST follow the ISO 8601 duration format.  
+      [interval: string]: number;
+    };
+  };
 };
 
 type FromAsset = Conversion["from"];
@@ -143,6 +162,46 @@ type ToAsset = Conversion["to"];
 type OnAssetsConversionResponse = {
   conversionRates: Record<From, Record<To, AssetConversionRate | null>>;
 };
+```
+
+### Get Assets historical price
+
+```typescript
+import { OnAssetHistoricalPriceHandler } from "@metamask/snaps-sdk";
+
+export const onAssetsHistoricalPrice: OnAssetsHistoricalPriceHandler = async ({
+  from, to
+}) => {
+  const historicalPrice = /* Get historical price for given `from` and `to` */;
+  return { historicalPrice };
+};
+```
+The type for an `onAssetHistoricalPrice` handler function’s arguments is:
+
+```typescript
+interface OnAssetHistoricalPriceArguments {
+  from: Caip19AssetType;
+  to: Caip19AssetType;
+}
+```
+
+The type for an `onAssetHistoricalPrice` handler function’s return value is:
+
+```typescript
+type OnAssetHistoricalPriceResponse = {
+  // The UNIX timestamp of when the historical price was last updated.
+  updateTime: number;
+  // The UNIX timestamp of when the historical price will expire.
+  expirationTime?: number;
+
+  intervals: {
+    // The `all` value is a special interval that represents all available data.  
+    all?: [number, string][];
+
+    // The interval key MUST follow the ISO 8601 duration format.
+    [interval: string]: [number, string][]; // Timestamp (UNIX time), price represented as a decimal number in a string
+  };
+} | null;
 ```
 
 ## Appendix I: Fungible Asset Metadata
