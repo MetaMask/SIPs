@@ -9,35 +9,42 @@ created: 2025-03-19
 ## Abstract
 
 This proposal introduces a new entrypoint, `onClientRequest`, allowing Snaps to
-expose a handler that can only be called by MetaMask clients.
+expose a handler that can only be called by clients.
 
-While request `origin` is currently used to differentiate requests from
-MetaMask and dapps, this new entrypoint increases separation and minimizes the
-risks associated with `origin` spoofing or request routing bugs.
+While the request `origin` can currently be used to differentiate requests from
+clients and dapps, this new entrypoint increases separation and minimizes
+the risks associated with `origin` spoofing or request routing bugs.
 
 ## Motivation
 
 Currently, Snaps rely on the `origin` field of incoming requests to
-differentiate whether a request originates from MetaMask or an external dapp.
+differentiate whether a request originates from the client or an external dapp.
 However, this approach has potential risks:
 
 - **Origin Spoofing**: Bugs or vulnerabilities in request validation could
-  allow dApps to masquerade as MetaMask clients.
+  allow dapps to masquerade as clients.
 
-- **Unintended Exposure**: If a Snap processes requests without strict checks,
-  it may inadvertently handle dapp requests intended only for MetaMask.
+- **Unintended Exposure**: If a Snap processes requests without strict
+  validation, it may unintentionally expose to dapps methods that are meant
+  only for clients.
 
-- **Cleaner Separation**: Having a dedicated entrypoint for MetaMask requests
+- **Cleaner Separation**: Having a dedicated entrypoint for client requests
   enforces stricter request isolation at the API level.
 
 By introducing `onClientRequest`, we ensure that Snaps can define handlers
-exclusively accessible by MetaMask, reducing attack vectors and improving
-request security.
+exclusively accessible by clients, reducing attack vectors.
 
 ## Specification
 
-> This proposal introduces a new optional handler function, `onClientRequest`,
-> which a Snap can implement.
+This proposal introduces a new optional handler function, `onClientRequest`,
+which a Snap MAY implement.
+
+### Language
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" written
+in uppercase in this document are to be interpreted as described in [RFC
+2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 ### `onClientRequest` Entrypoint
 
@@ -57,26 +64,13 @@ A `Promise<JsonRpcResponse>`, which resolves to a JSON-RPC response object.
 
 #### Behavior
 
-- MetaMask MUST ensure that the request originates from a MetaMask client
-  before invoking `onClientRequest`.
+- Clients MUST ensure that they are the origin of a request before invoking
+  `onClientRequest`.
 
 - Requests from other origins MUST be rejected.
 
-- If a Snap does not implement `onClientRequest`, the default behavior is to
-  thrown an exception for any request, independent of the origin.
-
-### Language
-
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" written
-in uppercase in this document are to be interpreted as described in [RFC
-2119](https://www.ietf.org/rfc/rfc2119.txt)
-
-## Backwards compatibility
-
-Any SIPs that break backwards compatibility MUST include a section describing
-those incompatibilities and their severity. The SIP SHOULD describe how the
-author plans on proposes to deal with such these incompatibilities.
+- If a Snap does not implement `onClientRequest`, the client MUST throw an
+  exception for any request, regardless of the origin.
 
 ## Copyright
 
