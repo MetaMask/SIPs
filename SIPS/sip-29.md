@@ -4,7 +4,7 @@ title: Snap Assets API
 status: Draft
 author: Daniel Rocha (@danroc), Guillaume Roux (@GuillaumeRx)
 created: 2024-12-05
-updated: 2025-01-25
+updated: 2025-04-02
 ---
 
 ## Abstract
@@ -169,7 +169,7 @@ type OnAssetsConversionResponse = {
 ```typescript
 import { OnAssetHistoricalPriceHandler } from "@metamask/snaps-sdk";
 
-export const onAssetsHistoricalPrice: OnAssetsHistoricalPriceHandler = async ({
+export const onAssetHistoricalPrice: OnAssetHistoricalPriceHandler = async ({
   from, to
 }) => {
   const historicalPrice = /* Get historical price for given `from` and `to` */;
@@ -188,7 +188,7 @@ interface OnAssetHistoricalPriceArguments {
 The type for an `onAssetHistoricalPrice` handler function’s return value is:
 
 ```typescript
-type OnAssetHistoricalPriceResponse = {
+type HistoricalPrice = {
   // The UNIX timestamp of when the historical price was last updated.
   updateTime: number;
   // The UNIX timestamp of when the historical price will expire.
@@ -201,7 +201,11 @@ type OnAssetHistoricalPriceResponse = {
     // The interval key MUST follow the ISO 8601 duration format.
     [interval: string]: [number, string][]; // Timestamp (UNIX time), price represented as a decimal number in a string
   };
-} | null;
+};
+
+type OnAssetHistoricalPriceResponse = {
+  historicalPrice: HistoricalPrice | null;
+};
 ```
 
 ## Appendix I: Fungible Asset Metadata
@@ -225,10 +229,10 @@ type FungibleAssetUnit = {
 // Fungible asset metadata.
 type FungibleAssetMetadata = {
   // Human-friendly name of the asset.
-  name: string;
+  name?: string;
 
   // Ticker symbol of the asset's main unit.
-  symbol: string;
+  symbol?: string;
 
   // Represents a fungible asset
   fungible: true;
