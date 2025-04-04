@@ -72,7 +72,7 @@ await snap.request({
   params: {
     event: {
       category: 'Accounts',
-      name: 'Account Added',
+      event: 'Account Added',
       properties: {
         message: 'Snap account added',
       },
