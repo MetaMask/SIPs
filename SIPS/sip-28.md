@@ -47,8 +47,7 @@ The RPC method takes two parameters:
 
 - `date` - An [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date and time and optional timezone offset.
   - The time's precision SHALL be truncated on the extension side to minutes.
-  - If no timezone is provided, the time SHALL be understood to be local-time.
-    > Use ISO's `Z` identifier if you want to use UTC time.
+  - If no timezone is provided, the time MUST be understood to be UTC.
 - `request` - A JSON object that will provided as-is to `onCronjob` handler as parameter.
 
 An example of usage is given below.
