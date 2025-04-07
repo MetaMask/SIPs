@@ -2,7 +2,7 @@
 sip: 33
 title: Contacts API for Snaps
 status: Draft
-author: Fabio Bozzo <fabio.bozzo@consensys.net>
+author: Fabio Bozzo (@fabiobozzo)
 created: 2025-04-04
 ---
 
