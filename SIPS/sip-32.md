@@ -1,6 +1,6 @@
 ---
 sip: 32
-title: Add `snap_trackEvent` method for pre-installed Snaps
+title: Event tracking method for pre-installed Snaps
 status: Draft
 author: Daniel Rocha (@danroc)
 created: 2025-03-20
