@@ -47,18 +47,11 @@ pre-installed.
 #### Parameters
 
 - `event` - Event object to be tracked.
-  - `category: string` - The category to associate the event.
-
-  - `event: string` - The name of the event to track.
+  - `name: string` - The name of the event to track.
 
   - `properties: Record<string, Json>` - (**Optional**) Custom values to track.
     The client MUST enforce that all keys in this object are in the
     `snake_case` format.
-
-  - `sensitiveProperties: Record<string, Json>` - (**Optional**) Sensitive
-    values to track. These properties will be sent in an additional event that
-    excludes the user's `metaMetricsId`. The client MUST enforce that all keys
-    in this object are in the `snake_case` format.
 
 #### Returns
 
@@ -71,13 +64,9 @@ await snap.request({
   method: 'snap_trackEvent',
   params: {
     event: {
-      category: 'Accounts',
-      event: 'Account Added',
+      name: 'Account Added',
       properties: {
         message: 'Snap account added',
-      },
-      sensitiveProperties: {
-        account_type: 'Hardware Wallet',
       },
     },
   },
