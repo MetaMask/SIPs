@@ -47,8 +47,6 @@ pre-installed.
 #### Parameters
 
 - `event` - Event object to be tracked.
-  - `category: string` - The category to associate the event.
-
   - `event: string` - The name of the event to track.
 
   - `properties: Record<string, Json>` - (**Optional**) Custom values to track.
@@ -71,7 +69,6 @@ await snap.request({
   method: 'snap_trackEvent',
   params: {
     event: {
-      category: 'Accounts',
       event: 'Account Added',
       properties: {
         message: 'Snap account added',
