@@ -17,34 +17,9 @@ This will allow us to modify or add new functionality in the API without breakin
 ## Motivation
 
 The current `endowment:keyring` configuration does not support versioning, which limits our ability to introduce breaking changes or new functionality that may require changes in behavior.
-Adding the `version` field allows us to version the API and define distinct behaviors based on the declared version.
+Adding a `version` field would allow us to version the API and define distinct behaviors based on the declared version, limiting the need for breaking changes when new features are added.
 
-This is useful as we want to add new fields and features that should only apply to specific versions of the API, ensuring that existing implementations relying on previous versions continue to work without modification.
-
-Our current request "parsing" (within the keyring API) is strict and does not allow extra-fields. Meaning that current EVM Snaps might throw an error if we add new fields to some of our requests (even optional fields).
-
-We plan to modify the `submitRequest(request)` method by adding a new `origin` field to the `request` parameter, but only for version `2` and higher.
-We won't forward this `origin` field for requests made with version `1` to ensure backward compatibility.
-
-```json
-{
-  "jsonrpc": "2.0",
-  "id": "7c507ff0-365f-4de0-8cd5-eb83c30ebda4",
-  "method": "keyring_submitRequest",
-  "params": {
-    "id": "c555de37-cf4b-4ff2-8273-39db7fb58f1c",
-    "scope": "eip155:1",
-    "account": "4abdd17e-8b0f-4d06-a017-947a64823b3d",
-    "request": {
-      "method": "eth_method",
-      "params": [1, 2, 3]
-    },
-    "origin": "someOrigin"
-  }
-}
-```
-
-This system will allow us to introduce future versions in a flexible way, limiting the need for breaking changes when new features are added.
+Existing implementations relying on previous versions will continue to work without modification.
 
 ## Specification
 
@@ -70,12 +45,8 @@ This field will be a `number` and will defaults to `1` if not provided to mainta
 
 On the keyring API implementation side, we will modify our API methods to conditionally behave based on the `version`:
 - When `version` is set to `1`, the API will behave as it currently does.
-- When `version` is set to `2`, the API will allow new fields, such as the `origin` field, to be included in the request.
-- Future versions will allow additional features or fields to be introduced, with conditional logic to ensure backward compatibility.
-
-> Example of conditional behavior in `submitRequest(request)`:
-> - If the `version` is `1`, the request will not include the `origin` field.
-> - If the `version` is `2`, the `origin` field will be added to the request.
+- When `version` is set to `2`, the API will introduce new incompatible behaviors/features with verison `1`.
+- Future versions will allow additional breaking features, with conditional logic to ensure backward compatibility.
 
 This new implementation MUST ensure backward compatibility with older Snaps.
 - Snaps using the existing `endowment:keyring` configuration object will continue to function without modification.
