@@ -45,7 +45,7 @@ This field will be a `number` and will defaults to `1` if not provided to mainta
 
 On the keyring API implementation side, we will modify our API methods to conditionally behave based on the `version`:
 - When `version` is set to `1`, the API will behave as it currently does.
-- When `version` is set to `2`, the API will introduce new incompatible behaviors/features with verison `1`.
+- When `version` is set to `2`, the API will introduce new incompatible behaviors/features with version `1`.
 - Future versions will allow additional breaking features, with conditional logic to ensure backward compatibility.
 
 This new implementation MUST ensure backward compatibility with older Snaps.
