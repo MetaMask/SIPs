@@ -56,12 +56,13 @@ const rule = lintRule<Root>("sip:bad-link", async (tree, file) => {
     ): ReturnType<typeof fetchFunction> => {
       try {
         const url = args[0] as string;
-        if (fetchCache.has(url)) {
-          debug("Fetch cached", url);
-          return fetchCache.get(url)!;
+        const options = args[1] as RequestInit;
+        const key = `${options?.method ?? 'GET'}-${url}`;
+        if (fetchCache.has(key)) {
+          return fetchCache.get(key)!;
         }
-        const response = fetchFunction(...args);
-        fetchCache.set(url, response);
+        const response = fetchFunction(url, options);
+        fetchCache.set(key, response);
         return response;
       } catch (e) {
         const url = args[0].toString();
