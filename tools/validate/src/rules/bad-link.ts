@@ -39,10 +39,10 @@ function isExternal(url: string | URL): boolean {
   return !isLocal(url);
 }
 
-const fetchCache = new Map<string, Response>();
+const fetchCache = new Map<string, Promise<Response>>();
 
 const fetchFunction = retryFetch(global.fetch, {
-  retries: 5,
+  retries: 3,
   retryOn: [429, 503],
   // Exponential backoff
   retryDelay: (attempt) => Math.pow(2, attempt) * 1000,
@@ -60,7 +60,7 @@ const rule = lintRule<Root>("sip:bad-link", async (tree, file) => {
           debug("Fetch cached", url);
           return fetchCache.get(url)!;
         }
-        const response = await fetchFunction(...args);
+        const response = fetchFunction(...args);
         fetchCache.set(url, response);
         return response;
       } catch (e) {
