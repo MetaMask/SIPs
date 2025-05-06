@@ -65,7 +65,7 @@ Any Snap that wishes to provide asset information MUST implement the following A
 
 #### Get Assets Metadata
 
-`Caip19AssetType` - A string that represents an asset using the [CAIP-19][caip-19] standard.
+`Caip19AssetTypeOrId` - A string that represents an asset using the [CAIP-19][caip-19] standard.
 
 ```typescript
 import { OnAssetsLookupHandler } from "@metamask/snaps-sdk";
@@ -82,7 +82,7 @@ The type for an `onAssetsLookup` handler function’s arguments is:
 
 ```typescript
 interface OnAssetsLookupArguments {
-  assets: Caip19AssetType[];
+  assets: Caip19AssetTypeOrId[];
 }
 ```
 
@@ -90,7 +90,7 @@ The type for an `onAssetsLookup` handler function’s return value is:
 
 ```typescript
 type OnAssetsLookupResponse = {
-  assets: Record<Caip19AssetType, AssetMetadata | null>;
+  assets: Record<Caip19AssetTypeOrId, AssetMetadata | null>;
 };
 ```
 
@@ -163,8 +163,8 @@ The type for an `onAssetsMarketData` handler function’s arguments is:
 
 ```typescript
 type AssetPair = {
-  from: Caip19AssetType;
-  to: Caip19AssetType;
+  from: Caip19AssetTypeOrId;
+  to: Caip19AssetTypeOrId;
 };
 
 type OnAssetsMarketDataArguments = {
@@ -316,6 +316,9 @@ type NonFungibleAssetCollection = {
   // The number of tokens in the collection.
   tokenCount: string;
 
+  // The creator address of the asset.
+  creator?: Caip19AssetType;
+
   // Base64 data URI or URL representation of the asset icon.
   imageUrl: string;
 };
@@ -328,7 +331,7 @@ type NonFungibleAssetMetadata = {
   symbol?: string;
 
   // Base64 data URI or URL representation of the asset image.
-  imageUrl?: string;
+  imageUrl: string;
 
   // The description of the asset.
   description?: string;
@@ -336,12 +339,10 @@ type NonFungibleAssetMetadata = {
   // Represents a non-fungible asset
   fungible: false;
 
-  // The creator address of the asset.
-  creator: Caip19AssetType;
-
   // Attributes of the non-fungible asset.
   attributes?: Record<string, string | number>;
 
+  // The collection of the asset.
   collection: NonFungibleAssetCollection;
 };
 ```
@@ -355,7 +356,7 @@ type NonFungibleAssetMarketData = {
   // The last sale of one asset in the collection.
   lastSale?: {
     // The asset that was sold.
-    asset: Caip19AssetType;
+    asset: Caip19AssetTypeOrId;
     // The price at which is was sold represented as a decimal number in a string.
     amount: string;
   };
@@ -363,7 +364,7 @@ type NonFungibleAssetMarketData = {
   // The top bid on the asset.
   topBid?: {
     // The asset that was sold.
-    asset: Caip19AssetType;
+    asset: Caip19AssetTypeOrId;
     // The price at which is was sold represented as a decimal number in a string.
     amount: string;
   }
@@ -371,11 +372,12 @@ type NonFungibleAssetMarketData = {
   // The floor price of the collection.
   floorPrice?: {
     // The asset that is used to represent the floor price.
-    asset: Caip19AssetType;
+    asset: Caip19AssetTypeOrId;
     // The price of the asset represented as a decimal number in a string.
     amount: string;
   }
 
+  // The rarity of the asset and its metadata.
   rarity?: {
     ranking?: {
       source: string;
