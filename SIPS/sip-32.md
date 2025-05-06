@@ -13,7 +13,7 @@ This Snap Improvement Proposal (SIP) introduces a new method,
 through the client. The client will determine how to handle these events.
 
 This feature enables Snaps to utilize the existing client infrastructure for
-event tracking while maintaining user privacy. Temp
+event tracking while maintaining user privacy. Temp2
 
 ## Motivation
 
