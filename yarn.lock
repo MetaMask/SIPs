@@ -577,6 +577,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fetch-retry@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "fetch-retry@npm:6.0.0"
+  checksum: 10/0c8d3082e2d76fff2df75adef6280bc854bc36fd3ef38506674f0216d0d819e2efd14da7477d3f1732415aea1d2cfde7cd3e1aeae46f45f2adbfc5133296e8de
+  languageName: node
+  linkType: hard
+
 "foreground-child@npm:^3.1.0":
   version: 3.3.0
   resolution: "foreground-child@npm:3.3.0"
@@ -2371,6 +2378,7 @@ __metadata:
     "@types/yargs": "npm:^17.0.10"
     chalk: "npm:^5.0.1"
     debug: "npm:^4.3.4"
+    fetch-retry: "npm:^6.0.0"
     glob: "npm:^8.0.3"
     is-valid-path: "npm:^0.1.1"
     mdast: "npm:^3.0.0"

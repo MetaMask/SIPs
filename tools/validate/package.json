@@ -28,6 +28,7 @@
   "dependencies": {
     "chalk": "^5.0.1",
     "debug": "^4.3.4",
+    "fetch-retry": "^6.0.0",
     "glob": "^8.0.3",
     "is-valid-path": "^0.1.1",
     "remark-frontmatter": "^4.0.1",

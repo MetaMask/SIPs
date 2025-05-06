@@ -5,6 +5,7 @@ import { Definition, Image, Link, Root } from "mdast";
 import { lintRule } from "unified-lint-rule";
 import { Node } from "unist";
 import { visit } from "unist-util-visit";
+import retryFetch from "fetch-retry";
 
 const debug = Debug("validate:rule:bad-link");
 
@@ -38,12 +39,30 @@ function isExternal(url: string | URL): boolean {
   return !isLocal(url);
 }
 
+const fetchCache = new Map<string, Response>();
+
+const fetchFunction = retryFetch(global.fetch, {
+  retries: 5,
+  retryOn: [429, 503],
+  // Exponential backoff
+  retryDelay: (attempt) => Math.pow(2, attempt) * 1000,
+});
+
 const rule = lintRule<Root>("sip:bad-link", async (tree, file) => {
   const fetchWithLog =
     (node: Node) =>
-    async (...args: Parameters<typeof fetch>): ReturnType<typeof fetch> => {
+    async (
+      ...args: Parameters<typeof fetchFunction>
+    ): ReturnType<typeof fetchFunction> => {
       try {
-        return await fetch(...args);
+        const url = args[0] as string;
+        if (fetchCache.has(url)) {
+          debug("Fetch cached", url);
+          return fetchCache.get(url)!;
+        }
+        const response = await fetchFunction(...args);
+        fetchCache.set(url, response);
+        return response;
       } catch (e) {
         const url = args[0].toString();
         file.message(
