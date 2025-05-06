@@ -44,8 +44,7 @@ const fetchCache = new Map<string, Promise<Response>>();
 const fetchFunction = retryFetch(global.fetch, {
   retries: 3,
   retryOn: [429, 503],
-  // Exponential backoff
-  retryDelay: (attempt) => Math.pow(2, attempt) * 1000,
+  retryDelay: 10000,
 });
 
 const rule = lintRule<Root>("sip:bad-link", async (tree, file) => {
