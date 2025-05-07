@@ -5,6 +5,7 @@ import { Definition, Image, Link, Root } from "mdast";
 import { lintRule } from "unified-lint-rule";
 import { Node } from "unist";
 import { visit } from "unist-util-visit";
+import { Semaphore } from 'async-mutex';
 
 const debug = Debug("validate:rule:bad-link");
 
@@ -38,14 +39,29 @@ function isExternal(url: string | URL): boolean {
   return !isLocal(url);
 }
 
+const fetchCache = new Map<string, Promise<Response>>();
+const fetchSemaphore = new Semaphore(3);
+
+const fetchWithSemaphore = async (url: string, options?: RequestInit) => {
+  // Queue requests to reduce spam.
+  return fetchSemaphore.runExclusive(() => fetch(url, options));
+}
+
 const rule = lintRule<Root>("sip:bad-link", async (tree, file) => {
   const fetchWithLog =
     (node: Node) =>
-    async (...args: Parameters<typeof fetch>): ReturnType<typeof fetch> => {
+    async (
+      url: string, options?: RequestInit
+    ): ReturnType<typeof fetch> => {
       try {
-        return await fetch(...args);
+        const key = `${options?.method ?? 'GET'}-${url}`;
+        if (fetchCache.has(key)) {
+          return fetchCache.get(key)!;
+        }
+        const response = fetchWithSemaphore(url, options);
+        fetchCache.set(key, response);
+        return response;
       } catch (e) {
-        const url = args[0].toString();
         file.message(
           `Url "${url}" is invalid, the server doesn't exist or there's no internet access.`,
           node
@@ -63,10 +79,11 @@ const rule = lintRule<Root>("sip:bad-link", async (tree, file) => {
     const fetch = fetchWithLog(node);
     let response = await fetch(url, { method: "HEAD" });
     debug("Fetch responded", "url:", url, "is ok:", response.ok);
-    if (!response.ok) {
+    // Don't treat 429 responses as invalid links.
+    if (!response.ok && response.status !== 429) {
       debug("Fetch (HEAD) not ok, trying GET", url, response.status);
       response = await fetch(url);
-      if (!response.ok) {
+      if (!response.ok && response.status !== 429) {
         file.message(
           `Url "${url}" is invalid, the server responded with ${response.status}`,
           node
