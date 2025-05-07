@@ -42,7 +42,7 @@ function isExternal(url: string | URL): boolean {
 const fetchCache = new Map<string, Promise<Response>>();
 const fetchSemaphore = new Semaphore(3);
 
-const fetchWithSemaphore = async (url: string, options: RequestInit) => {
+const fetchWithSemaphore = async (url: string, options?: RequestInit) => {
   // Queue requests to reduce spam.
   return fetchSemaphore.runExclusive(() => fetch(url, options));
 }
@@ -51,11 +51,9 @@ const rule = lintRule<Root>("sip:bad-link", async (tree, file) => {
   const fetchWithLog =
     (node: Node) =>
     async (
-      ...args: Parameters<typeof fetch>
+      url: string, options?: RequestInit
     ): ReturnType<typeof fetch> => {
       try {
-        const url = args[0] as string;
-        const options = args[1] as RequestInit;
         const key = `${options?.method ?? 'GET'}-${url}`;
         if (fetchCache.has(key)) {
           return fetchCache.get(key)!;
@@ -64,7 +62,6 @@ const rule = lintRule<Root>("sip:bad-link", async (tree, file) => {
         fetchCache.set(key, response);
         return response;
       } catch (e) {
-        const url = args[0].toString();
         file.message(
           `Url "${url}" is invalid, the server doesn't exist or there's no internet access.`,
           node
