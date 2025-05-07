@@ -43,12 +43,8 @@ const fetchCache = new Map<string, Promise<Response>>();
 const fetchSemaphore = new Semaphore(3);
 
 const fetchWithSemaphore = async (url: string, options: RequestInit) => {
-  return fetchSemaphore.runExclusive(async () => {
-    // Space out requests a bit.
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    const response = fetch(url, options);
-    return response;
-  });
+  // Queue requests to reduce spam.
+  return fetchSemaphore.runExclusive(() => fetch(url, options));
 }
 
 const rule = lintRule<Root>("sip:bad-link", async (tree, file) => {
@@ -86,10 +82,11 @@ const rule = lintRule<Root>("sip:bad-link", async (tree, file) => {
     const fetch = fetchWithLog(node);
     let response = await fetch(url, { method: "HEAD" });
     debug("Fetch responded", "url:", url, "is ok:", response.ok);
-    if (!response.ok) {
+    // Don't treat 429 responses as invalid links.
+    if (!response.ok && response.status !== 429) {
       debug("Fetch (HEAD) not ok, trying GET", url, response.status);
       response = await fetch(url);
-      if (!response.ok) {
+      if (!response.ok && response.status !== 429) {
         file.message(
           `Url "${url}" is invalid, the server responded with ${response.status}`,
           node
