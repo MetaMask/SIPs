@@ -5,7 +5,7 @@ import { Definition, Image, Link, Root } from "mdast";
 import { lintRule } from "unified-lint-rule";
 import { Node } from "unist";
 import { visit } from "unist-util-visit";
-import retryFetch from "fetch-retry";
+import { Semaphore } from 'async-mutex';
 
 const debug = Debug("validate:rule:bad-link");
 
@@ -40,19 +40,23 @@ function isExternal(url: string | URL): boolean {
 }
 
 const fetchCache = new Map<string, Promise<Response>>();
+const fetchSemaphore = new Semaphore(3);
 
-const fetchFunction = retryFetch(global.fetch, {
-  retries: 3,
-  retryOn: [429, 503],
-  retryDelay: 25000,
-});
+const fetchWithSemaphore = async (url: string, options: RequestInit) => {
+  return fetchSemaphore.runExclusive(async () => {
+    // Space out requests a bit.
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const response = fetch(url, options);
+    return response;
+  });
+}
 
 const rule = lintRule<Root>("sip:bad-link", async (tree, file) => {
   const fetchWithLog =
     (node: Node) =>
     async (
-      ...args: Parameters<typeof fetchFunction>
-    ): ReturnType<typeof fetchFunction> => {
+      ...args: Parameters<typeof fetch>
+    ): ReturnType<typeof fetch> => {
       try {
         const url = args[0] as string;
         const options = args[1] as RequestInit;
@@ -60,7 +64,7 @@ const rule = lintRule<Root>("sip:bad-link", async (tree, file) => {
         if (fetchCache.has(key)) {
           return fetchCache.get(key)!;
         }
-        const response = fetchFunction(url, options);
+        const response = fetchWithSemaphore(url, options);
         fetchCache.set(key, response);
         return response;
       } catch (e) {

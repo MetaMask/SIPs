@@ -295,6 +295,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"async-mutex@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "async-mutex@npm:0.5.0"
+  dependencies:
+    tslib: "npm:^2.4.0"
+  checksum: 10/4c6bfce1cc9cd43f723c4d96403ac5f4757f885c953b839cde6956ec8817ff39623b82d67614de10c7933e21626925882fb9bac367db7d15d7cb4f84228722c9
+  languageName: node
+  linkType: hard
+
 "bail@npm:^2.0.0":
   version: 2.0.2
   resolution: "bail@npm:2.0.2"
@@ -574,13 +583,6 @@ __metadata:
   dependencies:
     format: "npm:^0.2.0"
   checksum: 10/c9b30f47d95769177130a9409976a899ed31eb598450fbad5b0d39f2f5f56d5f4a9ff9257e0bee8407cb0fc3ce37165657888c6aa6d78472e403893104329b72
-  languageName: node
-  linkType: hard
-
-"fetch-retry@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "fetch-retry@npm:6.0.0"
-  checksum: 10/0c8d3082e2d76fff2df75adef6280bc854bc36fd3ef38506674f0216d0d819e2efd14da7477d3f1732415aea1d2cfde7cd3e1aeae46f45f2adbfc5133296e8de
   languageName: node
   linkType: hard
 
@@ -1973,6 +1975,7 @@ __metadata:
   dependencies:
     "@lavamoat/allow-scripts": "npm:^3.3.1"
     "@lavamoat/preinstall-always-fail": "npm:^2.1.0"
+    async-mutex: "npm:^0.5.0"
   languageName: unknown
   linkType: soft
 
@@ -2198,6 +2201,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tslib@npm:^2.4.0":
+  version: 2.8.1
+  resolution: "tslib@npm:2.8.1"
+  checksum: 10/3e2e043d5c2316461cb54e5c7fe02c30ef6dccb3384717ca22ae5c6b5bc95232a6241df19c622d9c73b809bea33b187f6dbc73030963e29950c2141bc32a79f7
+  languageName: node
+  linkType: hard
+
 "type-fest@npm:4.30.0":
   version: 4.30.0
   resolution: "type-fest@npm:4.30.0"
@@ -2378,7 +2388,6 @@ __metadata:
     "@types/yargs": "npm:^17.0.10"
     chalk: "npm:^5.0.1"
     debug: "npm:^4.3.4"
-    fetch-retry: "npm:^6.0.0"
     glob: "npm:^8.0.3"
     is-valid-path: "npm:^0.1.1"
     mdast: "npm:^3.0.0"
