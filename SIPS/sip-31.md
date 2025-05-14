@@ -22,7 +22,7 @@ differentiate whether a request originates from the client, another
 Snap, or an external dapp. However, this approach has potential risks:
 
 - **Origin Spoofing**: Bugs or vulnerabilities in request validation could
-  allow dapps to masquerade as the client.
+  allow dapps to masquerade as the client or a different dapp.
 
 - **Unintended Exposure**: If a Snap processes requests without strict
   validation, it may unintentionally expose methods to dapps or other Snaps
