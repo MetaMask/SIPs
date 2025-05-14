@@ -51,7 +51,7 @@ in uppercase in this document are to be interpreted as described in [RFC
 Snaps MAY define an `onClientRequest` handler with the following signature:
 
 ```typescript
-type OnClientRequest = (request: JsonRpcRequest) => Promise<JsonRpcResponse>;
+type OnClientRequest = ({ request }: { request: JsonRpcRequest }) => Promise<JsonRpcResponse>;
 ```
 
 #### Parameters
