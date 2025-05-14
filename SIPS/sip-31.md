@@ -60,7 +60,7 @@ type OnClientRequest = ({ request }: { request: JsonRpcRequest }) => Promise<Jso
 
 #### Returns
 
-A `Promise<JsonRpcResponse>`, which resolves to a JSON-RPC response object.
+A `Promise<Json>`, which resolves to any valid JSON structure.
 
 #### Behavior
 
