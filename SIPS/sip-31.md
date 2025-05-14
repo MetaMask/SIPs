@@ -46,21 +46,48 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 in uppercase in this document are to be interpreted as described in [RFC
 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
-### `onClientRequest` Entrypoint
+### Snap Implementation
 
-Snaps MAY define an `onClientRequest` handler with the following signature:
+#### On Client Request
+
+This specification introduces to the Snap Platform a dedicated handler that
+Snaps MAY implement to process JSON-RPC requests originating exclusively from
+the client.
+
+Example:
 
 ```typescript
-type OnClientRequest = ({ request }: { request: JsonRpcRequest }) => Promise<Json>;
+import { OnClientRequestHandler } from "@metamask/snaps-sdk";
+
+export const onClientRequest: OnClientRequestHandler = async ({
+  request,
+}) => {
+  const result = /* Handle `request` */;
+  return result;
+};
 ```
 
-#### Parameters
+The type of the `onClientRequest` handler is:
 
-- `request: JsonRpcRequest` – A JSON-RPC request object.
+```typescript
+type OnClientRequestHandler = (
+  args: OnClientRequestArguments,
+) => Promise<OnClientRequestReturnValue>;
+```
 
-#### Returns
+The type for an `onClientRequest` handler function’s arguments is:
 
-A `Promise<Json>`, which resolves to any valid JSON structure.
+```typescript
+type OnClientRequestArguments = {
+  request: JsonRpcRequest;
+};
+```
+
+The type for an `onClientRequest` handler function’s return value is:
+
+```typescript
+type OnClientRequestReturnValue = Json;
+```
 
 #### Behavior
 
