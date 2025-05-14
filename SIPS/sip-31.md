@@ -91,7 +91,7 @@ type OnClientRequestResponse = Json;
 
 #### Behavior
 
-- The client MUST ensure that they are the origin of a request before invoking
+- The client MUST ensure that it is the origin of a request before invoking
   `onClientRequest`.
 
 - Requests from other origins MUST be rejected.
