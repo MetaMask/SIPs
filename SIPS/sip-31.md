@@ -86,7 +86,7 @@ type OnClientRequestArguments = {
 The type for an `onClientRequest` handler function’s return value is:
 
 ```typescript
-type OnClientRequestReturnValue = Json;
+type OnClientRequestResponse = Json;
 ```
 
 #### Behavior
