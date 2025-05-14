@@ -72,7 +72,7 @@ The type of the `onClientRequest` handler is:
 ```typescript
 type OnClientRequestHandler = (
   args: OnClientRequestArguments,
-) => Promise<OnClientRequestReturnValue>;
+) => Promise<OnClientRequestResponse>;
 ```
 
 The type for an `onClientRequest` handler function’s arguments is:
