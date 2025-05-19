@@ -339,6 +339,10 @@ type NonFungibleAssetMetadata = {
   // Represents a non-fungible asset
   fungible: false;
 
+  // The time at which the asset was acquired.
+  // The time is represented as a UNIX timestamp. 
+  acquired_at?: number;
+
   // Attributes of the non-fungible asset.
   attributes?: Record<string, string | number>;
 
