@@ -89,6 +89,9 @@ interface OnAssetsLookupArguments {
 The type for an `onAssetsLookup` handler function’s return value is:
 
 ```typescript
+
+type AssetMetadata = FungibleAssetMetadata | NonFungibleAssetMetadata;
+
 type OnAssetsLookupResponse = {
   assets: Record<Caip19AssetTypeOrId, AssetMetadata | null>;
 };
