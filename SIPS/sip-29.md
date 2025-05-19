@@ -123,7 +123,7 @@ type OnAssetsConversionArguments = {
 The type for an `onAssetsConversion` handler function’s return value is:
 
 ```typescript
-type AssetConversion = {
+type AssetConversionRate = {
   // The rate of conversion from the source asset to the target asset represented as a decimal number in a string.
   // It means that 1 unit of the `from` asset should be converted to this amount
   // of the `to` asset.
@@ -142,7 +142,7 @@ type FromAsset = Conversion["from"];
 type ToAsset = Conversion["to"];
 
 type OnAssetsConversionResponse = {
-  conversionRates: Record<From, Record<To, AssetConversion | null>>;
+  conversionRates: Record<From, Record<To, AssetConversionRate | null>>;
 };
 ```
 
@@ -162,13 +162,13 @@ export const onAssetsMarketData: OnAssetsMarketDataHandler = async ({
 The type for an `onAssetsMarketData` handler function’s arguments is:
 
 ```typescript
-type AssetPair = {
-  from: Caip19AssetTypeOrId;
-  to: Caip19AssetTypeOrId;
+type AssetRequest = {
+  asset: Caip19AssetTypeOrId;
+  unit: Caip19AssetType;
 };
 
 type OnAssetsMarketDataArguments = {
-  assets: AssetPair[];
+  assets: AssetRequest[];
 };
 ```
 
@@ -177,12 +177,12 @@ The type for an `onAssetsMarketData` handler function’s return value is:
 ```typescript
 type MarketData = FungibleAssetMarketData | NonFungibleAssetMarketData;
 
-type FromAsset = AssetPair["from"];
+type Asset = AssetRequest["asset"];
 
-type ToAsset = AssetPair["to"];
+type Unit = AssetPair["unit"];
 
 type OnAssetsMarketDataResponse = {
-  marketData: Record<FromAsset, Record<ToAsset, MarketData | null>>;
+  marketData: Record<Asset, Record<Unit, MarketData | null>>;
 };
 ```
 
@@ -232,8 +232,7 @@ type OnAssetHistoricalPriceResponse = {
 
 ## Appendix I: Fungible Asset Metadata & Market Data
 
-The following asset metadata and market data fields for a fungible and non-fungible asset are defined.
-As of the time of creation of this SIP, they are the only possible assets requested by clients.
+The following asset metadata and market data fields for a fungible asset are defined.
 
 ### Asset Metadata
 
@@ -305,6 +304,9 @@ type FungibleAssetMarketData = {
 The following asset metadata fields for a non-fungible asset are defined.
 
 ### Asset Metadata
+
+`Caip10Address` - A string that represents an address using the [CAIP-10][caip-10] standard.
+
 ```typescript
 type NonFungibleAssetCollection = {
   // Human-friendly name of the asset collection.
@@ -317,10 +319,10 @@ type NonFungibleAssetCollection = {
   tokenCount: string;
 
   // The creator address of the asset.
-  creator?: Caip19AssetType;
+  creator?: Caip10Address;
 
   // Base64 data URI or URL representation of the asset icon.
-  imageUrl: string;
+  imageUrl?: string;
 };
 
 type NonFungibleAssetMetadata = {
@@ -331,7 +333,7 @@ type NonFungibleAssetMetadata = {
   symbol?: string;
 
   // Base64 data URI or URL representation of the asset image.
-  imageUrl: string;
+  imageUrl?: string;
 
   // The description of the asset.
   description?: string;
@@ -341,13 +343,13 @@ type NonFungibleAssetMetadata = {
 
   // The time at which the asset was acquired.
   // The time is represented as a UNIX timestamp. 
-  acquired_at?: number;
+  acquiredAt?: number;
 
   // Attributes of the non-fungible asset.
   attributes?: Record<string, string | number>;
 
   // The collection of the asset.
-  collection: NonFungibleAssetCollection;
+  collection?: NonFungibleAssetCollection;
 };
 ```
 
@@ -398,3 +400,4 @@ type NonFungibleAssetMarketData = {
 Copyright and related rights waived via [CC0](../LICENSE).
 
 [caip-19]: https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-19.md
+[caip-10]: https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-10.md
