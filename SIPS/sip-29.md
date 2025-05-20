@@ -315,6 +315,9 @@ type NonFungibleAssetCollection = {
   // Human-friendly name of the asset collection.
   name: string;
 
+  // The collection address.
+  address: Caip10Address;
+
   // Ticker symbol of the asset collection.
   symbol: string;
 
