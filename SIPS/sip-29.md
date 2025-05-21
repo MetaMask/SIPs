@@ -182,7 +182,7 @@ type MarketData = FungibleAssetMarketData | NonFungibleAssetMarketData;
 
 type Asset = AssetRequest["asset"];
 
-type Unit = AssetPair["unit"];
+type Unit = AssetRequest["unit"];
 
 type OnAssetsMarketDataResponse = {
   marketData: Record<Asset, Record<Unit, MarketData | null>>;
@@ -351,8 +351,8 @@ type NonFungibleAssetMetadata = {
   // The time is represented as a UNIX timestamp. 
   acquiredAt?: number;
 
-  // Indicates whether the asset is a spam asset.
-  isSpam?: boolean;
+  // Indicates whether the asset is possibly a spam asset.
+  isPossibleSpam?: boolean;
 
   // Attributes of the non-fungible asset.
   attributes?: Record<string, string | number>;
