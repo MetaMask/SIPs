@@ -1,10 +1,10 @@
 ---
 sip: 29
 title: Snap Assets API
-status: Draft
+status: Living
 author: Daniel Rocha (@danroc), Guillaume Roux (@GuillaumeRx)
 created: 2024-12-05
-updated: 2025-04-02
+updated: 2025-05-05
 ---
 
 ## Abstract
@@ -59,13 +59,13 @@ This permission is specified as follows in `snap.manifest.json` files:
 
 ### Snap Implementation
 
-Two methods are defined in the Snap Assets API:
+Four methods are defined in the Snap Assets API:
 
 Any Snap that wishes to provide asset information MUST implement the following API:
 
 #### Get Assets Metadata
 
-`Caip19AssetType` - A string that represents an asset using the [CAIP-19][caip-19] standard.
+`Caip19AssetTypeOrId` - A string that represents an asset using the [CAIP-19][caip-19] standard.
 
 ```typescript
 import { OnAssetsLookupHandler } from "@metamask/snaps-sdk";
@@ -82,15 +82,18 @@ The type for an `onAssetsLookup` handler function’s arguments is:
 
 ```typescript
 interface OnAssetsLookupArguments {
-  assets: Caip19AssetType[];
+  assets: Caip19AssetTypeOrId[];
 }
 ```
 
 The type for an `onAssetsLookup` handler function’s return value is:
 
 ```typescript
+
+type AssetMetadata = FungibleAssetMetadata | NonFungibleAssetMetadata;
+
 type OnAssetsLookupResponse = {
-  assets: Record<Caip19AssetType, AssetMetadata | null>;
+  assets: Record<Caip19AssetTypeOrId, AssetMetadata | null>;
 };
 ```
 
@@ -117,10 +120,8 @@ type Conversion = {
 
 type OnAssetsConversionArguments = {
   conversions: Conversion[];
-  includeMarketData?: boolean;
 };
 ```
-- `includeMarketData` - A boolean that indicates whether the Snap should include market data in the response. If `true`, the Snap SHOULD include market data in the response if available.
 
 The type for an `onAssetsConversion` handler function’s return value is:
 
@@ -136,24 +137,8 @@ type AssetConversionRate = {
 
   // The UNIX timestamp of when the conversion rate will expire.
   expirationTime?: number;
-
-  // Market data for the asset pair.
-  // The values of the type string are expected to represent decimal numbers in a string.
-  marketData?: {
-    marketCap: string;
-    totalVolume: string;
-    circulatingSupply: string;
-    allTimeHigh: string;
-    allTimeLow: string;
-    pricePercentChange: {
-      // The `all` value is a special interval that represents all available data.  
-      all?: number;  
-
-      // The interval key MUST follow the ISO 8601 duration format.  
-      [interval: string]: number;
-    };
-  };
 };
+
 
 type FromAsset = Conversion["from"];
 
@@ -164,7 +149,47 @@ type OnAssetsConversionResponse = {
 };
 ```
 
-### Get Assets historical price
+#### Get Assets market data
+
+```typescript
+import { OnAssetsMarketDataHandler } from "@metamask/snaps-sdk";
+
+export const onAssetsMarketData: OnAssetsMarketDataHandler = async ({
+  assets
+}) => {
+  const marketData = /* Get market data for given `assets` */;
+  return { marketData };
+};
+```
+
+The type for an `onAssetsMarketData` handler function’s arguments is:
+
+```typescript
+type AssetRequest = {
+  asset: Caip19AssetTypeOrId;
+  unit: Caip19AssetType;
+};
+
+type OnAssetsMarketDataArguments = {
+  assets: AssetRequest[];
+};
+```
+
+The type for an `onAssetsMarketData` handler function’s return value is:
+
+```typescript
+type MarketData = FungibleAssetMarketData | NonFungibleAssetMarketData;
+
+type Asset = AssetRequest["asset"];
+
+type Unit = AssetRequest["unit"];
+
+type OnAssetsMarketDataResponse = {
+  marketData: Record<Asset, Record<Unit, MarketData | null>>;
+};
+```
+
+#### Get Assets historical price
 
 ```typescript
 import { OnAssetHistoricalPriceHandler } from "@metamask/snaps-sdk";
@@ -208,10 +233,11 @@ type OnAssetHistoricalPriceResponse = {
 };
 ```
 
-## Appendix I: Fungible Asset Metadata
+## Appendix I: Fungible Asset Metadata & Market Data
 
-The following asset metadata fields for a fungible asset are defined.
-As of the time of creation of this SIP, they are the only possible assets requested by clients.
+The following asset metadata and market data fields for a fungible asset are defined.
+
+### Asset Metadata
 
 ```typescript
 // Represents an asset unit.
@@ -243,9 +269,139 @@ type FungibleAssetMetadata = {
   // List of asset units.
   units: FungibleAssetUnit[];
 };
+```
+### Asset Market Data
 
-// Represents the metadata of an asset.
-type AssetMetadata = FungibleAssetMetadata
+```typescript
+type FungibleAssetMarketData = {
+  // Represents a fungible asset market data.
+  fungible: true;
+
+  // The market cap of the asset represented as a decimal number in a string.
+  marketCap?: string;
+
+  // The total volume of the asset represented as a decimal number in a string.
+  totalVolume?: string;
+
+  // The circulating supply of the asset represented as a decimal number in a string.
+  circulatingSupply?: string;
+
+  // The all time high of the asset represented as a decimal number in a string.
+  allTimeHigh?: string;
+
+  // The all time low of the asset represented as a decimal number in a string.
+  allTimeLow?: string;
+
+  pricePercentChange?: {
+    // The `all` value is a special interval that represents all available data.  
+    all?: number;  
+
+    // The interval key MUST follow the ISO 8601 duration format.  
+    [interval: string]: number;
+  };
+};
+```
+
+## Appendix II: Non-fungible Asset Metadata & Market Data
+
+The following asset metadata fields for a non-fungible asset are defined.
+
+### Asset Metadata
+
+`Caip10Address` - A string that represents an address using the [CAIP-10][caip-10] standard.
+
+```typescript
+type NonFungibleAssetCollection = {
+  // Human-friendly name of the asset collection.
+  name: string;
+
+  // The collection address.
+  address: Caip10Address;
+
+  // Ticker symbol of the asset collection.
+  symbol: string;
+
+  // The number of tokens in the collection.
+  tokenCount?: number;
+
+  // The creator address of the asset.
+  creator?: Caip10Address;
+
+  // Base64 data URI or URL representation of the asset icon.
+  imageUrl?: string;
+};
+
+type NonFungibleAssetMetadata = {
+  // Human-friendly name of the asset.
+  name?: string;
+
+  // Ticker symbol of the asset.
+  symbol?: string;
+
+  // Base64 data URI or URL representation of the asset image.
+  imageUrl?: string;
+
+  // The description of the asset.
+  description?: string;
+
+  // Represents a non-fungible asset
+  fungible: false;
+
+  // The time at which the asset was acquired.
+  // The time is represented as a UNIX timestamp. 
+  acquiredAt?: number;
+
+  // Indicates whether the asset is possibly a spam asset.
+  isPossibleSpam?: boolean;
+
+  // Attributes of the non-fungible asset.
+  attributes?: Record<string, string | number>;
+
+  // The collection of the asset.
+  collection?: NonFungibleAssetCollection;
+};
+```
+
+### Asset Market Data
+```typescript
+type NonFungibleAssetMarketData = {
+  // Represents a non-fungible asset market data.
+  fungible: false;
+
+  // The last sale of one asset in the collection.
+  lastSale?: {
+    // The asset that was sold.
+    asset: Caip19AssetTypeOrId;
+    // The price at which is was sold represented as a decimal number in a string.
+    amount: string;
+  };
+
+  // The top bid on the asset.
+  topBid?: {
+    // The asset that was sold.
+    asset: Caip19AssetTypeOrId;
+    // The price at which is was sold represented as a decimal number in a string.
+    amount: string;
+  }
+
+  // The floor price of the collection.
+  floorPrice?: {
+    // The asset that is used to represent the floor price.
+    asset: Caip19AssetTypeOrId;
+    // The price of the asset represented as a decimal number in a string.
+    amount: string;
+  }
+
+  // The rarity of the asset and its metadata.
+  rarity?: {
+    ranking?: {
+      source: string;
+      rank: number;
+    }
+
+    metadata?: Record<string, number>;
+  }
+}
 ```
 
 ## Copyright
@@ -253,3 +409,4 @@ type AssetMetadata = FungibleAssetMetadata
 Copyright and related rights waived via [CC0](../LICENSE).
 
 [caip-19]: https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-19.md
+[caip-10]: https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-10.md
