@@ -25,7 +25,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 ### Top-level architecture
 
-This SIP proposes a way to defer WebSocket management to the client, allowing Snaps to open, close, and send messages over WebSocket. The client will handle the underlying WebSocket connections and notify the Snap of any events that occur on those connections.
+This architecture defers WebSocket management to the client, allowing Snaps to open, close, and send messages over WebSocket. The client will handle the underlying WebSocket connections and notify the Snap of any events that occur on those connections.
 
 The client has multiple responsibilities in this architecture:
 - All WebSocket connections opened by Snaps MUST be monitored by the client. Each connection is identified by a unique identifier, which is returned to the Snap when the connection is opened.
