@@ -38,7 +38,7 @@ The client has multiple responsibilities in this architecture:
 
 - When the Snap requests to close a WebSocket connection via `snap_closeWebSocket`, the client MUST close the connection and remove it from its list of open connections.
 
-- Any errors that occur during the WebSocket connection lifecycle (e.g., connection failure, message send failure) MUST be handled by the client and reported to the Snap via `onWebSocketEvent`.
+- Any errors that occur when the WebSocket connection is open (e.g., connection failure, message send failure) MUST be handled by the client and reported to the Snap via `onWebSocketEvent`.
 
 
 ### Snap Manifest
