@@ -1,6 +1,6 @@
 ---
 sip: 20
-title: External data entry point
+title: WebSockets
 status: Draft
 author: David Drazic (@david0xd), Frederik Bolding (@frederikbolding), Guillaume Roux (@guillaumerx) 
 created: 2023-12-15
@@ -23,6 +23,28 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
 "OPTIONAL" written in uppercase in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt)
 
+### Top-level architecture
+
+This SIP proposes a way to defer WebSocket management to the client, allowing Snaps to open, close, and send messages over WebSocket. The client will handle the underlying WebSocket connections and notify the Snap of any events that occur on those connections.
+
+The client has multiple responsibilities in this architecture:
+- All WebSocket connections opened by Snaps MUST be monitored by the client. Each connection is identified by a unique identifier, which is returned to the Snap when the connection is opened.
+
+- Any incoming message from WebSocket connections MUST be handled by the client and forwarded to the appropriate Snap through `onWebSocketEvent`. 
+
+- When the Snap requests to open a WebSocket connection via `snap_openWebSocket`, the client MUST ensure that the connection is established and return a unique identifier for that connection.
+
+- Any open connection MUST be kept alive by the client until the Snap explicitly closes it or the connection is lost, even when the Snap is terminated.
+
+- When the Snap requests to close a WebSocket connection via `snap_closeWebSocket`, the client MUST close the connection and remove it from its list of open connections.
+
+- Any errors that occur during the WebSocket connection lifecycle (e.g., connection failure, message send failure) MUST be handled by the client and reported to the Snap via `onWebSocketEvent`.
+
+
+### Snap Manifest
+
+This SIP doesn't introduce any new permissions, but rather extends `endowment:network-access` with new capabilities.
+
 ### RPC Methods
 
 #### `snap_openWebSocket`
@@ -39,6 +61,7 @@ The RPC method takes one parameter:
 
 - `url` - The URL of the WebSocket service to connect to. 
   - The URL MUST be a valid WebSocket URL, starting with `wss://`. URLs starting with `ws://` are not allowed.
+  - Only one WebSocket connection can be opened per URL at a time. If a Snap tries to open a new connection to the same URL while an existing connection is still open, it will result in an error.
 
 An example of usage is given below.
 
@@ -79,7 +102,7 @@ This method allows a Snap to send a message over an existing WebSocket connectio
 ```typescript
 type SendWebSocketMessageParams = {
   id: string;
-  message: string | Uint8Array;
+  message: string | number[];
 };
 ```
 
@@ -102,12 +125,12 @@ snap.request({
 This method allows a Snap to retrieve a list of all currently open WebSocket connections. It returns an array of objects, each containing the unique identifier and URL of the connection.
 
 - `id` - The unique identifier of the WebSocket connection.
-- `url` - The URL of the WebSocket connection.
+- `origin` - The origin of the WebSocket connection.
 
 ```typescript
 type WebSocketConnection = {
   id: string;
-  url: string;
+  origin: string;
 };
 
 type GetWebSocketsResult = WebSocketConnection[];
@@ -199,7 +222,7 @@ type OnWebSocketEventArgs = {
 
 `id` - The unique identifier of the WebSocket connection associated with the event.
 
-`origin` - The origin of the Snap that is handling the WebSocket event.
+`origin` - The origin of the WebSocket event.
 
 `dataType` - The type of data received in the event, which can be either `text` or `binary`. This property is only present for `message` events.
 
