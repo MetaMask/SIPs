@@ -15,7 +15,7 @@ Currently, Snaps can only communicate with external services via HTTP requests. 
 
 ## Specification
 
-> Formal specifications are written in TypeScript. 
+> Formal specifications are written in TypeScript.
 
 ### Language
 
@@ -25,9 +25,10 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 ### Top-level architecture
 
-This architecture defers WebSocket management to the client, allowing Snaps to open, close, and send messages over WebSocket. The client will handle the underlying WebSocket connections and notify the Snap of any events that occur on those connections.
+This architecture defers WebSocket management to the client, allowing Snaps to open, close, and send messages over WebSockets. The client will handle the underlying WebSocket connections and notify the Snap of any events that occur on those connections.
 
 The client has multiple responsibilities in this architecture:
+
 - All WebSocket connections opened by Snaps MUST be monitored by the client. Each connection is identified by a unique identifier, which is returned to the Snap when the connection is opened.
 
 - Any incoming message from WebSocket connections MUST be handled by the client and forwarded to the appropriate Snap through `onWebSocketEvent`. 
@@ -55,6 +56,7 @@ This method allows a Snap to open a WebSocket connection to an external service.
 
 type OpenWebSocketParams = {
   url: string;
+  protocols?: string[];
 };
 ```
 The RPC method takes one parameter:
@@ -62,6 +64,7 @@ The RPC method takes one parameter:
 - `url` - The URL of the WebSocket service to connect to. 
   - The URL MUST be a valid WebSocket URL, starting with `wss://`. URLs starting with `ws://` are not allowed.
   - Only one WebSocket connection can be opened per URL at a time. If a Snap tries to open a new connection to the same URL while an existing connection is still open, the client MUST throw an error.
+- `protocols` - An optional array of subprotocols to use for the WebSocket connection.
 
 An example of usage is given below.
 
@@ -70,6 +73,7 @@ snap.request({
   method: "snap_openWebSocket",
   params: {
     url: "wss://example.com/websocket",
+    protocols: ["soap", "wamp"],
   },
 });
 
@@ -96,7 +100,7 @@ snap.request({
   },
 });
 ```
-#### `snap_sendMessage`
+#### `snap_sendWebSocketMessage`
 This method allows a Snap to send a message over an existing WebSocket connection. The method takes the unique identifier of the connection and the message to send as parameters.
 
 ```typescript
@@ -108,13 +112,13 @@ type SendWebSocketMessageParams = {
 
 The RPC method takes two parameters:
 - `id` - The unique identifier of the WebSocket connection to send the message over. This identifier is returned by the `snap_openWebSocket` method.
-- `message` - The message to send over the WebSocket connection. It can be either a string or a `Uint8Array`.
+- `message` - The message to send over the WebSocket connection. It can be either a string or a number array.
 
 An example of usage is given below.
 
 ```typescript
 snap.request({
-  method: "snap_sendMessage",
+  method: "snap_sendWebSocketMessage",
   params: {
     id: "unique-connection-id",
     message: "Hello, WebSocket!",
@@ -173,41 +177,6 @@ export const onWebSocketEvent: OnWebSocketEventHandler = async ({ event }) => {
   }
 };
 ```
-the type for an `onWebSocketEvent` handler function's arguments is:
-
-```typescript
-export type WebSocketMessageEvent = {
-  type: "message";
-  id: string;
-  origin: string;
-  dataType: "text" | "binary";
-  data: string | Uint8Array;
-};
-
-export type WebSocketOpenEvent = {
-  type: "open";
-  id: string;
-  origin: string;
-};
-
-export type WebSocketCloseEvent = {
-  type: "close";
-  id: string;
-  origin: string;
-};
-
-export type WebSocketErrorEvent = {
-  type: "error";
-  id: string;
-  origin: string;
-};
-
-export type WebSocketEvent =
-  | WebSocketDataEvent
-  | WebSocketOpenEvent
-  | WebSocketCloseEvent
-  | WebSocketErrorEvent;
-```
 
 ```typescript
 type OnWebSocketEventArgs = {
@@ -228,11 +197,132 @@ type OnWebSocketEventArgs = {
 
 `data` - The data received in the event. For `message` events, this can be either a string (for text messages) or a `Uint8Array` (for binary messages). For other event types, this property is not present.
 
-This handler does not return any value. It is used to handle WebSocket events asynchronously:
+This handler does not return any value.
 
 ```typescript
 type OnWebSocketEventResponse = void;
 ```
+
+#### Event Types
+
+the type for an `onWebSocketEvent` handler function's arguments. 
+
+```typescript
+export type WebSocketEvent =
+  | WebSocketMessage
+  | WebSocketOpenEvent
+  | WebSocketCloseEvent
+  | WebSocketErrorEvent;
+```
+
+##### Message Event
+
+This event is triggered when a message is received over a WebSocket connection. The message can be either text or binary data.
+
+```typescript
+export type WebSocketTextMessage = {
+  type: "message";
+  id: string;
+  origin: string;
+  dataType: "text";
+  data: string;
+};
+```
+
+`type` - The type of the WebSocket event, which is `"message"` for this event type.
+
+`id` - The unique identifier of the WebSocket connection associated with the event.
+
+`origin` - The origin of the WebSocket event.
+
+`dataType` - The type of data received in the event, which is `"text"` for this event type.
+
+`data` - The data received in the event, which is a string for text messages.
+
+```typescript
+export type WebSocketBinaryMessage = {
+  type: "message";
+  id: string;
+  origin: string;
+  dataType: "binary";
+  data: number[];
+};
+```
+
+`type` - The type of the WebSocket event, which is `"message"` for this event type.
+
+`id` - The unique identifier of the WebSocket connection associated with the event.
+
+`origin` - The origin of the WebSocket event.
+
+`dataType` - The type of data received in the event, which is `"binary"` for this event type.
+
+`data` - The data received in the event, which is a number array for binary messages.
+
+```typescript
+export type WebSocketMessageEvent = 
+  | WebSocketTextMessage
+  | WebSocketBinaryMessage;
+```
+
+##### Connection opened event
+
+This event is triggered when a WebSocket connection is successfully opened. It provides the unique identifier of the connection and the origin of the event.
+
+```typescript
+export type WebSocketOpenEvent = {
+  type: "open";
+  id: string;
+  origin: string;
+};
+```
+`type` - The type of the WebSocket event, which is `"open"` for this event type.
+
+`id` - The unique identifier of the WebSocket connection associated with the event.
+
+`origin` - The origin of the WebSocket connection.
+
+##### Connection closed event
+
+This event is triggered when a WebSocket connection is closed. It provides the unique identifier of the connection and the origin of the event.
+
+```typescript
+export type WebSocketCloseEvent = {
+  type: "close";
+  id: string;
+  origin: string;
+  code: number;
+  reason: string;
+};
+```
+
+`type` - The type of the WebSocket event, which is `"close"` for this event type.
+
+`id` - The unique identifier of the WebSocket connection associated with the event.
+
+`origin` - The origin of the WebSocket connection.
+
+`code` - The numeric code indicating the reason for the closure of the WebSocket connection. This is a standard WebSocket close code.
+
+`reason` - A string providing a human-readable explanation of why the WebSocket connection was closed.
+
+##### Error event
+
+This event is triggered when an error occurs with a WebSocket connection. It provides the unique identifier of the connection, and the origin of the event.
+
+```typescript
+export type WebSocketErrorEvent = {
+  type: "error";
+  id: string;
+  origin: string;
+};
+```
+
+`type` - The type of the WebSocket event, which is `"error"` for this event type.
+
+`id` - The unique identifier of the WebSocket connection associated with the event.
+
+`origin` - The origin of the WebSocket connection where the error occurred.
 
 ## Copyright
 
