@@ -112,7 +112,7 @@ type SendWebSocketMessageParams = {
 
 The RPC method takes two parameters:
 - `id` - The unique identifier of the WebSocket connection to send the message over. This identifier is returned by the `snap_openWebSocket` method.
-- `message` - The message to send over the WebSocket connection. It can be either a string or a number array.
+- `message` - The message to send over the WebSocket connection. It can be either a string or an array of bytes.
 
 An example of usage is given below.
 
