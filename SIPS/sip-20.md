@@ -183,21 +183,6 @@ type OnWebSocketEventArgs = {
   event: WebSocketEvent;
 };
 ```
-`type` - The type of the WebSocket event, which can be one of the following:
-  - `message` - Indicates that a message has been received.
-  - `open` - Indicates that a WebSocket connection has been opened.
-  - `close` - Indicates that a WebSocket connection has been closed.
-  - `error` - Indicates that an error has occurred with the WebSocket connection.
-
-`id` - The unique identifier of the WebSocket connection associated with the event.
-
-`origin` - The origin of the WebSocket event.
-
-`dataType` - The type of data received in the event, which can be either `text` or `binary`. This property is only present for `message` events.
-
-`data` - The data received in the event. For `message` events, this can be either a string (for text messages) or a `Uint8Array` (for binary messages). For other event types, this property is not present.
-
-This handler does not return any value.
 
 ```typescript
 type OnWebSocketEventResponse = void;
