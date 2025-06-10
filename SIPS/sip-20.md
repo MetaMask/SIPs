@@ -262,6 +262,7 @@ export type WebSocketCloseEvent = {
   origin: string;
   code: number;
   reason: string;
+  wasClean: boolean;
 };
 ```
 
@@ -274,6 +275,8 @@ export type WebSocketCloseEvent = {
 `code` - The numeric code indicating the reason for the closure of the WebSocket connection. This is a standard WebSocket close code.
 
 `reason` - A string providing a human-readable explanation of why the WebSocket connection was closed.
+
+`wasClean` - A boolean indicating whether the connection was closed cleanly (i.e., without any errors).
 
 ##### Error event
 
