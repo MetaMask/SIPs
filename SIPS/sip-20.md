@@ -220,32 +220,24 @@ export type WebSocketEvent =
 This event is triggered when a message is received over a WebSocket connection. The message can be either text or binary data.
 
 ```typescript
-export type WebSocketTextMessage = {
-  type: "message";
-  id: string;
-  origin: string;
+export type WebSocketTextMessageData = {
   dataType: "text";
   data: string;
 };
-```
+export type WebSocketBinaryMessageData = {
+  dataType: "binary";
+  data: number[];
+};
 
-`type` - The type of the WebSocket event, which is `"message"` for this event type.
+export type WebSocketMessageData =
+  | WebSocketTextMessageData
+  | WebSocketBinaryMessageData;
 
-`id` - The unique identifier of the WebSocket connection associated with the event.
-
-`origin` - The origin of the WebSocket event.
-
-`dataType` - The type of data received in the event, which is `"text"` for this event type.
-
-`data` - The data received in the event, which is a string for text messages.
-
-```typescript
-export type WebSocketBinaryMessage = {
+export type WebSocketMessage = {
   type: "message";
   id: string;
   origin: string;
-  dataType: "binary";
-  data: number[];
+  data: WebSocketMessageData;
 };
 ```
 
@@ -255,15 +247,7 @@ export type WebSocketBinaryMessage = {
 
 `origin` - The origin of the WebSocket event.
 
-`dataType` - The type of data received in the event, which is `"binary"` for this event type.
-
-`data` - The data received in the event, which is a number array for binary messages.
-
-```typescript
-export type WebSocketMessageEvent = 
-  | WebSocketTextMessage
-  | WebSocketBinaryMessage;
-```
+`data` - The data received in the event. This can be either a text message (as a string) or binary data (as an array of numbers). The `type` property indicates whether the data is text or binary.
 
 ##### Connection opened event
 
