@@ -11,7 +11,7 @@ updated: 2024-06-05
 This SIP proposes to expose a new communication protocol to `endowment:network-access`, that enables Snaps to communicate with external services via WebSockets. This will allow Snaps to receive real-time data updates from external sources, such as price feeds or event notifications.
 
 ## Motivation
-Currently, Snaps can only communicate with external services via HTTP requests. This limits their ability to receive real-time data updates, which is essential for many use cases, such as price feeds or event notifications. By exposing a WebSocket protocol, Snaps can establish persistent connections with external services and receive real-time updates.
+Currently, Snaps can only communicate with external services via HTTP requests. This limits their ability to receive real-time data updates, which is essential for many use cases, such as price feeds or event notifications. By exposing the WebSocket protocol, Snaps can establish persistent connections with external services and receive real-time updates.
 
 ## Specification
 
