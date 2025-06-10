@@ -220,18 +220,18 @@ export type WebSocketEvent =
 This event is triggered when a message is received over a WebSocket connection. The message can be either text or binary data.
 
 ```typescript
-export type WebSocketTextMessageData = {
-  dataType: "text";
-  data: string;
+export type WebSocketTextMessage = {
+  type: "text";
+  message: string;
 };
-export type WebSocketBinaryMessageData = {
-  dataType: "binary";
-  data: number[];
+export type WebSocketBinaryMessage = {
+  type: "binary";
+  message: number[];
 };
 
 export type WebSocketMessageData =
-  | WebSocketTextMessageData
-  | WebSocketBinaryMessageData;
+  | WebSocketTextMessage
+  | WebSocketBinaryMessage;
 
 export type WebSocketMessage = {
   type: "message";
