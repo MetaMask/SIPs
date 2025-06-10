@@ -129,12 +129,12 @@ snap.request({
 This method allows a Snap to retrieve a list of all currently open WebSocket connections. It returns an array of objects, each containing the unique identifier and URL of the connection.
 
 - `id` - The unique identifier of the WebSocket connection.
-- `origin` - The origin of the WebSocket connection.
+- `url` - The URL of the WebSocket connection.
 
 ```typescript
 type WebSocketConnection = {
   id: string;
-  origin: string;
+  url: string;
 };
 
 type GetWebSocketsResult = WebSocketConnection[];
