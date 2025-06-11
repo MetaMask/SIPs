@@ -4,7 +4,7 @@ title: WebSockets
 status: Draft
 author: David Drazic (@david0xd), Frederik Bolding (@frederikbolding), Guillaume Roux (@guillaumerx) 
 created: 2023-12-15
-updated: 2024-06-05
+updated: 2025-06-05
 ---
 
 ## Abstract
