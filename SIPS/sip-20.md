@@ -151,7 +151,7 @@ snap.request({
 
 ### Handling WebSocket Events
 
-Snaps can handle WebSocket events by implementing the `onWebSocketEvent` handler. This handler will be called whenever a WebSocket event occurs, such as receiving a message, opening a connection, closing a connection, or encountering an error.
+Snaps can handle WebSocket events by implementing the `onWebSocketEvent` handler. This handler will be called whenever a WebSocket event occurs, such as receiving a message, opening a connection or closing a connection.
 
 ```typescript
 import { OnWebSocketEventHandler } from "@metamask/snap-sdk";
@@ -169,10 +169,6 @@ export const onWebSocketEvent: OnWebSocketEventHandler = async ({ event }) => {
     case "close":
       // Handle connection closed
       console.log(`WebSocket connection closed with ID ${event.id} from ${event.origin}`);
-      break;
-    case "error":
-      // Handle error
-      console.error(`WebSocket error occurred with ID ${event.id} from ${event.origin}`);
       break;
   }
 };
@@ -196,8 +192,7 @@ the type for an `onWebSocketEvent` handler function's arguments.
 export type WebSocketEvent =
   | WebSocketMessage
   | WebSocketOpenEvent
-  | WebSocketCloseEvent
-  | WebSocketErrorEvent;
+  | WebSocketCloseEvent;
 ```
 
 ##### Message Event
@@ -277,24 +272,6 @@ export type WebSocketCloseEvent = {
 `reason` - A string providing a human-readable explanation of why the WebSocket connection was closed.
 
 `wasClean` - A boolean indicating whether the connection was closed cleanly (i.e., without any errors).
-
-##### Error event
-
-This event is triggered when an error occurs with a WebSocket connection. It provides the unique identifier of the connection, and the origin of the event.
-
-```typescript
-export type WebSocketErrorEvent = {
-  type: "error";
-  id: string;
-  origin: string;
-};
-```
-
-`type` - The type of the WebSocket event, which is `"error"` for this event type.
-
-`id` - The unique identifier of the WebSocket connection associated with the event.
-
-`origin` - The origin of the WebSocket connection where the error occurred.
 
 ## Copyright
 
