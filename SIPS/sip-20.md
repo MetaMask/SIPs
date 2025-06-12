@@ -35,7 +35,7 @@ The client has multiple responsibilities in this architecture:
 
 - When the Snap requests to open a WebSocket connection via `snap_openWebSocket`, the client MUST ensure that the connection is established and return a unique identifier for that connection.
 
-- Any open connection MUST be kept alive by the client until the Snap explicitly closes it or the connection is lost, even when the Snap is terminated.
+- Any open connection MUST be kept alive by the client until the Snap explicitly closes it, the connection is lost or the client is shut down, even while the Snap isn't running.
 
 - When the Snap requests to close a WebSocket connection via `snap_closeWebSocket`, the client MUST close the connection and remove it from its list of open connections.
 
