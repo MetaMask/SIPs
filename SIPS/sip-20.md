@@ -130,6 +130,7 @@ This method allows a Snap to retrieve a list of all currently open WebSocket con
 
 - `id` - The unique identifier of the WebSocket connection.
 - `url` - The URL of the WebSocket connection.
+- `protocols` - The optional protocols of the WebSocket connection.
 
 ```typescript
 type WebSocketConnection = {
