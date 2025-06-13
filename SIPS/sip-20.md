@@ -126,7 +126,7 @@ snap.request({
 });
 ```
 #### `snap_getWebSockets`
-This method allows a Snap to retrieve a list of all currently open WebSocket connections. It returns an array of objects, each containing the unique identifier and URL of the connection.
+This method allows a Snap to retrieve a list of all currently open WebSocket connections. It returns an array of objects, each containing the unique identifier, the optional protocols and the URL of the connection.
 
 - `id` - The unique identifier of the WebSocket connection.
 - `url` - The URL of the WebSocket connection.
