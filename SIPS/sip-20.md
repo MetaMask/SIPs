@@ -1,190 +1,280 @@
 ---
 sip: 20
-title: External data entry point
+title: WebSockets
 status: Draft
-author: David Drazic (@david0xd)
+author: David Drazic (@david0xd), Frederik Bolding (@frederikbolding), Guillaume Roux (@guillaumerx) 
 created: 2023-12-15
+updated: 2025-06-05
 ---
 
 ## Abstract
-
-This SIP proposes a new permission that enables Snaps to receive data from external sources.
-
-In the initial version, this SIP proposes support for WebSockets, but it can be extended to support other data sources like blockchain events in the future.
-The Snap can specify the external data source in the Snap manifest. The client then connects to the external data source and sends the data to the Snap.
-The Snap can then do whatever it wants with the data. This initial version only supports one-way communication from the external source to the Snap. The Snap can't send any data back to the external source.
+This SIP proposes to expose a new communication protocol to `endowment:network-access`, that enables Snaps to communicate with external services via WebSockets. This will allow Snaps to receive real-time data updates from external sources, such as price feeds or event notifications.
 
 ## Motivation
-
-Snaps are currently limited in their ability to receive data from external sources; they have to rely on user actions or cron jobs to fetch data, so they can't react to events in real time. Snaps also cannot use WebSocket connections to receive data from external sources, and are limited to HTTP requests.
+Currently, Snaps can only communicate with external services via HTTP requests. This limits their ability to receive real-time data updates, which is essential for many use cases, such as price feeds or event notifications. By exposing the WebSocket protocol, Snaps can establish persistent connections with external services and receive real-time updates.
 
 ## Specification
 
-> Formal specifications are written in Typescript.
+> Formal specifications are written in TypeScript.
 
 ### Language
 
-The key words "MUST", "MUST NOT", "SHOULD", "RECOMMENDED" and "MAY" written in uppercase in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+"OPTIONAL" written in uppercase in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt)
 
-### Snap manifest
+### Top-level architecture
 
-This SIP introduces a new permission named `endowment:external-data`.
+This architecture defers WebSocket management to the client, allowing Snaps to open, close, and send messages over WebSockets. The client will handle the underlying WebSocket connections and notify the Snap of any events that occur on those connections.
+
+The client has multiple responsibilities in this architecture:
+
+- All WebSocket connections opened by Snaps MUST be monitored by the client. Each connection is identified by a unique identifier, which is returned to the Snap when the connection is opened.
+
+- Any incoming message from WebSocket connections MUST be handled by the client and forwarded to the appropriate Snap through `onWebSocketEvent`. 
+
+- When the Snap requests to open a WebSocket connection via `snap_openWebSocket`, the client MUST ensure that the connection is established and return a unique identifier for that connection.
+
+- Any open connection MUST be kept alive by the client until the Snap explicitly closes it, the connection is lost or the client is shut down, even while the Snap isn't running.
+
+- When the Snap requests to close a WebSocket connection via `snap_closeWebSocket`, the client MUST close the connection and remove it from its list of open connections.
+
+- Any errors that occur when the WebSocket connection is open (e.g., connection failure, message send failure) MUST be handled by the client and reported to the Snap via `onWebSocketEvent`.
+
+
+### Snap Manifest
+
+This SIP doesn't introduce any new permissions, but rather extends `endowment:network-access` with new capabilities.
+
+### RPC Methods
+
+#### `snap_openWebSocket`
+
+This method allows a Snap to open a WebSocket connection to an external service. The method takes a URL as a parameter and returns a unique identifier for the connection.
 
 ```typescript
-/**
- * A WebSocket connection as specified in the Snap manifest.
- *
- * @property type - The type of connection. Currently, only WebSockets are
- * supported.
- * @property url - The URL to connect to. This must be a valid WebSocket URL,
- * starting with `wss://`. URLs starting with `ws://` are not allowed.
- * @property dataType - The type of data expected from the WebSocket. If this
- * field is omitted, text is assumed.
- */
-type WebSocketConnection = {
-  type: 'websocket';
+
+type OpenWebSocketParams = {
   url: string;
-  dataType?: 'text' | 'binary';
-};
-
-/**
- * An external data connection as specified in the Snap manifest.
- *
- * Currently, only {@link WebSocketConnection} is supported.
- */
-type ExternalDataConnection = WebSocketConnection;
-
-/**
- * External data connections as specified in the Snap manifest.
- *
- * This is the value of the `endowment:external-data` field in the Snap
- * manifest.
- *
- * @property maxRequestTime - The maximum request time for the `onExternalData`
- * entry point, as described in SIP-21.
- * @property connections - The external data connections.
- */
-type ExternalData = {
-    maxRequestTime?: number;
-    connections: ExternalDataConnection[]
+  protocols?: string[];
 };
 ```
+The RPC method takes two parameters:
 
-#### Example
+- `url` - The URL of the WebSocket service to connect to. 
+  - The URL MUST be a valid WebSocket URL, starting with `wss://`. URLs starting with `ws://` are not allowed.
+  - Only one WebSocket connection can be opened per URL at a time. If a Snap tries to open a new connection to the same URL while an existing connection is still open, the client MUST throw an error.
+- `protocols` - An optional array of subprotocols to use for the WebSocket connection.
 
-The new field can be specified as follows in a `snap.manifest.json` file:
-
-```json
-{
-  "initialPermissions": {
-    "endowment:external-data": {
-      "maxRequestTime": 50000,
-      "connections": [
-        {
-          "type": "websocket",
-          "url": "wss://example.com/binary/endpoint",
-          "dataType": "binary"
-        },
-        {
-          "type": "websocket",
-          "url": "wss://example.com/text/endpoint",
-          "dataType": "text"
-        }
-      ]
-    }
-  }
-}
-```
-
-### Permission caveats
-
-Each caveat object MUST have `type` property that SHOULD be `websocket`.
-The caveat MUST have `url` and `dataType` properties.
-The `url` MUST be string.
-The `dataType` MUST be string that MUST be `"binary"` or `"text"`.
-
-- `type` property represents the type of data source.
-- `url` is the WebSocket URL.
-- `dataType` is type of data that WebSocket returns.
-
-The caveats MUST NOT have duplicate objects with the same `url` properties.
-
-The `url` MUST start with `wss://` which is a protocol indicator for secure WebSocket connection.
-
-### Snap implementation
-
-This SIP introduces a new `onExternalData` function export that MAY be implemented by the Snap. The function is called every time the WebSocket client receives some data. The function SHOULD accept an object parameter that MUST have `data`, `type` and `source` properties.
-The parameters represent the following:
-- `data`: An object that represents the data that was received. Depending on the `data.type`, this SHOULD contain a `message` property, which SHOULD be either a `string` or an `ArrayBuffer`.
-- `type`: The type of the external data source. For this SIP, this SHOULD always be `websocket`.
-- `source`: The URL that the message was sent from. Snaps can use this to differentiate between different endpoints. This SHOULD be the exact same URL as specified in manifest.
-
-The specification of types of `onExternalData` and its parameters:
+An example of usage is given below.
 
 ```typescript
-/**
- * A text message received from a WebSocket.
- *
- * @property type - The type of the message.
- * @property message - The message as a string.
- */
-type WebSocketTextMessage = {
-  type: 'text';
+snap.request({
+  method: "snap_openWebSocket",
+  params: {
+    url: "wss://example.com/websocket",
+    protocols: ["soap", "wamp"],
+  },
+});
+
+```
+
+#### `snap_closeWebSocket`
+This method allows a Snap to close an existing WebSocket connection. The method takes the unique identifier of the connection as a parameter.
+
+```typescript
+type CloseWebSocketParams = {
+  id: string;
+};
+```
+The RPC method takes one parameter:
+- `id` - The unique identifier of the WebSocket connection to close. This identifier is returned by the `snap_openWebSocket` method.
+
+An example of usage is given below.
+
+```typescript
+snap.request({
+  method: "snap_closeWebSocket",
+  params: {
+    id: "unique-connection-id",
+  },
+});
+```
+#### `snap_sendWebSocketMessage`
+This method allows a Snap to send a message over an existing WebSocket connection. The method takes the unique identifier of the connection and the message to send as parameters.
+
+```typescript
+type SendWebSocketMessageParams = {
+  id: string;
+  message: string | number[];
+};
+```
+
+The RPC method takes two parameters:
+- `id` - The unique identifier of the WebSocket connection to send the message over. This identifier is returned by the `snap_openWebSocket` method.
+- `message` - The message to send over the WebSocket connection. It can be either a string or an array of bytes.
+
+An example of usage is given below.
+
+```typescript
+snap.request({
+  method: "snap_sendWebSocketMessage",
+  params: {
+    id: "unique-connection-id",
+    message: "Hello, WebSocket!",
+  },
+});
+```
+#### `snap_getWebSockets`
+This method allows a Snap to retrieve a list of all currently open WebSocket connections. It returns an array of objects, each containing the unique identifier, the optional protocols and the URL of the connection.
+
+- `id` - The unique identifier of the WebSocket connection.
+- `url` - The URL of the WebSocket connection.
+- `protocols` - The optional protocols of the WebSocket connection.
+
+```typescript
+type WebSocketConnection = {
+  id: string;
+  url: string;
+  protocols?: string[];
+};
+
+type GetWebSocketsResult = WebSocketConnection[];
+```
+
+An example of usage is given below.
+
+```typescript
+snap.request({
+  method: "snap_getWebSockets",
+})
+```
+
+
+### Handling WebSocket Events
+
+Snaps can handle WebSocket events by implementing the `onWebSocketEvent` handler. This handler will be called whenever a WebSocket event occurs, such as receiving a message, opening a connection or closing a connection.
+
+```typescript
+import { OnWebSocketEventHandler } from "@metamask/snap-sdk";
+
+export const onWebSocketEvent: OnWebSocketEventHandler = async ({ event }) => {
+  switch (event.type) {
+    case "message":
+      // Handle incoming message
+      console.log(`Message received from ${event.origin}:`, event.data);
+      break;
+    case "open":
+      // Handle connection opened
+      console.log(`WebSocket connection opened with ID ${event.id} from ${event.origin}`);
+      break;
+    case "close":
+      // Handle connection closed
+      console.log(`WebSocket connection closed with ID ${event.id} code ${event.code} and reason ${event.reason} from ${event.origin}`);
+      break;
+  }
+};
+```
+
+```typescript
+type OnWebSocketEventArgs = {
+  event: WebSocketEvent;
+};
+```
+
+```typescript
+type OnWebSocketEventResponse = void;
+```
+
+#### Event Types
+
+The type for the `onWebSocketEvent` handler function's arguments. 
+
+```typescript
+export type WebSocketEvent =
+  | WebSocketMessage
+  | WebSocketOpenEvent
+  | WebSocketCloseEvent;
+```
+
+##### Message Event
+
+This event is triggered when a message is received over a WebSocket connection. The message can be either text or binary data.
+
+```typescript
+export type WebSocketTextMessage = {
+  type: "text";
   message: string;
 };
 
-/**
- * A binary message received from a WebSocket.
- *
- * @property type - The type of the message.
- * @property message - The message as an ArrayBuffer.
- */
-type WebSocketBinaryMessage = {
-  type: 'binary';
-  message: ArrayBuffer;
+export type WebSocketBinaryMessage = {
+  type: "binary";
+  message: number[];
 };
 
-/**
- * A message received from a WebSocket.
- *
- * @property type - The type of the message.
- * @property message - The message as a string or an ArrayBuffer, depending on
- * the type.
- */
-type WebSocketData = {
-  type: 'websocket';
-  data: WebSocketTextMessage | WebSocketBinaryMessage;
+export type WebSocketMessageData =
+  | WebSocketTextMessage
+  | WebSocketBinaryMessage;
+
+export type WebSocketMessage = {
+  type: "message";
+  id: string;
+  origin: string;
+  data: WebSocketMessageData;
 };
-
-/**
- * The data received from an external source.
- *
- * @property type - The type of the external data source.
- * @property data - The data received from the external data source.
- */
-type ExternalData = WebSocketData;
-
-type OnExternalDataHandlerArgs = ExternalData & {
-  source: string;
-};
-
-type OnExternalDataHandler = (args: OnExternalDataHandlerArgs) => Promise<void>;
 ```
 
-#### Example
+`type` - The type of the WebSocket event, which is `"message"` for this event type.
+
+`id` - The unique identifier of the WebSocket connection associated with the event.
+
+`origin` - The origin of the WebSocket event.
+
+`data` - The data received in the event. This can be either a text message (as a string) or binary data (as an array of numbers). The `type` property indicates whether the data is text or binary.
+
+##### Connection opened event
+
+This event is triggered when a WebSocket connection is successfully opened. It provides the unique identifier of the connection and the origin of the event.
 
 ```typescript
-import { OnExternalDataHandler } from '@metamask/snaps-types';
-import { assert } from '@metamask/utils';
-
-export const onExternalData: OnExternalDataHandler = ({ type, data, source }) => {
-  assert(type === 'websocket'); // `data` is inferred as `WebSocketData`.
-  assert(data.type === 'text'); // `message` is inferred as `string`.
-
-  // Now the Snap can do whatever is needed with the message.
-  const json = JSON.parse(data.message);
+export type WebSocketOpenEvent = {
+  type: "open";
+  id: string;
+  origin: string;
 };
 ```
+`type` - The type of the WebSocket event, which is `"open"` for this event type.
+
+`id` - The unique identifier of the WebSocket connection associated with the event.
+
+`origin` - The origin of the WebSocket connection.
+
+##### Connection closed event
+
+This event is triggered when a WebSocket connection is closed. It provides the unique identifier of the connection and the origin of the event.
+
+```typescript
+export type WebSocketCloseEvent = {
+  type: "close";
+  id: string;
+  origin: string;
+  code: number;
+  reason: string | null;
+  wasClean: boolean | null;
+};
+```
+
+`type` - The type of the WebSocket event, which is `"close"` for this event type.
+
+`id` - The unique identifier of the WebSocket connection associated with the event.
+
+`origin` - The origin of the WebSocket connection.
+
+`code` - The numeric code indicating the reason for the closure of the WebSocket connection. This is a standard WebSocket close code.
+
+`reason` - A string providing a human-readable explanation of why the WebSocket connection was closed.
+
+`wasClean` - A boolean indicating whether the connection was closed cleanly (i.e., without any errors).
 
 ## Copyright
 
