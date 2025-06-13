@@ -59,7 +59,7 @@ type OpenWebSocketParams = {
   protocols?: string[];
 };
 ```
-The RPC method takes one parameter:
+The RPC method takes two parameters:
 
 - `url` - The URL of the WebSocket service to connect to. 
   - The URL MUST be a valid WebSocket URL, starting with `wss://`. URLs starting with `ws://` are not allowed.
@@ -186,7 +186,7 @@ type OnWebSocketEventResponse = void;
 
 #### Event Types
 
-the type for an `onWebSocketEvent` handler function's arguments. 
+The type for the `onWebSocketEvent` handler function's arguments. 
 
 ```typescript
 export type WebSocketEvent =
@@ -204,6 +204,7 @@ export type WebSocketTextMessage = {
   type: "text";
   message: string;
 };
+
 export type WebSocketBinaryMessage = {
   type: "binary";
   message: number[];
