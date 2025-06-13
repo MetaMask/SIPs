@@ -135,6 +135,7 @@ This method allows a Snap to retrieve a list of all currently open WebSocket con
 type WebSocketConnection = {
   id: string;
   url: string;
+  protocols?: string[];
 };
 
 type GetWebSocketsResult = WebSocketConnection[];
@@ -168,7 +169,7 @@ export const onWebSocketEvent: OnWebSocketEventHandler = async ({ event }) => {
       break;
     case "close":
       // Handle connection closed
-      console.log(`WebSocket connection closed with ID ${event.id} from ${event.origin}`);
+      console.log(`WebSocket connection closed with ID ${event.id} code ${event.code} and reason ${event.reason} from ${event.origin}`);
       break;
   }
 };
