@@ -62,7 +62,7 @@ type OpenWebSocketParams = {
 The RPC method takes two parameters:
 
 - `url` - The URL of the WebSocket service to connect to. 
-  - The URL MUST be a valid WebSocket URL, starting with `wss://`. URLs starting with `ws://` are not allowed.
+  - The URL MUST be a valid WebSocket URL, starting with `wss://` or `ws://`.
   - Only one WebSocket connection can be opened per URL at a time. If a Snap tries to open a new connection to the same URL while an existing connection is still open, the client MUST throw an error.
 - `protocols` - An optional array of subprotocols to use for the WebSocket connection.
 
