@@ -1,6 +1,6 @@
 ---
 sip: 34
-title: History Item Insights
+title: Activity Item Insights
 status: Draft
 author: Kylan Hurt (@smilingkylan, kylan.hurt@gmail.com)
 created: 2025-10-26
@@ -8,7 +8,7 @@ created: 2025-10-26
 
 ## Abstract
 
-The purpose of this SIP is to propose the addition of an lifecycle hook, similar to the `onTransaction` and `onSignature` hooks that triggers when the user clicks on a history item (typically a transaction), passing with it parameters related to the transaction. I am giving this hook the name `onHistoryItem`.
+The purpose of this SIP is to propose the addition of an lifecycle hook, similar to the `onTransaction` and `onSignature` hooks that triggers when the user clicks on a history item (typically a transaction), passing with it parameters related to the transaction. I am giving this hook the name `onActivityItem`.
 
 ## Motivation
 
