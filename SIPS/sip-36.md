@@ -1,5 +1,5 @@
 ---
-sip: 34
+sip: 36
 title: Snap Transaction Creation with `eth_sendTransaction`
 status: Draft
 author: Kylan Hurt (@smilingkylan, kylan.hurt@consensys.net, kylan.hurt@gmail.com)
