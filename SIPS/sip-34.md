@@ -51,8 +51,6 @@ export const onActivityItem: OnActivityItemHandler = async ({
 };
 ```
 
-For inspiration: https://github.com/MetaMask/snaps/pull/3534 (I called the hook `onTransactionDetail` in this **obsolete** PR)
-
 ### Language
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
