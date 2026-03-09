@@ -2,7 +2,7 @@
 sip: 34
 title: Activity Item Insights
 status: Draft
-author: Kylan Hurt (smilingkylan.eth, kylan.hurt@gmail.com)
+author: Kylan Hurt (@smilingkylan, kylan.hurt@gmail.com)
 created: 2025-10-26
 ---
 
